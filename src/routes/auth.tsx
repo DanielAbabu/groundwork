@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,14 +59,6 @@ function AuthPage() {
     }
   };
 
-  const google = async () => {
-    try {
-      await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Google sign-in failed");
-    }
-  };
-
   return (
     <main className="grid-noise flex min-h-screen items-center justify-center bg-background px-6">
       <div className="w-full max-w-sm rounded-lg border border-border bg-card p-7">
@@ -113,10 +104,6 @@ function AuthPage() {
             {busy ? "Working…" : mode === "signin" ? "Sign in" : "Create account"}
           </Button>
         </form>
-
-        <Button variant="outline" onClick={google} className="mt-3 w-full font-mono">
-          Continue with Google
-        </Button>
 
         <button
           type="button"
