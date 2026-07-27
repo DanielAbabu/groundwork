@@ -20,7 +20,7 @@ export default function CodeEditor({
       value={value}
       onChange={(next) => onChange(next ?? "")}
       options={{
-        readOnly = false,
+        readOnly,
         fontSize: 13,
         fontFamily: "JetBrains Mono, ui-monospace, monospace",
         minimap: { enabled: false },
