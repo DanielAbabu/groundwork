@@ -3,7 +3,7 @@ import Editor from "@monaco-editor/react";
 export default function CodeEditor({
   path,
   value,
-  readOnly,
+  readOnly = false,
   onChange,
 }: {
   path: string;
@@ -20,7 +20,7 @@ export default function CodeEditor({
       value={value}
       onChange={(next) => onChange(next ?? "")}
       options={{
-        readOnly,
+        readOnly = false,
         fontSize: 13,
         fontFamily: "JetBrains Mono, ui-monospace, monospace",
         minimap: { enabled: false },
