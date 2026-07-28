@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedIncidentsIndexRouteImport } from './routes/_authenticated/incidents.index'
+import { Route as AuthenticatedIncidentsSlugRouteImport } from './routes/_authenticated/incidents.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,15 +35,23 @@ const AuthenticatedIncidentsIndexRoute =
     path: '/incidents/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedIncidentsSlugRoute =
+  AuthenticatedIncidentsSlugRouteImport.update({
+    id: '/incidents/$slug',
+    path: '/incidents/$slug',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/incidents/$slug': typeof AuthenticatedIncidentsSlugRoute
   '/incidents/': typeof AuthenticatedIncidentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/incidents/$slug': typeof AuthenticatedIncidentsSlugRoute
   '/incidents': typeof AuthenticatedIncidentsIndexRoute
 }
 export interface FileRoutesById {
@@ -50,18 +59,20 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/incidents/$slug': typeof AuthenticatedIncidentsSlugRoute
   '/_authenticated/incidents/': typeof AuthenticatedIncidentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/incidents/'
+  fullPaths: '/' | '/auth' | '/incidents/$slug' | '/incidents/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/incidents'
+  to: '/' | '/auth' | '/incidents/$slug' | '/incidents'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/incidents/$slug'
     | '/_authenticated/incidents/'
   fileRoutesById: FileRoutesById
 }
@@ -101,14 +112,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIncidentsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/incidents/$slug': {
+      id: '/_authenticated/incidents/$slug'
+      path: '/incidents/$slug'
+      fullPath: '/incidents/$slug'
+      preLoaderRoute: typeof AuthenticatedIncidentsSlugRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedIncidentsSlugRoute: typeof AuthenticatedIncidentsSlugRoute
   AuthenticatedIncidentsIndexRoute: typeof AuthenticatedIncidentsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedIncidentsSlugRoute: AuthenticatedIncidentsSlugRoute,
   AuthenticatedIncidentsIndexRoute: AuthenticatedIncidentsIndexRoute,
 }
 
