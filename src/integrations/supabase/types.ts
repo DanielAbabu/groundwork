@@ -14,21 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      nudges: {
+        Row: {
+          created_at: string
+          from_user_id: string
+          id: string
+          message: string
+          to_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_user_id: string
+          id?: string
+          message?: string
+          to_user_id: string
+        }
+        Update: {
+          created_at?: string
+          from_user_id?: string
+          id?: string
+          message?: string
+          to_user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           display_name: string | null
           id: string
+          username: string | null
         }
         Insert: {
           created_at?: string
           display_name?: string | null
           id: string
+          username?: string | null
         }
         Update: {
           created_at?: string
           display_name?: string | null
           id?: string
+          username?: string | null
         }
         Relationships: []
       }
@@ -61,6 +88,30 @@ export type Database = {
           scenario_id?: string
           status?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scenario_runs: {
+        Row: {
+          created_at: string
+          id: string
+          passed: boolean
+          scenario_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          passed?: boolean
+          scenario_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          passed?: boolean
+          scenario_id?: string
           user_id?: string
         }
         Relationships: []
