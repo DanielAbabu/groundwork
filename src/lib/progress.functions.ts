@@ -26,12 +26,17 @@ export const recordRun = createServerFn({ method: "POST" })
     z.object({ scenarioId: z.string().min(1), passed: z.boolean() }).parse(input),
   )
   .handler(async ({ data, context }): Promise<ProgressRow> => {
+    await context.supabase
+      .from("scenario_runs")
+      .insert({ user_id: context.userId, scenario_id: data.scenarioId, passed: data.passed });
+
     const { data: existing } = await context.supabase
       .from("scenario_progress")
       .select("scenario_id, status, attempts, first_passed_at")
       .eq("user_id", context.userId)
       .eq("scenario_id", data.scenarioId)
       .maybeSingle();
+
 
     const attempts = (existing?.attempts ?? 0) + 1;
     const alreadyPassed = existing?.status === "passed";
