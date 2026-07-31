@@ -39,10 +39,17 @@ export const TYPE_LABELS: Record<ScenarioType, string> = {
 };
 
 export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
-  starter: "Starter",
-  routine: "Routine",
-  tricky: "Tricky",
+  starter: "Easy",
+  routine: "Medium",
+  tricky: "Hard",
 };
+
+export const DIFFICULTY_CLASSES: Record<Difficulty, string> = {
+  starter: "text-sev3 border-sev3/40",
+  routine: "text-sev2 border-sev2/40",
+  tricky: "text-sev1 border-sev1/40",
+};
+
 
 export function scenarioFileMap(scenario: Scenario, edits: Record<string, string>) {
   const files: Record<string, string> = {};
