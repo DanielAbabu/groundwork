@@ -3,9 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { scenarios } from "@/content/scenarios";
-import { DIFFICULTY_LABELS, TYPE_LABELS } from "@/lib/scenarios/types";
+import { DIFFICULTY_CLASSES, DIFFICULTY_LABELS, TYPE_LABELS } from "@/lib/scenarios/types";
 import { listProgress, type ProgressRow } from "@/lib/progress.functions";
+import { ProgressSummary } from "@/components/ProgressSummary";
 import { Button } from "@/components/ui/button";
+
 
 export const Route = createFileRoute("/_authenticated/incidents/")({
   head: () => ({
