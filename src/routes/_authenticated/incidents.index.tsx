@@ -30,11 +30,8 @@ export const Route = createFileRoute("/_authenticated/incidents/")({
   component: Board,
 });
 
-const SEV_CLASS: Record<string, string> = {
-  "SEV-1": "text-sev1 border-sev1/40",
-  "SEV-2": "text-sev2 border-sev2/40",
-  "SEV-3": "text-sev3 border-sev3/40",
-};
+
+
 
 function Board() {
   const router = useRouter();
