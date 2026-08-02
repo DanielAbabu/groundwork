@@ -117,10 +117,8 @@ function Board() {
                 <span className="rounded bg-secondary px-2 py-0.5">
                   {TYPE_LABELS[scenario.type]}
                 </span>
-                <span className="rounded bg-secondary px-2 py-0.5">
-                  {DIFFICULTY_LABELS[scenario.difficulty]}
-                </span>
               </div>
+
               <p className="mt-3 font-mono text-[10px] text-muted-foreground">
                 {row?.attempts ? `${row.attempts} attempt${row.attempts === 1 ? "" : "s"}` : "no attempts yet"}
               </p>
