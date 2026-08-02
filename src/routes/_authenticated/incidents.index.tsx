@@ -91,10 +91,11 @@ function Board() {
             >
               <div className="flex items-center justify-between gap-2">
                 <span
-                  className={`rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest ${SEV_CLASS[scenario.severity]}`}
+                  className={`rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest ${DIFFICULTY_CLASSES[scenario.difficulty]}`}
                 >
-                  {scenario.severity}
+                  {DIFFICULTY_LABELS[scenario.difficulty]}
                 </span>
+
                 <span
                   className={`font-mono text-[10px] uppercase tracking-widest ${
                     status === "resolved"
