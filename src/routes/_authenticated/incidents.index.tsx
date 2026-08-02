@@ -64,6 +64,9 @@ function Board() {
                 {resolved === 0 ? "Start first incident" : "Next incident"}
               </Link>
             </Button>
+            <Button asChild variant="outline" className="font-mono">
+              <Link to="/profile">Profile</Link>
+            </Button>
             <Button
               variant="outline"
               className="font-mono"
@@ -78,7 +81,12 @@ function Board() {
         </div>
       </header>
 
+      <div className="mx-auto max-w-6xl px-6 pt-8">
+        <ProgressSummary progress={progress ?? []} />
+      </div>
+
       <div className="mx-auto grid max-w-6xl gap-4 px-6 py-10 md:grid-cols-2 xl:grid-cols-3">
+
         {scenarios.map((scenario) => {
           const row = byId.get(scenario.id);
           const status = row?.status === "passed" ? "resolved" : row ? "attempted" : "unattempted";
