@@ -147,8 +147,8 @@ function IncidentRoom() {
             </Link>
             <h1 className="mt-2 text-lg font-semibold text-foreground">{scenario.title}</h1>
             <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-              {scenario.severity} · {scenario.service} · {TYPE_LABELS[scenario.type]} ·{" "}
-              {DIFFICULTY_LABELS[scenario.difficulty]}
+              {DIFFICULTY_LABELS[scenario.difficulty]} · {scenario.service} ·{" "}
+              {TYPE_LABELS[scenario.type]}
             </p>
           </div>
           {passed && (

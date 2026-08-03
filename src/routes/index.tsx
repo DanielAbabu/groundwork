@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { scenarios } from "@/content/scenarios";
-import { TYPE_LABELS } from "@/lib/scenarios/types";
+import { DIFFICULTY_LABELS, TYPE_LABELS } from "@/lib/scenarios/types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,7 +28,7 @@ const STEPS = [
   {
     n: "01",
     title: "You get paged",
-    body: "A one-line symptom, a severity, and the failing signal — a stack trace or test output, exactly as it landed.",
+    body: "A one-line symptom, a difficulty, and the failing signal — a stack trace or test output, exactly as it landed.",
   },
   {
     n: "02",
@@ -78,7 +78,7 @@ function Index() {
             </Link>
           </div>
           <p className="mt-4 font-mono text-xs text-muted-foreground">
-            First up — {first.severity} · {TYPE_LABELS[first.type]} · {first.title}
+            First up — {DIFFICULTY_LABELS[first.difficulty]} · {TYPE_LABELS[first.type]} · {first.title}
           </p>
         </div>
       </section>
