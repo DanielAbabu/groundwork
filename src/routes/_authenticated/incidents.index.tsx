@@ -16,12 +16,12 @@ export const Route = createFileRoute("/_authenticated/incidents/")({
       {
         name: "description",
         content:
-          "Every incident in the rotation with severity, type, difficulty, your attempts, and whether you resolved it.",
+          "Every incident in the rotation with difficulty, type, your attempts, and whether you resolved it.",
       },
       { property: "og:title", content: "Incident board — open pages and resolved incidents" },
       {
         property: "og:description",
-        content: "Every incident in the rotation with severity, type, difficulty and your progress.",
+        content: "Every incident in the rotation with difficulty, type and your progress.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
