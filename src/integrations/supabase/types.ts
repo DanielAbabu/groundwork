@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      design_stage_results: {
+        Row: {
+          answer: Json
+          created_at: string
+          id: string
+          passed: boolean
+          scenario_id: string
+          score: number
+          stage_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answer?: Json
+          created_at?: string
+          id?: string
+          passed?: boolean
+          scenario_id: string
+          score?: number
+          stage_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answer?: Json
+          created_at?: string
+          id?: string
+          passed?: boolean
+          scenario_id?: string
+          score?: number
+          stage_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       nudges: {
         Row: {
           created_at: string
@@ -67,6 +103,7 @@ export type Database = {
           id: string
           scenario_id: string
           status: string
+          track: string
           updated_at: string
           user_id: string
         }
@@ -77,6 +114,7 @@ export type Database = {
           id?: string
           scenario_id: string
           status?: string
+          track?: string
           updated_at?: string
           user_id: string
         }
@@ -87,6 +125,7 @@ export type Database = {
           id?: string
           scenario_id?: string
           status?: string
+          track?: string
           updated_at?: string
           user_id?: string
         }
@@ -98,6 +137,7 @@ export type Database = {
           id: string
           passed: boolean
           scenario_id: string
+          track: string
           user_id: string
         }
         Insert: {
@@ -105,6 +145,7 @@ export type Database = {
           id?: string
           passed?: boolean
           scenario_id: string
+          track?: string
           user_id: string
         }
         Update: {
@@ -112,6 +153,7 @@ export type Database = {
           id?: string
           passed?: boolean
           scenario_id?: string
+          track?: string
           user_id?: string
         }
         Relationships: []
