@@ -7,6 +7,7 @@ import { DIFFICULTY_CLASSES, DIFFICULTY_LABELS, TYPE_LABELS } from "@/lib/scenar
 import { listProgress, type ProgressRow } from "@/lib/progress.functions";
 import { ProgressSummary } from "@/components/ProgressSummary";
 import { Button } from "@/components/ui/button";
+import { TrackTabs } from "@/components/TrackTabs";
 
 
 export const Route = createFileRoute("/_authenticated/incidents/")({
@@ -50,7 +51,7 @@ function Board() {
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-5">
           <div>
-            <Link to="/" className="font-mono text-xs uppercase tracking-[0.3em] text-primary">
+            <Link to="/dashboard" className="font-mono text-xs uppercase tracking-[0.3em] text-primary">
               incident
             </Link>
             <h1 className="mt-2 text-xl font-semibold text-foreground">Incident board</h1>
@@ -58,7 +59,8 @@ function Board() {
               {resolved} of {scenarios.length} resolved
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <TrackTabs active="debugging" />
             <Button asChild className="font-mono">
               <Link to="/incidents/$slug" params={{ slug: nextUp.id }}>
                 {resolved === 0 ? "Start first incident" : "Next incident"}

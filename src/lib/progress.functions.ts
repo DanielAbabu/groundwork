@@ -15,7 +15,8 @@ export const listProgress = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("scenario_progress")
       .select("scenario_id, status, attempts, first_passed_at")
-      .eq("user_id", context.userId);
+      .eq("user_id", context.userId)
+      .eq("track", "debugging");
     if (error) throw new Error(error.message);
     return data ?? [];
   });
@@ -28,7 +29,7 @@ export const recordRun = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<ProgressRow> => {
     await context.supabase
       .from("scenario_runs")
-      .insert({ user_id: context.userId, scenario_id: data.scenarioId, passed: data.passed });
+      .insert({ user_id: context.userId, scenario_id: data.scenarioId, passed: data.passed, track: "debugging" });
 
     const { data: existing } = await context.supabase
       .from("scenario_progress")
@@ -43,6 +44,7 @@ export const recordRun = createServerFn({ method: "POST" })
     const row = {
       user_id: context.userId,
       scenario_id: data.scenarioId,
+      track: "debugging",
       status: data.passed || alreadyPassed ? "passed" : "attempted",
       attempts,
       first_passed_at:
