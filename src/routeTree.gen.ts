@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedDesignIndexRouteImport } from './routes/_authenticated/design.index'
+import { Route as AuthenticatedDesignSlugRouteImport } from './routes/_authenticated/design.$slug'
 import { Route as AuthenticatedIncidentsIndexRouteImport } from './routes/_authenticated/incidents.index'
 import { Route as AuthenticatedIncidentsSlugRouteImport } from './routes/_authenticated/incidents.$slug'
 
@@ -42,6 +43,11 @@ const AuthenticatedDesignIndexRoute =
     path: '/design/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDesignSlugRoute = AuthenticatedDesignSlugRouteImport.update({
+  id: '/design/$slug',
+  path: '/design/$slug',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedIncidentsIndexRoute =
   AuthenticatedIncidentsIndexRouteImport.update({
     id: '/incidents/',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/design/$slug': typeof AuthenticatedDesignSlugRoute
   '/incidents/$slug': typeof AuthenticatedIncidentsSlugRoute
   '/design/': typeof AuthenticatedDesignIndexRoute
   '/incidents/': typeof AuthenticatedIncidentsIndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/design/$slug': typeof AuthenticatedDesignSlugRoute
   '/incidents/$slug': typeof AuthenticatedIncidentsSlugRoute
   '/design': typeof AuthenticatedDesignIndexRoute
   '/incidents': typeof AuthenticatedIncidentsIndexRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/design/$slug': typeof AuthenticatedDesignSlugRoute
   '/_authenticated/incidents/$slug': typeof AuthenticatedIncidentsSlugRoute
   '/_authenticated/design/': typeof AuthenticatedDesignIndexRoute
   '/_authenticated/incidents/': typeof AuthenticatedIncidentsIndexRoute
@@ -84,15 +93,29 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/profile' | '/incidents/$slug' | '/design/' | '/incidents/'
+    | '/'
+    | '/auth'
+    | '/profile'
+    | '/design/$slug'
+    | '/incidents/$slug'
+    | '/design/'
+    | '/incidents/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/profile' | '/incidents/$slug' | '/design' | '/incidents'
+  to:
+    | '/'
+    | '/auth'
+    | '/profile'
+    | '/design/$slug'
+    | '/incidents/$slug'
+    | '/design'
+    | '/incidents'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/profile'
+    | '/_authenticated/design/$slug'
     | '/_authenticated/incidents/$slug'
     | '/_authenticated/design/'
     | '/_authenticated/incidents/'
@@ -141,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDesignIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/design/$slug': {
+      id: '/_authenticated/design/$slug'
+      path: '/design/$slug'
+      fullPath: '/design/$slug'
+      preLoaderRoute: typeof AuthenticatedDesignSlugRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/incidents/': {
       id: '/_authenticated/incidents/'
       path: '/incidents'
@@ -160,6 +190,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedDesignSlugRoute: typeof AuthenticatedDesignSlugRoute
   AuthenticatedIncidentsSlugRoute: typeof AuthenticatedIncidentsSlugRoute
   AuthenticatedDesignIndexRoute: typeof AuthenticatedDesignIndexRoute
   AuthenticatedIncidentsIndexRoute: typeof AuthenticatedIncidentsIndexRoute
@@ -167,6 +198,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedDesignSlugRoute: AuthenticatedDesignSlugRoute,
   AuthenticatedIncidentsSlugRoute: AuthenticatedIncidentsSlugRoute,
   AuthenticatedDesignIndexRoute: AuthenticatedDesignIndexRoute,
   AuthenticatedIncidentsIndexRoute: AuthenticatedIncidentsIndexRoute,
