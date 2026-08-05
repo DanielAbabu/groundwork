@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedDesignIndexRouteImport } from './routes/_authenticated/design.index'
 import { Route as AuthenticatedDesignSlugRouteImport } from './routes/_authenticated/design.$slug'
@@ -31,6 +32,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
@@ -64,6 +70,7 @@ const AuthenticatedIncidentsSlugRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/design/$slug': typeof AuthenticatedDesignSlugRoute
   '/incidents/$slug': typeof AuthenticatedIncidentsSlugRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/design/$slug': typeof AuthenticatedDesignSlugRoute
   '/incidents/$slug': typeof AuthenticatedIncidentsSlugRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/design/$slug': typeof AuthenticatedDesignSlugRoute
   '/_authenticated/incidents/$slug': typeof AuthenticatedIncidentsSlugRoute
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/dashboard'
     | '/profile'
     | '/design/$slug'
     | '/incidents/$slug'
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/dashboard'
     | '/profile'
     | '/design/$slug'
     | '/incidents/$slug'
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/dashboard'
     | '/_authenticated/profile'
     | '/_authenticated/design/$slug'
     | '/_authenticated/incidents/$slug'
@@ -149,6 +161,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
@@ -189,6 +208,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedDesignSlugRoute: typeof AuthenticatedDesignSlugRoute
   AuthenticatedIncidentsSlugRoute: typeof AuthenticatedIncidentsSlugRoute
@@ -197,6 +217,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedDesignSlugRoute: AuthenticatedDesignSlugRoute,
   AuthenticatedIncidentsSlugRoute: AuthenticatedIncidentsSlugRoute,

@@ -489,7 +489,7 @@ function TradeoffStage({
   stage: Extract<DesignStage, { kind: "tradeoff" }>;
   answer: { text: string };
   onChange: (next: { text: string }) => void;
-  grade?: StageGrade;
+  grade: StageGrade | undefined;
 }) {
   return (
     <div className="space-y-4">
