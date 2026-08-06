@@ -76,6 +76,12 @@ function Index() {
             >
               Open incident board
             </Link>
+            <Link
+              to="/design"
+              className="inline-flex items-center rounded-md border border-border bg-card px-5 py-2.5 font-mono text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              Try a design review
+            </Link>
           </div>
           <p className="mt-4 font-mono text-xs text-muted-foreground">
             First up — {DIFFICULTY_LABELS[first.difficulty]} · {TYPE_LABELS[first.type]} · {first.title}
