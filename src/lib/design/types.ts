@@ -1,3 +1,9 @@
+import type { ComponentType, ConnectionType } from "./registry";
+import { COMPONENT_LABELS } from "./registry";
+
+export type { ComponentType, ConnectionType };
+export { COMPONENT_LABELS };
+
 export type DesignTier = "tier-1" | "tier-2" | "tier-3";
 
 export interface ClarifyQuestion {
@@ -22,26 +28,40 @@ export interface CapacityField {
   rationale: string;
 }
 
-export type ComponentKind =
-  | "client"
-  | "cdn"
-  | "load-balancer"
-  | "app-server"
-  | "cache"
-  | "db-primary"
-  | "db-replica"
-  | "queue"
-  | "object-store"
-  | "worker";
+/** Serialized canvas state — the only thing the grader ever sees. */
+export interface GraphNode {
+  id: string;
+  type: ComponentType;
+  instances: number;
+}
 
-export interface ComponentsSpec {
-  palette: ComponentKind[];
-  required: ComponentKind[];
-  forbidden: ComponentKind[];
-  /** Edges the graph must contain, direction matters. */
-  requiredEdges: [ComponentKind, ComponentKind][];
-  /** Anti-patterns: edges that must NOT exist. */
-  forbiddenEdges: [ComponentKind, ComponentKind][];
+export interface GraphEdge {
+  from: string;
+  to: string;
+  type: ConnectionType;
+}
+
+export interface DesignGraph {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+}
+
+/** An edge pattern matched by node type (and optionally connection type). */
+export interface EdgePattern {
+  from: ComponentType;
+  to: ComponentType;
+  type?: ConnectionType;
+}
+
+export interface ComponentsRubric {
+  /** Subset of the registry shown in this scenario's palette. */
+  palette: ComponentType[];
+  requiredNodeTypes: ComponentType[];
+  forbiddenNodeTypes: ComponentType[];
+  requiredEdges: EdgePattern[];
+  forbiddenEdges: EdgePattern[];
+  minInstances?: Partial<Record<ComponentType, number>>;
+  /** Explanations keyed by node type, "TYPE->TYPE", or "!TYPE" / "!TYPE->TYPE". */
   notes: Record<string, string>;
 }
 
@@ -71,7 +91,7 @@ export type DesignStage =
       kind: "components";
       title: string;
       prompt: string;
-      spec: ComponentsSpec;
+      spec: ComponentsRubric;
     }
   | {
       id: string;
@@ -103,26 +123,10 @@ export const STAGE_KIND_LABELS: Record<DesignStage["kind"], string> = {
   tradeoff: "Trade-offs",
 };
 
-export const COMPONENT_LABELS: Record<ComponentKind, string> = {
-  client: "Client",
-  cdn: "CDN",
-  "load-balancer": "Load Balancer",
-  "app-server": "App Server",
-  cache: "Cache",
-  "db-primary": "DB (primary)",
-  "db-replica": "DB (replica)",
-  queue: "Queue",
-  "object-store": "Object Store",
-  worker: "Worker",
-};
-
 /** Answer shapes, one per stage kind. */
 export type ClarifyAnswer = Record<string, string>;
 export type CapacityAnswer = Record<string, number | null>;
-export type ComponentsAnswer = {
-  nodes: ComponentKind[];
-  edges: [ComponentKind, ComponentKind][];
-};
+export type ComponentsAnswer = DesignGraph;
 export type TradeoffAnswer = { text: string };
 export type StageAnswer = ClarifyAnswer | CapacityAnswer | ComponentsAnswer | TradeoffAnswer;
 
