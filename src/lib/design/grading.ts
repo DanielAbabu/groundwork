@@ -1,7 +1,6 @@
 import type {
   CapacityAnswer,
   ClarifyAnswer,
-  ComponentKind,
   ComponentsAnswer,
   DesignScenario,
   DesignStage,
@@ -10,13 +9,9 @@ import type {
   StageGrade,
   TradeoffAnswer,
 } from "./types";
-import { COMPONENT_LABELS } from "./types";
+import { gradeGraph } from "./graph-grading";
 
 const PASS_THRESHOLD = 0.75;
-
-function edgeKey(from: ComponentKind, to: ComponentKind) {
-  return `${from}->${to}`;
-}
 
 function gradeClarify(stage: Extract<DesignStage, { kind: "clarify" }>, answer: ClarifyAnswer) {
   const feedback: StageFeedbackItem[] = stage.questions.map((question) => {
@@ -66,70 +61,6 @@ function gradeCapacity(stage: Extract<DesignStage, { kind: "capacity" }>, answer
   return { score, feedback };
 }
 
-function gradeComponents(
-  stage: Extract<DesignStage, { kind: "components" }>,
-  answer: ComponentsAnswer,
-) {
-  const { spec } = stage;
-  const nodes = new Set(answer.nodes ?? []);
-  const edges = new Set((answer.edges ?? []).map(([from, to]) => edgeKey(from, to)));
-  const feedback: StageFeedbackItem[] = [];
-  const checks: boolean[] = [];
-
-  for (const required of spec.required) {
-    const ok = nodes.has(required);
-    checks.push(ok);
-    feedback.push({
-      label: `Includes ${COMPONENT_LABELS[required]}`,
-      ok,
-      detail: ok
-        ? (spec.notes[required] ?? "Present.")
-        : `Missing. ${spec.notes[required] ?? "This component is required for the load described."}`,
-    });
-  }
-
-  for (const [from, to] of spec.requiredEdges) {
-    const ok = edges.has(edgeKey(from, to));
-    checks.push(ok);
-    const key = edgeKey(from, to);
-    feedback.push({
-      label: `${COMPONENT_LABELS[from]} → ${COMPONENT_LABELS[to]}`,
-      ok,
-      detail: ok
-        ? (spec.notes[key] ?? "Connection present.")
-        : `Missing connection. ${spec.notes[key] ?? "Add this edge."}`,
-    });
-  }
-
-  for (const forbidden of spec.forbidden) {
-    const present = nodes.has(forbidden);
-    checks.push(!present);
-    feedback.push({
-      label: `No ${COMPONENT_LABELS[forbidden]}`,
-      ok: !present,
-      detail: present
-        ? (spec.notes[`!${forbidden}`] ?? "This component is unnecessary here and adds cost.")
-        : "Correctly left out.",
-    });
-  }
-
-  for (const [from, to] of spec.forbiddenEdges) {
-    const key = edgeKey(from, to);
-    const present = edges.has(key);
-    checks.push(!present);
-    feedback.push({
-      label: `No ${COMPONENT_LABELS[from]} → ${COMPONENT_LABELS[to]}`,
-      ok: !present,
-      detail: present
-        ? (spec.notes[`!${key}`] ?? "This is the anti-pattern we're grading against.")
-        : "Anti-pattern avoided.",
-    });
-  }
-
-  const score = checks.length === 0 ? 0 : checks.filter(Boolean).length / checks.length;
-  return { score, feedback };
-}
-
 function gradeTradeoff(stage: Extract<DesignStage, { kind: "tradeoff" }>, answer: TradeoffAnswer) {
   const text = (answer.text ?? "").toLowerCase();
   const feedback: StageFeedbackItem[] = stage.concepts.map((concept) => {
@@ -166,7 +97,11 @@ export function gradeStage(stage: DesignStage, answer: StageAnswer): StageGrade 
       return { stageId: stage.id, score, passed: score >= PASS_THRESHOLD, advisory: false, feedback };
     }
     case "components": {
-      const { score, feedback } = gradeComponents(stage, answer as ComponentsAnswer);
+      const graph = (answer ?? {}) as ComponentsAnswer;
+      const { score, feedback } = gradeGraph(stage.spec, {
+        nodes: graph.nodes ?? [],
+        edges: graph.edges ?? [],
+      });
       return { stageId: stage.id, score, passed: score >= PASS_THRESHOLD, advisory: false, feedback };
     }
     case "tradeoff": {
