@@ -8,16 +8,17 @@ import { COMPONENT_LABELS, STAGE_KIND_LABELS } from "@/lib/design/types";
 import type {
   CapacityAnswer,
   ClarifyAnswer,
-  ComponentKind,
   ComponentsAnswer,
   DesignStage,
   StageAnswer,
   StageGrade,
 } from "@/lib/design/types";
 import { listDesignResults, submitDesignStage, type DesignStageRow } from "@/lib/design.functions";
+import { ComponentCanvas } from "@/components/design/ComponentCanvas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+
 
 export const Route = createFileRoute("/_authenticated/design/$slug")({
   loader: ({ params }) => {
