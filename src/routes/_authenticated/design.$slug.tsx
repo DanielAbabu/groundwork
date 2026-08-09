@@ -378,107 +378,15 @@ function ComponentsStage({
   answer: ComponentsAnswer;
   onChange: (next: ComponentsAnswer) => void;
 }) {
-  const [pendingFrom, setPendingFrom] = useState<ComponentKind | null>(null);
-
-  const toggleNode = (kind: ComponentKind) => {
-    const has = answer.nodes.includes(kind);
-    onChange({
-      nodes: has ? answer.nodes.filter((n) => n !== kind) : [...answer.nodes, kind],
-      edges: has ? answer.edges.filter(([a, b]) => a !== kind && b !== kind) : answer.edges,
-    });
-    setPendingFrom(null);
-  };
-
-  const pickForEdge = (kind: ComponentKind) => {
-    if (pendingFrom == null) {
-      setPendingFrom(kind);
-      return;
-    }
-    if (pendingFrom === kind) {
-      setPendingFrom(null);
-      return;
-    }
-    const exists = answer.edges.some(([a, b]) => a === pendingFrom && b === kind);
-    onChange({
-      nodes: answer.nodes,
-      edges: exists ? answer.edges : [...answer.edges, [pendingFrom, kind]],
-    });
-    setPendingFrom(null);
-  };
-
   return (
-    <div className="space-y-5">
-      <div>
-        <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-          palette — click to add or remove
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {stage.spec.palette.map((kind) => {
-            const active = answer.nodes.includes(kind);
-            return (
-              <button
-                key={kind}
-                onClick={() => toggleNode(kind)}
-                className={`rounded border px-3 py-1.5 font-mono text-xs transition-colors ${
-                  active
-                    ? "border-primary bg-primary/10 text-foreground"
-                    : "border-border text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {COMPONENT_LABELS[kind]}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="rounded-lg border border-border bg-background p-4">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-          connections — click a source, then a target
-        </p>
-        {answer.nodes.length === 0 ? (
-          <p className="mt-3 text-sm text-muted-foreground">Add components first.</p>
-        ) : (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {answer.nodes.map((kind) => (
-              <button
-                key={kind}
-                onClick={() => pickForEdge(kind)}
-                className={`rounded border px-3 py-1.5 font-mono text-xs transition-colors ${
-                  pendingFrom === kind
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border text-foreground hover:border-primary/50"
-                }`}
-              >
-                {COMPONENT_LABELS[kind]}
-              </button>
-            ))}
-          </div>
-        )}
-        <ul className="mt-4 space-y-1">
-          {answer.edges.map(([from, to], i) => (
-            <li key={`${from}-${to}-${i}`} className="flex items-center gap-2 font-mono text-xs">
-              <span className="text-foreground">
-                {COMPONENT_LABELS[from]} → {COMPONENT_LABELS[to]}
-              </span>
-              <button
-                className="text-muted-foreground hover:text-fail"
-                onClick={() =>
-                  onChange({
-                    nodes: answer.nodes,
-                    edges: answer.edges.filter((_, index) => index !== i),
-                  })
-                }
-              >
-                remove
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+    <ComponentCanvas
+      palette={stage.spec.palette}
+      value={answer}
+      onChange={(graph) => onChange(graph)}
+    />
   );
 }
+
 
 function TradeoffStage({
   stage,
