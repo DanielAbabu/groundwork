@@ -170,7 +170,12 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
         {
           id,
           type: "component" as const,
-          position: position ?? { x: 120 + count * 40, y: 80 + prev.length * 30 },
+          position:
+            position ?? {
+              x: 40 + (prev.length % 3) * 240,
+              y: 40 + Math.floor(prev.length / 3) * 150,
+            },
+
           data: { componentType: type, instances: 1 },
         },
       ]);
