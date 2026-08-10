@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { getDesignScenario } from "@/content/design";
-import { COMPONENT_LABELS, STAGE_KIND_LABELS } from "@/lib/design/types";
+import { STAGE_KIND_LABELS } from "@/lib/design/types";
 import type {
   CapacityAnswer,
   ClarifyAnswer,
