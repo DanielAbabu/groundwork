@@ -362,6 +362,10 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
             snapToGrid
             snapGrid={[8, 8]}
             fitView
+            fitViewOptions={{ maxZoom: 1, padding: 0.2 }}
+            minZoom={0.4}
+            maxZoom={1.75}
+
             proOptions={{ hideAttribution: true }}
             className="rounded-lg"
           >
