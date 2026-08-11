@@ -164,7 +164,7 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
   const addNode = useCallback(
     (type: ComponentType, position?: { x: number; y: number }) => {
       const id = `n${idRef.current++}`;
-      const count = nodes.filter((node) => node.data.componentType === type).length;
+      
       setNodes((prev) => [
         ...prev,
         {
