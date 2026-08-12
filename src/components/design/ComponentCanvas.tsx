@@ -172,8 +172,8 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
           type: "component" as const,
           position:
             position ?? {
-              x: 40 + (prev.length % 3) * 240,
-              y: 40 + Math.floor(prev.length / 3) * 150,
+              x: 40 + (prev.length % 2) * 260,
+              y: 30 + Math.floor(prev.length / 2) * 130,
             },
 
           data: { componentType: type, instances: 1 },
@@ -360,6 +360,7 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
             onConnect={onConnect}
             onSelectionChange={onSelectionChange}
             snapToGrid
+            connectionRadius={70}
             snapGrid={[8, 8]}
             fitView
             fitViewOptions={{ maxZoom: 1, padding: 0.2 }}
