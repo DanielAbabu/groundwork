@@ -130,11 +130,28 @@ export type ComponentsAnswer = DesignGraph;
 export type TradeoffAnswer = { text: string };
 export type StageAnswer = ClarifyAnswer | CapacityAnswer | ComponentsAnswer | TradeoffAnswer;
 
+/** Which rule family produced a feedback line — drives grouping in the UI. */
+export type FeedbackRule =
+  | "schema"
+  | "required-node"
+  | "required-edge"
+  | "instances"
+  | "forbidden-node"
+  | "forbidden-edge"
+  | "answer";
+
 export interface StageFeedbackItem {
   label: string;
   ok: boolean | "partial";
   detail: string;
+  /** Rule family, when the grader knows it. */
+  rule?: FeedbackRule;
+  /** Human-readable targets this rule points at, e.g. ["Cache → Database (Primary)"]. */
+  targets?: string[];
+  /** Concrete next action to satisfy the rule. */
+  fix?: string;
 }
+
 
 export interface StageGrade {
   stageId: string;
