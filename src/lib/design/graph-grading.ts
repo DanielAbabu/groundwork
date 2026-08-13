@@ -1,5 +1,6 @@
 import {
   COMPONENT_LABELS,
+  COMPONENT_TYPES,
   CONNECTION_TYPES,
   isSchemaValidEdge,
   type ComponentType,
@@ -60,12 +61,25 @@ export function gradeGraph(
   feedback.push({
     label: "Every connection is structurally legal",
     ok: illegal.length === 0,
+    rule: "schema",
+    targets: illegal.map((edge) => `${COMPONENT_LABELS[edge.from]} → ${COMPONENT_LABELS[edge.to]}`),
     detail:
       illegal.length === 0
         ? "No connection violates the component type system."
-        : `These connections are not valid for those component types: ${illegal
-            .map((edge) => `${COMPONENT_LABELS[edge.from]} → ${COMPONENT_LABELS[edge.to]}`)
-            .join(", ")}.`,
+        : `${illegal.length} connection${illegal.length === 1 ? "" : "s"} are not valid for those component types.`,
+    fix:
+      illegal.length === 0
+        ? undefined
+        : illegal
+            .map(
+              (edge) =>
+                `${COMPONENT_LABELS[edge.from]} may only point at ${
+                  COMPONENT_TYPES[edge.from].validOutgoing
+                    .map((type) => COMPONENT_LABELS[type])
+                    .join(", ") || "nothing in this palette"
+                } — delete the edge into ${COMPONENT_LABELS[edge.to]} or route it through a legal hop.`,
+            )
+            .join(" "),
   });
 
   // Layer 2 — scenario rubric.
@@ -75,9 +89,12 @@ export function gradeGraph(
     feedback.push({
       label: `Includes ${COMPONENT_LABELS[type]}`,
       ok,
+      rule: "required-node",
+      targets: [COMPONENT_LABELS[type]],
       detail: ok
         ? (rubric.notes[type] ?? "Present.")
-        : `Missing. ${rubric.notes[type] ?? "This component is required for the load described."}`,
+        : `No ${COMPONENT_LABELS[type]} node on the canvas. ${rubric.notes[type] ?? "This component is required for the load described."}`,
+      fix: ok ? undefined : `Drag one ${COMPONENT_LABELS[type]} from the palette onto the canvas.`,
     });
   }
 
@@ -93,9 +110,14 @@ export function gradeGraph(
     feedback.push({
       label: `At least ${min}x ${COMPONENT_LABELS[type]}`,
       ok,
+      rule: "instances",
+      targets: [`${COMPONENT_LABELS[type]} (you have ${count})`],
       detail: ok
         ? `You placed ${count}. ${rubric.notes[`#${type}`] ?? ""}`.trim()
-        : `You have ${count}. ${rubric.notes[`#${type}`] ?? "Raise the instance count to survive the peak load."}`,
+        : `You have ${count}, the rubric wants ${min}. ${rubric.notes[`#${type}`] ?? "Raise the instance count to survive the peak load."}`,
+      fix: ok
+        ? undefined
+        : `Select the ${COMPONENT_LABELS[type]} node and raise its instance count to ${min} (or place another one).`,
     });
   }
 
@@ -103,12 +125,27 @@ export function gradeGraph(
     const ok = edges.some((edge) => matches(edge, pattern));
     checks.push(ok);
     const key = edgeKey(pattern.from, pattern.to);
+    const wrongType =
+      !ok &&
+      pattern.type != null &&
+      edges.some((edge) => edge.from === pattern.from && edge.to === pattern.to);
     feedback.push({
-      label: patternLabel(pattern),
+      label: `Connection ${patternLabel(pattern)}`,
       ok,
+      rule: "required-edge",
+      targets: [patternLabel(pattern)],
       detail: ok
         ? (rubric.notes[key] ?? "Connection present.")
-        : `Missing connection. ${rubric.notes[key] ?? "Add this edge."}`,
+        : wrongType
+          ? `The edge exists but it is not typed as ${CONNECTION_TYPES[pattern.type!].label}. ${rubric.notes[key] ?? ""}`.trim()
+          : `Missing edge from ${COMPONENT_LABELS[pattern.from]} to ${COMPONENT_LABELS[pattern.to]}. ${rubric.notes[key] ?? "Add this edge."}`,
+      fix: ok
+        ? undefined
+        : wrongType
+          ? `Select that connection and switch its type to ${CONNECTION_TYPES[pattern.type!].label}.`
+          : `Drag from the ${COMPONENT_LABELS[pattern.from]} handle to ${COMPONENT_LABELS[pattern.to]}${
+              pattern.type ? `, then set the connection type to ${CONNECTION_TYPES[pattern.type].label}` : ""
+            }.`,
     });
   }
 
@@ -118,9 +155,12 @@ export function gradeGraph(
     feedback.push({
       label: `No ${COMPONENT_LABELS[type]}`,
       ok: !bad,
+      rule: "forbidden-node",
+      targets: bad ? [COMPONENT_LABELS[type]] : [],
       detail: bad
         ? (rubric.notes[`!${type}`] ?? "This component is unnecessary here and adds cost.")
         : "Correctly left out.",
+      fix: bad ? `Delete the ${COMPONENT_LABELS[type]} node and any edges attached to it.` : undefined,
     });
   }
 
@@ -131,9 +171,14 @@ export function gradeGraph(
     feedback.push({
       label: `No ${patternLabel(pattern)}`,
       ok: !bad,
+      rule: "forbidden-edge",
+      targets: bad ? [patternLabel(pattern)] : [],
       detail: bad
         ? (rubric.notes[key] ?? "This is the anti-pattern we're grading against.")
         : "Anti-pattern avoided.",
+      fix: bad
+        ? `Delete the ${COMPONENT_LABELS[pattern.from]} → ${COMPONENT_LABELS[pattern.to]} connection.`
+        : undefined,
     });
   }
 
