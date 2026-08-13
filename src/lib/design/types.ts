@@ -145,11 +145,11 @@ export interface StageFeedbackItem {
   ok: boolean | "partial";
   detail: string;
   /** Rule family, when the grader knows it. */
-  rule?: FeedbackRule;
+  rule?: FeedbackRule | undefined;
   /** Human-readable targets this rule points at, e.g. ["Cache → Database (Primary)"]. */
-  targets?: string[];
+  targets?: string[] | undefined;
   /** Concrete next action to satisfy the rule. */
-  fix?: string;
+  fix?: string | undefined;
 }
 
 
