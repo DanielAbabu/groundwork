@@ -267,6 +267,81 @@ function DesignRoom() {
   );
 }
 
+const RULE_LABELS: Record<string, string> = {
+  schema: "type system",
+  "required-node": "required component",
+  "required-edge": "required connection",
+  instances: "instance count",
+  "forbidden-node": "anti-pattern component",
+  "forbidden-edge": "anti-pattern connection",
+  answer: "answer",
+};
+
+function FeedbackList({ grade }: { grade: StageGrade }) {
+  const failing = grade.feedback.filter((item) => item.ok !== true);
+  const passing = grade.feedback.filter((item) => item.ok === true);
+
+  return (
+    <div className="mt-6 space-y-4">
+      <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+        {passing.length} of {grade.feedback.length} rules satisfied
+      </p>
+      {[...failing, ...passing].map((item, i) => (
+        <div
+          key={i}
+          className={`rounded-lg border p-4 ${
+            item.ok === true
+              ? "border-pass/25 bg-pass/5"
+              : item.ok === "partial"
+                ? "border-primary/30 bg-primary/5"
+                : "border-fail/30 bg-fail/5"
+          }`}
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <span
+              className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-widest ${
+                item.ok === true
+                  ? "bg-pass/15 text-pass"
+                  : item.ok === "partial"
+                    ? "bg-primary/15 text-primary"
+                    : "bg-fail/15 text-fail"
+              }`}
+            >
+              {item.ok === true ? "pass" : item.ok === "partial" ? "partial" : "fail"}
+            </span>
+            {item.rule && (
+              <span className="rounded bg-secondary px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                {RULE_LABELS[item.rule] ?? item.rule}
+              </span>
+            )}
+            <span className="text-sm font-medium text-foreground">{item.label}</span>
+          </div>
+          {item.targets && item.targets.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {item.targets.map((target) => (
+                <span
+                  key={target}
+                  className="rounded border border-border bg-background px-2 py-0.5 font-mono text-[10px] text-foreground"
+                >
+                  {target}
+                </span>
+              ))}
+            </div>
+          )}
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.detail}</p>
+          {item.fix && (
+            <p className="mt-2 border-l-2 border-primary/50 pl-3 font-mono text-[11px] leading-relaxed text-primary">
+              fix: {item.fix}
+            </p>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
+
 function ClarifyStage({
   stage,
   answer,
