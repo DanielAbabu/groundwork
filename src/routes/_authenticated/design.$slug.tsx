@@ -258,30 +258,8 @@ function DesignRoom() {
               )}
             </div>
 
-            {grade && (
-              <ul className="mt-5 space-y-2">
-                {grade.feedback.map((item, i) => (
-                  <li
-                    key={i}
-                    className="rounded border border-border bg-background p-3 font-mono text-xs"
-                  >
-                    <span
-                      className={
-                        item.ok === true
-                          ? "text-pass"
-                          : item.ok === "partial"
-                            ? "text-primary"
-                            : "text-fail"
-                      }
-                    >
-                      {item.ok === true ? "PASS" : item.ok === "partial" ? "PART" : "FAIL"}
-                    </span>{" "}
-                    <span className="text-foreground">{item.label}</span>
-                    <p className="mt-1 leading-relaxed text-muted-foreground">{item.detail}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
+            {grade && <FeedbackList grade={grade} />}
+
           </section>
         )}
       </div>
