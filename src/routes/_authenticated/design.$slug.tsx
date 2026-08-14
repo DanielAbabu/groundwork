@@ -113,10 +113,13 @@ function DesignRoom() {
     }
   }
 
+  const wide = stage.kind === "components" && !showSummary;
+  const shellWidth = wide ? "max-w-[1700px]" : "max-w-5xl";
+
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-5">
+      <header className="border-b border-border bg-surface/60">
+        <div className={`mx-auto flex ${shellWidth} flex-wrap items-center justify-between gap-4 px-6 py-5`}>
           <div>
             <Link to="/design" className="font-mono text-xs uppercase tracking-[0.3em] text-primary">
               ← design review
@@ -134,12 +137,14 @@ function DesignRoom() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-5xl px-6 py-8">
-        <p className="rounded-lg border border-border bg-card p-4 text-sm leading-relaxed text-muted-foreground">
-          {scenario.framing}
-        </p>
+      <div className={`mx-auto ${shellWidth} px-6 py-8`}>
+        {!wide && (
+          <p className="rounded-lg border border-border bg-card p-4 text-sm leading-relaxed text-muted-foreground">
+            {scenario.framing}
+          </p>
+        )}
 
-        <ol className="mt-6 flex flex-wrap gap-2">
+        <ol className="mt-2 flex flex-wrap gap-2">
           {scenario.stages.map((item, i) => {
             const cleared = grades[item.id]?.passed ?? savedPassed.has(item.id);
             return (
@@ -178,7 +183,8 @@ function DesignRoom() {
         ) : (
           <section className="mt-6 rounded-lg border border-border bg-card p-6">
             <h2 className="text-base font-semibold text-foreground">{stage.title}</h2>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{stage.prompt}</p>
+            <p className="mt-2 max-w-4xl text-sm leading-relaxed text-muted-foreground">{stage.prompt}</p>
+
 
             <div className="mt-6">
               {stage.kind === "clarify" && (
