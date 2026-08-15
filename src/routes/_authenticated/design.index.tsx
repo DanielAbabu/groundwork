@@ -53,9 +53,12 @@ function DesignBoard() {
               incident
             </Link>
             <h1 className="mt-2 text-xl font-semibold text-foreground">Design Review</h1>
-            <p className="font-mono text-xs text-muted-foreground">
-              Present a design, stage by stage, to a stakeholder who pushes back.
+            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              Four graded stages per review: pin the requirements that change the design, size the
+              load with real arithmetic, sketch the path on a typed canvas, then defend one
+              trade-off out loud.
             </p>
+
           </div>
           <div className="flex items-center gap-2">
             <TrackTabs active="design" />
