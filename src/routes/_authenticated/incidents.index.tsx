@@ -55,9 +55,12 @@ function Board() {
               incident
             </Link>
             <h1 className="mt-2 text-xl font-semibold text-foreground">Incident board</h1>
-            <p className="font-mono text-xs text-muted-foreground">
-              {resolved} of {scenarios.length} resolved
+            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              Each card is a live page: a symptom, the failing signal, and a small codebase with one
+              root cause. Fix it in the editor and a hidden test harness decides whether the incident
+              is resolved. <span className="font-mono text-xs text-primary">{resolved} of {scenarios.length} resolved</span>
             </p>
+
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <TrackTabs active="debugging" />
