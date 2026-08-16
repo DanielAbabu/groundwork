@@ -151,3 +151,44 @@
     opacity: 0.35;
   }
 }
+
+/* React Flow chrome, themed to the console surfaces. */
+.react-flow__controls {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.react-flow__controls-button {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.react-flow__controls-button:hover {
+  background: var(--accent);
+}
+
+.react-flow__controls-button svg {
+  fill: currentColor;
+}
+
+.react-flow__minimap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.react-flow__attribution {
+  display: none;
+}
+
+.react-flow__handle {
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--surface-strong);
+}
+
+.react-flow__edge-text {
+  font-family: var(--font-mono);
+}

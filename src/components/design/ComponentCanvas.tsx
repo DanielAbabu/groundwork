@@ -381,7 +381,7 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
   }, [palette]);
 
   return (
-    <div className="flex flex-col gap-3 lg:h-[calc(100vh-15rem)] lg:min-h-[560px] lg:flex-row">
+    <div className="flex flex-col gap-3 lg:h-[calc(100vh-19rem)] lg:max-h-[820px] lg:min-h-[520px] lg:flex-row">
       <aside className="shrink-0 space-y-4 overflow-y-auto rounded-lg border border-border bg-surface p-3 lg:w-[208px]">
         <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
           palette — drag or click
