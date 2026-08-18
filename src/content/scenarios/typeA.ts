@@ -10,7 +10,7 @@ export const typeAScenarios: Scenario[] = [
     difficulty: "starter",
     symptom: "TypeError: Cannot read properties of undefined (reading 'toFixed') in POST /checkout",
     framing:
-      "Every checkout attempt is 500ing. The deploy 20 minutes ago shipped a refactor of the pricing service. Order volume is zero right now — find out why the total never comes back.",
+      "INCIDENT SUMMARY:\nEvery checkout attempt across the e-commerce platform is returning HTTP 500 status codes. A deploy 20 minutes ago refactored the pricing engine to delegate line-item normalization to the cart model, but the `calculateTotal()` service function was left as an incomplete stub.\n\nARCHITECTURE & REASONING:\n`POST /checkout` invokes `handleCheckout(cart)`, expecting a numerical total to format via `.toFixed(2)` for payment processing. The pricing service in `src/services/pricing.js` must sum the subtotal (price × quantity for every line item), compute shipping ($4.99 flat rate, free if subtotal ≥ $50.00), and return the final dollar amount.\n\nOBJECTIVES:\n1. Reimplement `calculateTotal(cart)` using `lineItems(cart)` from `src/models/cart.js`.\n2. Ensure empty carts return flat shipping ($4.99).\n3. Waive shipping fees automatically when subtotal reaches or exceeds $50.00.\n4. Return an accurate numerical total so `.toFixed(2)` succeeds.",
     files: [
       {
         path: "src/routes/checkout.js",
@@ -69,7 +69,7 @@ module.exports = { lineItems };
 
   10 |   return {
   11 |     status: "ok",
-> 12 |     amountDue: total.toFixed(2),
+  12 |   amountDue: total.toFixed(2),
      |                      ^
   13 |   };`,
     testPath: "hidden.test.js",
@@ -108,7 +108,7 @@ test("an empty cart still returns a number", () => {
     difficulty: "starter",
     symptom: "Every EU invoice renders `tax: NaN` and the total equals the net amount",
     framing:
-      "Finance flagged 400 invoices generated overnight with a NaN tax line. The rate table is right there and unchanged — something downstream of it never got written.",
+      "INCIDENT SUMMARY:\nFinance flagged hundreds of European invoices generated overnight with invalid `NaN` tax totals. While the regional tax rate map `RATES` exists in `src/billing/tax.js`, the `taxFor(net, region)` helper function does not calculate or return any value.\n\nARCHITECTURE & REASONING:\n`buildInvoice({ net, region })` in `src/billing/invoice.js` calls `taxFor(net, region)` to calculate taxes. When `taxFor` returns `undefined`, evaluating `net + tax` produces `NaN`, invalidating downstream invoicing records and financial compliance reports.\n\nOBJECTIVES:\n1. Complete `taxFor(net, region)` in `src/billing/tax.js` to look up the regional rate from `RATES`.\n2. Compute `net * rate` and round the result to 2 decimal places.\n3. Ensure unknown regions or regions with missing rates default to a tax rate of 0 (returning 0 instead of undefined or NaN).",
     files: [
       {
         path: "src/billing/invoice.js",
@@ -189,7 +189,7 @@ test("invoice totals add up again", () => {
     difficulty: "routine",
     symptom: "Cache hit rate dropped to 0% and upstream QPS tripled",
     framing:
-      "Since the cache key helper was extracted into its own module, every request is a miss and the upstream search cluster is doing three times the work. The key builder is the only thing that changed.",
+      "INCIDENT SUMMARY:\nSince the cache key generator was extracted into its own module `src/cache/keys.js`, the search gateway's cache hit rate plummeted to 0%. Upstream elasticsearch nodes are handling triple their normal QPS because every query produces `undefined` as its cache key.\n\nARCHITECTURE & REASONING:\n`src/cache/store.js` relies on `buildCacheKey(params)` to generate deterministic cache keys. When `buildCacheKey` returns `undefined`, every lookup collisions onto the same undefined key or fails equality comparisons.\n\nCONTRACT SPECIFICATION:\n- Always prefix the key string with 'v1'.\n- Filter out parameter keys whose values are `undefined` or `null`.\n- Sort remaining parameter keys alphabetically.\n- Format each pair as `key=value` and join them with '|'.\n- Example: `buildCacheKey({ q: 'shoes', page: 2 })` MUST equal `'v1|page=2|q=shoes'`.\n\nOBJECTIVES:\n1. Implement `buildCacheKey(params)` adhering strictly to the contract above.",
     files: [
       {
         path: "src/cache/keys.js",
@@ -277,7 +277,7 @@ test("different params produce different keys", () => {
     difficulty: "tricky",
     symptom: "resolvePermissions() returns an empty list, so the UI falls back to allow-all",
     framing:
-      "A support agent screenshotted the billing admin screen in a shared channel. The gate is `permissions.includes(...)`, and permissions is coming back empty for everyone.",
+      "INCIDENT SUMMARY:\nA privilege escalation vulnerability occurred when support team members gained access to internal billing admin screens. Investigation revealed `resolvePermissions(user, roleMatrix)` in `src/authz/resolve.js` returns an empty array `[]` because its calculation body is unwritten.\n\nARCHITECTURE & SECURITY RISK:\n`can(user, permission)` in `src/authz/guard.js` uses legacy fallback logic: `if (permissions.length === 0) return true;`. Because `resolvePermissions` always returns `[]`, permissions checks succeed for every single action!\n\nRESOLUTION SPECIFICATION:\n- Iterate over all roles listed in `user.roles`.\n- Collect permissions granted by each valid role from `roleMatrix` (ignore unknown roles).\n- Remove any permissions specified in `user.denied` array.\n- De-duplicate the resultant permission list.\n- Return the final list sorted alphabetically.\n\nOBJECTIVES:\n1. Reimplement `resolvePermissions(user, roleMatrix)` to follow all five authorization steps.",
     files: [
       {
         path: "src/authz/resolve.js",

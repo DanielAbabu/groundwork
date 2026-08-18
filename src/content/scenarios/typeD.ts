@@ -10,7 +10,7 @@ export const typeDScenarios: Scenario[] = [
     difficulty: "starter",
     symptom: "paginate() returns 9 of 10 requested items and undercounts total pages",
     framing:
-      "A customer noticed rows vanishing between page 1 and page 2 of their export. Nothing is deleted — the slice boundaries are wrong.",
+      "INCIDENT SUMMARY:\nUsers navigating through paginated table views reported that every page displays 9 items instead of the requested page size of 10. Items at page boundary indices (e.g. item 10, item 20) are missing from search results.\n\nARCHITECTURE & REASONING:\n`paginate(rows, page, pageSize)` in `src/search/paginate.js` calculates slice indices using `rows.slice(start, start + pageSize - 1)`. In JavaScript, `Array.prototype.slice(start, end)` excludes the `end` index element, so subtracting 1 truncates the last item from every page!\n\nOBJECTIVES:\n1. Update slice boundary calculation to `start + pageSize` in `src/search/paginate.js`.\n2. Fix total page count math: `Math.ceil(rows.length / pageSize)`.",
     files: [
       {
         path: "src/search/paginate.js",
@@ -59,292 +59,139 @@ test("the second page continues without gaps", () => {
 test("the partial last page returns the remainder", () => {
   expect(paginate(rows, 3, 10).items).toEqual([21, 22, 23, 24, 25]);
 });
-
-test("totalPages includes the partial page", () => {
-  expect(paginate(rows, 1, 10).totalPages).toBe(3);
-});
-
-test("an exact multiple does not add an empty page", () => {
-  expect(paginate(Array.from({ length: 20 }, (_, i) => i), 1, 10).totalPages).toBe(2);
-});
-
-test("an empty result set has no pages", () => {
-  expect(paginate([], 1, 10)).toEqual({ items: [], page: 1, pageSize: 10, total: 0, totalPages: 0 });
-});
 `,
     postmortem:
-      "Two off-by-one errors: slice(start, start + pageSize - 1) drops the last item of every page (slice's end is already exclusive), and Math.floor() truncates the partial final page out of totalPages. Math.ceil() is the right rounding for page counts.",
+      "rows.slice(start, start + pageSize - 1) subtracted 1 from an exclusive end boundary. Removing -1 and fixing Math.ceil for totalPages restored complete pages.",
   },
   {
-    id: "discount-flipped-comparison",
-    title: "Small orders are getting the bulk discount",
-    service: "storefront-api",
-    severity: "SEV-1",
+    id: "slice-boundary-inclusive",
+    title: "Recent activity widget truncates top item",
+    service: "dashboard-api",
+    severity: "SEV-3",
     type: "D",
     difficulty: "starter",
-    symptom: "A 12.00 order receives the 10% bulk discount; a 400.00 order receives nothing",
+    symptom: "getTopActivity(items, N) returns N - 1 entries",
     framing:
-      "Margin alerting fired: the bulk discount is landing on tiny orders and skipping the large ones it was designed for. Discounts are being honoured at checkout, so revenue is leaking now.",
+      "INCIDENT SUMMARY:\nThe user dashboard's 'Recent Activity' widget is configured to display the 5 most recent events, but only displays 4 events. A recent refactor of array slicing introduced an off-by-one boundary mistake.\n\nARCHITECTURE & REASONING:\n`getTopActivity(activities, limit)` in `src/dashboard/activity.js` extracts recent entries using `activities.slice(0, limit - 1)`. Because array slice end indices are exclusive, subtracting 1 drops the Nth activity entry.\n\nOBJECTIVES:\n1. Update `activities.slice(0, limit)` in `src/dashboard/activity.js` to return exactly `limit` entries.",
     files: [
       {
-        path: "src/pricing/discount.js",
-        content: `const BULK_THRESHOLD = 100;
-const BULK_RATE = 0.1;
-
-// Should apply a 10% discount when the subtotal reaches 100 or more.
-// Returns { subtotal, discount, total }, all rounded to 2 decimals.
-function applyBulkDiscount(subtotal) {
-  const qualifies = subtotal < BULK_THRESHOLD;
-  const discount = qualifies ? Math.round(subtotal * BULK_RATE * 100) / 100 : 0;
-  return {
-    subtotal: subtotal,
-    discount: discount,
-    total: Math.round((subtotal - discount) * 100) / 100,
-  };
+        path: "src/dashboard/activity.js",
+        content: `function getTopActivity(activities, limit) {
+  if (!activities || !Array.isArray(activities)) return [];
+  return activities.slice(0, limit - 1);
 }
 
-module.exports = { applyBulkDiscount };
-`,
-      },
-      {
-        path: "src/routes/quote.js",
-        context: true,
-        content: `const { applyBulkDiscount } = require("../pricing/discount");
-
-function quote(subtotal) {
-  const priced = applyBulkDiscount(subtotal);
-  return { amountDue: priced.total.toFixed(2), discountApplied: priced.discount > 0 };
-}
-
-module.exports = { quote };
+module.exports = { getTopActivity };
 `,
       },
     ],
-    signal: `FAIL src/pricing/__tests__/discount.test.js
-  ● applyBulkDiscount › discounts a large order
+    signal: `FAIL src/dashboard/__tests__/activity.test.js
+  ● getTopActivity › returns exact limit requested
 
-    input: 400
-    expected: { subtotal: 400, discount: 40, total: 360 }
-    received: { subtotal: 400, discount: 0, total: 400 }
-
-  ● applyBulkDiscount › leaves a small order alone
-
-    input: 12
-    expected discount: 0
-    received discount: 1.2`,
+    expected length: 5
+    received length: 4`,
     testPath: "hidden.test.js",
-    testContent: `const { applyBulkDiscount } = require("./src/pricing/discount");
-const { quote } = require("./src/routes/quote");
+    testContent: `const { getTopActivity } = require("./src/dashboard/activity");
 
-test("discounts a large order", () => {
-  expect(applyBulkDiscount(400)).toEqual({ subtotal: 400, discount: 40, total: 360 });
-});
-
-test("leaves a small order alone", () => {
-  expect(applyBulkDiscount(12).discount).toBe(0);
-});
-
-test("the threshold itself qualifies", () => {
-  expect(applyBulkDiscount(100)).toEqual({ subtotal: 100, discount: 10, total: 90 });
-});
-
-test("just under the threshold does not qualify", () => {
-  expect(applyBulkDiscount(99.99).discount).toBe(0);
-});
-
-test("rounds the discount to cents", () => {
-  expect(applyBulkDiscount(133.33)).toEqual({ subtotal: 133.33, discount: 13.33, total: 120 });
-});
-
-test("the quote route reports whether a discount applied", () => {
-  expect(quote(250)).toEqual({ amountDue: "225.00", discountApplied: true });
+test("returns requested limit count", () => {
+  const items = [1, 2, 3, 4, 5, 6, 7];
+  expect(getTopActivity(items, 5).length).toBe(5);
+  expect(getTopActivity(items, 5)).toEqual([1, 2, 3, 4, 5]);
 });
 `,
     postmortem:
-      "The qualification check was inverted: `subtotal < BULK_THRESHOLD` discounted everything below 100 instead of at or above it. `subtotal >= BULK_THRESHOLD` restores the rule, and the boundary case (exactly 100) has to qualify.",
+      "slice(0, limit - 1) prematurely truncated array output. Removing -1 from the slice call fixed the activity widget count.",
   },
   {
-    id: "date-range-exclusive",
-    title: "Monthly report is missing the first and last day",
-    service: "reporting",
+    id: "retry-count-off-by-one",
+    title: "Webhook retries stop after 2 attempts",
+    service: "webhook-worker",
     severity: "SEV-2",
     type: "D",
     difficulty: "routine",
-    symptom: "Rows dated on the range boundaries are excluded from every report",
+    symptom: "Webhook notifications marked as failed after 2 retries instead of 3",
     framing:
-      "The finance team reconciled the March report against raw data and found two missing days: the 1st and the 31st. The range filter is treating an inclusive range as exclusive.",
+      "INCIDENT SUMMARY:\nIntegrations team reported that failed webhook notifications are abandoned after 2 retry attempts despite product policy mandating 3 retries (4 total HTTP attempts).\n\nARCHITECTURE & REASONING:\n`shouldRetry(attemptCount, maxRetries)` in `src/webhooks/retry.js` evaluates `attemptCount < maxRetries`. When `maxRetries = 3` and `attemptCount` starts at 1, evaluating `< maxRetries` causes execution to halt at attempt 2!\n\nOBJECTIVES:\n1. Update comparison logic to `attemptCount <= maxRetries` in `src/webhooks/retry.js`.",
     files: [
       {
-        path: "src/reporting/range.js",
-        content: `// Should return the events whose date falls inside [start, end] — both ends
-// inclusive. Dates are ISO "YYYY-MM-DD" strings and sort lexicographically.
-function eventsInRange(events, start, end) {
-  return events.filter((event) => event.date > start && event.date < end);
+        path: "src/webhooks/retry.js",
+        content: `function shouldRetry(attemptCount, maxRetries = 3) {
+  // Bug: attemptCount < maxRetries stops at 2 retries
+  return attemptCount < maxRetries;
 }
 
-function totalInRange(events, start, end) {
-  return eventsInRange(events, start, end).reduce((sum, event) => sum + event.amount_cents, 0);
-}
-
-module.exports = { eventsInRange, totalInRange };
-`,
-      },
-      {
-        path: "src/reporting/fixtures.js",
-        context: true,
-        content: `const marchEvents = [
-  { id: "e_1", date: "2026-02-28", amount_cents: 500 },
-  { id: "e_2", date: "2026-03-01", amount_cents: 1000 },
-  { id: "e_3", date: "2026-03-15", amount_cents: 2500 },
-  { id: "e_4", date: "2026-03-31", amount_cents: 4000 },
-  { id: "e_5", date: "2026-04-01", amount_cents: 700 },
-];
-
-module.exports = { marchEvents };
+module.exports = { shouldRetry };
 `,
       },
     ],
-    signal: `FAIL src/reporting/__tests__/range.test.js
-  ● eventsInRange › includes both boundary days
+    signal: `FAIL src/webhooks/__tests__/retry.test.js
+  ● shouldRetry › permits retry on maxRetries count
 
-    input: start = "2026-03-01", end = "2026-03-31"
-    expected ids: [ "e_2", "e_3", "e_4" ]
-    received ids: [ "e_3" ]
-
-  ● totalInRange › matches the ledger
-
-    expected: 7500
-    received: 2500`,
+    attemptCount: 3, maxRetries: 3
+    expected: true
+    received: false`,
     testPath: "hidden.test.js",
-    testContent: `const { eventsInRange, totalInRange } = require("./src/reporting/range");
-const { marchEvents } = require("./src/reporting/fixtures");
+    testContent: `const { shouldRetry } = require("./src/webhooks/retry");
 
-test("includes both boundary days", () => {
-  expect(eventsInRange(marchEvents, "2026-03-01", "2026-03-31").map((e) => e.id)).toEqual([
-    "e_2",
-    "e_3",
-    "e_4",
-  ]);
-});
-
-test("excludes days outside the range", () => {
-  const ids = eventsInRange(marchEvents, "2026-03-01", "2026-03-31").map((e) => e.id);
-  expect(ids.includes("e_1")).toBe(false);
-  expect(ids.includes("e_5")).toBe(false);
-});
-
-test("totals match the ledger", () => {
-  expect(totalInRange(marchEvents, "2026-03-01", "2026-03-31")).toBe(7500);
-});
-
-test("a single-day range returns that day", () => {
-  expect(eventsInRange(marchEvents, "2026-03-15", "2026-03-15").map((e) => e.id)).toEqual(["e_3"]);
-});
-
-test("a range with no events is empty", () => {
-  expect(eventsInRange(marchEvents, "2026-05-01", "2026-05-31")).toEqual([]);
+test("allows retries up to maxRetries", () => {
+  expect(shouldRetry(1, 3)).toBe(true);
+  expect(shouldRetry(2, 3)).toBe(true);
+  expect(shouldRetry(3, 3)).toBe(true);
+  expect(shouldRetry(4, 3)).toBe(false);
 });
 `,
     postmortem:
-      "The filter used strict > and <, which excludes the boundary dates the report is defined to include. Using >= and <= makes the range inclusive — and makes a single-day range return that day instead of nothing.",
+      "Using `<` instead of `<=` caused the retry worker to abort 1 attempt early. Changing the comparison to `<=` enabled full retry coverage.",
   },
   {
-    id: "retry-cap-exceeded",
-    title: "Retries are hammering a degraded provider",
-    service: "webhook-dispatcher",
-    severity: "SEV-2",
+    id: "date-range-end-exclusive",
+    title: "End of month reports drop last day's records",
+    service: "reports-service",
+    severity: "SEV-1",
     type: "D",
     difficulty: "tricky",
-    symptom: "maxAttempts: 3 produces 4 provider calls and the provider is rate-limiting us",
+    symptom: "Monthly revenue reports exclude transactions occurring on the final day of the month",
     framing:
-      "The provider sent an abuse warning: we're sending 33% more traffic than our own retry policy allows during their outage. The loop bound is one attempt too generous.",
+      "INCIDENT SUMMARY:\nAccounting audits uncovered discrepancies between bank settlement reports and internal monthly revenue metrics: transactions occurring on the last day of any month (e.g. March 31st at 14:00) were omitted from end-of-month summaries.\n\nARCHITECTURE & REASONING:\n`filterByDateRange(records, startDate, endDate)` in `src/reports/filter.js` compares `record.timestamp < endDate`. When `endDate` is formatted as `'2026-03-31'`, converting it to a Timestamp defaults to `'2026-03-31T00:00:00.000Z'`, excluding all transactions recorded throughout March 31st!\n\nOBJECTIVES:\n1. Adjust `endDate` in `src/reports/filter.js` to cover the full end-of-day boundary (`23:59:59.999Z` or `<= endDateEndOfDay`).",
     files: [
       {
-        path: "src/dispatch/retry.js",
-        content: `// Should call \`send\` until it succeeds or maxAttempts is reached.
-// Resolves { ok, attempts, result } on success, { ok: false, attempts, error }
-// after the final failure. Never exceeds maxAttempts calls.
-async function withRetries(send, maxAttempts) {
-  let attempt = 0;
-  let lastError = null;
+        path: "src/reports/filter.js",
+        content: `function filterByDateRange(records, startDate, endDate) {
+  const startMs = new Date(startDate).getTime();
+  // Bug: endDate timestamp is 00:00:00, excluding transactions on that date
+  const endMs = new Date(endDate).getTime();
 
-  while (attempt <= maxAttempts) {
-    attempt += 1;
-    try {
-      const result = await send(attempt);
-      return { ok: true, attempts: attempt, result: result };
-    } catch (error) {
-      lastError = error;
-    }
-  }
-
-  return { ok: false, attempts: attempt, error: lastError.message };
+  return records.filter(r => {
+    const t = new Date(r.date).getTime();
+    return t >= startMs && t < endMs;
+  });
 }
 
-module.exports = { withRetries };
-`,
-      },
-      {
-        path: "src/dispatch/provider.js",
-        context: true,
-        content: `// Test double: fails the first \`failures\` calls, then succeeds.
-function makeSender(failures) {
-  let calls = 0;
-  const send = async () => {
-    calls += 1;
-    if (calls <= failures) throw new Error("provider_unavailable");
-    return { delivered: true, onCall: calls };
-  };
-  send.calls = () => calls;
-  return send;
-}
-
-module.exports = { makeSender };
+module.exports = { filterByDateRange };
 `,
       },
     ],
-    signal: `FAIL src/dispatch/__tests__/retry.test.js
-  ● withRetries › never exceeds maxAttempts
+    signal: `FAIL src/reports/__tests__/filter.test.js
+  ● filterByDateRange › includes records on the final day of the range
 
-    policy: maxAttempts = 3
-    expected provider calls: 3
-    received provider calls: 4
-
-    expected: { ok: false, attempts: 3, error: "provider_unavailable" }
-    received: { ok: false, attempts: 4, error: "provider_unavailable" }`,
+    records on 2026-03-31T15:00:00:
+    expected: included in report
+    received: filtered out`,
     testPath: "hidden.test.js",
-    testContent: `const { withRetries } = require("./src/dispatch/retry");
-const { makeSender } = require("./src/dispatch/provider");
+    testContent: `const { filterByDateRange } = require("./src/reports/filter");
 
-test("stops at maxAttempts calls", async () => {
-  const send = makeSender(99);
-  const result = await withRetries(send, 3);
-  expect(send.calls()).toBe(3);
-  expect(result).toEqual({ ok: false, attempts: 3, error: "provider_unavailable" });
-});
-
-test("succeeds on the first call without retrying", async () => {
-  const send = makeSender(0);
-  const result = await withRetries(send, 3);
-  expect(send.calls()).toBe(1);
-  expect(result).toEqual({ ok: true, attempts: 1, result: { delivered: true, onCall: 1 } });
-});
-
-test("recovers on a later attempt", async () => {
-  const send = makeSender(2);
-  const result = await withRetries(send, 3);
-  expect(result.ok).toBe(true);
-  expect(result.attempts).toBe(3);
-});
-
-test("maxAttempts of 1 means no retry", async () => {
-  const send = makeSender(99);
-  const result = await withRetries(send, 1);
-  expect(send.calls()).toBe(1);
-  expect(result.attempts).toBe(1);
+test("includes records occurring on end date", () => {
+  const records = [
+    { id: 1, date: "2026-03-01T10:00:00Z" },
+    { id: 2, date: "2026-03-31T15:00:00Z" },
+    { id: 3, date: "2026-04-01T08:00:00Z" },
+  ];
+  const results = filterByDateRange(records, "2026-03-01", "2026-03-31");
+  expect(results.length).toBe(2);
+  expect(results.map(r => r.id)).toEqual([1, 2]);
 });
 `,
     postmortem:
-      "The loop condition `attempt <= maxAttempts` ran one extra iteration because attempt is incremented inside the body — with maxAttempts 3 it made 4 calls. `attempt < maxAttempts` bounds the loop to exactly the allowed number of attempts.",
+      "Parsing endDate as '2026-03-31' yielded midnight (00:00:00), dropping records later that day. Setting endMs to the end of the day (or +24h - 1ms) included full-day records.",
   },
 ];

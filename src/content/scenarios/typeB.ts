@@ -69,7 +69,7 @@ export const typeBScenarios: Scenario[] = [
     difficulty: "starter",
     symptom: "GET /users/:id returns 404 for ids that definitely exist",
     framing:
-      "Support has 60 tickets in an hour: everyone's profile page says the account does not exist. The rows are still in the database — the lookup is asking the wrong question.",
+      "INCIDENT SUMMARY:\nCustomer support received 60+ tickets in the past hour from users unable to view account profile pages. Navigating to `/users/u_1` returns HTTP 404 'not_found' error responses despite the database containing valid user records.\n\nARCHITECTURE & REASONING:\n`getUser(req)` in `src/routes/users.js` parses `req.params.id` (e.g. `'u_1'`) and calls `findUserById(id)` in `src/data/users.js`. However, `findUserById` queries `.where('email', id)` instead of matching on the primary key `'id'` column!\n\nOBJECTIVES:\n1. Update `findUserById(id)` in `src/data/users.js` to query `.where('id', id)`.\n2. Ensure user records are returned properly when queried by primary key ID.",
     files: [
       {
         path: "src/routes/users.js",
@@ -103,313 +103,183 @@ module.exports = { findUserById };
       },
     ],
     signal: `FAIL src/data/__tests__/users.test.js
-  ● findUserById › returns the matching user
+  ● findUserById › finds user by ID
 
-    expected 1 user, got 0
-
-    expected: { id: "u_2", email: "grace@example.com", name: "Grace Hopper", org_id: "o_1", status: "active" }
+    expected: { id: "u_1", email: "ada@example.com", ... }
     received: null
 
-      at Object.<anonymous> (src/data/__tests__/users.test.js:6:34)`,
+    Query executing: query("users").where("email", "u_1")`,
     testPath: "hidden.test.js",
     testContent: `const { findUserById } = require("./src/data/users");
-const { getUser } = require("./src/routes/users");
 
-test("finds a user by id", () => {
-  expect(findUserById("u_2")).toEqual({
-    id: "u_2",
-    email: "grace@example.com",
-    name: "Grace Hopper",
-    org_id: "o_1",
-    status: "active",
-  });
+test("looks up user by ID", () => {
+  const user = findUserById("u_1");
+  expect(user).not.toBeNull();
+  expect(user.email).toBe("ada@example.com");
 });
 
-test("finds a different user by id", () => {
-  expect(findUserById("u_5").name).toBe("Barbara Liskov");
-});
-
-test("unknown ids still return null", () => {
-  expect(findUserById("u_999")).toBe(null);
-});
-
-test("an email is not a valid id", () => {
-  expect(findUserById("ada@example.com")).toBe(null);
-});
-
-test("the route returns 200 for a real user", () => {
-  expect(getUser({ params: { id: "u_1" } }).status).toBe(200);
+test("returns null for non-existent ID", () => {
+  expect(findUserById("u_99")).toBeNull();
 });
 `,
     postmortem:
-      "The query filtered on the email column while the route passes an id, so nothing ever matched and the route returned 404. Filtering on id fixes it — and note that matching an email would have made the id parameter interchangeable with an email, which the tests now forbid.",
+      "findUserById() was querying the 'email' column with an ID argument. Changing the column parameter from 'email' to 'id' fixed the lookup.",
   },
   {
-    id: "subscriptions-missing-filter",
-    title: "Cancelled customers are still being billed",
-    service: "billing-worker",
-    severity: "SEV-1",
-    type: "B",
-    difficulty: "starter",
-    symptom: "The nightly charge run picked up every subscription, not just active ones",
-    framing:
-      "The nightly job charged 6 customers who cancelled weeks ago. Refunds are going out manually. The job iterates whatever the data layer hands it — so the data layer is handing it too much.",
-    files: [
-      {
-        path: "src/jobs/charge.js",
-        context: true,
-        content: `const { listActiveSubscriptions } = require("../data/subscriptions");
-
-function runChargeJob() {
-  return listActiveSubscriptions().map((sub) => ({
-    subscription_id: sub.id,
-    amount_cents: sub.amount_cents,
-  }));
-}
-
-module.exports = { runChargeJob };
-`,
-      },
-      {
-        path: "src/data/subscriptions.js",
-        content: `const { query } = require("../db");
-
-// Should return only subscriptions with status "active", oldest first by id.
-function listActiveSubscriptions() {
-  return query("subscriptions").orderBy("id").all();
-}
-
-module.exports = { listActiveSubscriptions };
-`,
-      },
-      {
-        path: "src/db.js",
-        context: true,
-        content: dbSource(`{
-  subscriptions: [
-    { id: "s_1", customer: "ada", status: "active", amount_cents: 2900 },
-    { id: "s_2", customer: "grace", status: "cancelled", amount_cents: 2900 },
-    { id: "s_3", customer: "alan", status: "active", amount_cents: 9900 },
-    { id: "s_4", customer: "edsger", status: "past_due", amount_cents: 2900 },
-    { id: "s_5", customer: "barbara", status: "cancelled", amount_cents: 4900 },
-    { id: "s_6", customer: "john", status: "active", amount_cents: 1900 },
-  ],
-}`),
-      },
-    ],
-    signal: `FAIL src/jobs/__tests__/charge.test.js
-  ● runChargeJob › only charges active subscriptions
-
-    expected 3 subscriptions, got 6
-
-    expected: [ "s_1", "s_3", "s_6" ]
-    received: [ "s_1", "s_2", "s_3", "s_4", "s_5", "s_6" ]
-
-      at Object.<anonymous> (src/jobs/__tests__/charge.test.js:8:41)`,
-    testPath: "hidden.test.js",
-    testContent: `const { listActiveSubscriptions } = require("./src/data/subscriptions");
-const { runChargeJob } = require("./src/jobs/charge");
-
-test("returns only active subscriptions", () => {
-  expect(listActiveSubscriptions().map((s) => s.id)).toEqual(["s_1", "s_3", "s_6"]);
-});
-
-test("cancelled subscriptions are excluded", () => {
-  expect(listActiveSubscriptions().some((s) => s.status === "cancelled")).toBe(false);
-});
-
-test("past_due is not active either", () => {
-  expect(listActiveSubscriptions().some((s) => s.status === "past_due")).toBe(false);
-});
-
-test("ordering by id is preserved", () => {
-  const ids = listActiveSubscriptions().map((s) => s.id);
-  expect(ids).toEqual(ids.slice().sort());
-});
-
-test("the charge job only bills the active three", () => {
-  expect(runChargeJob()).toEqual([
-    { subscription_id: "s_1", amount_cents: 2900 },
-    { subscription_id: "s_3", amount_cents: 9900 },
-    { subscription_id: "s_6", amount_cents: 1900 },
-  ]);
-});
-`,
-    postmortem:
-      "listActiveSubscriptions() had no status filter, so it returned every row and the job charged cancelled and past-due customers. Adding .where(\"status\", \"active\") restores the intended result set.",
-  },
-  {
-    id: "orders-wrong-join-key",
-    title: "Order history shows other people's orders",
-    service: "orders-api",
-    severity: "SEV-1",
-    type: "B",
-    difficulty: "routine",
-    symptom: "ordersForUser() returns one unrelated order instead of that user's orders",
-    framing:
-      "A customer emailed a screenshot of someone else's order in their history. This is a data-exposure incident: the join is matching the wrong columns.",
-    files: [
-      {
-        path: "src/data/orders.js",
-        content: `const { query } = require("../db");
-
-// Should return every order belonging to userId, oldest first by id,
-// each shaped as { id, total_cents, customer_email }.
-function ordersForUser(userId) {
-  const user = query("users").where("id", userId).first();
-  if (!user) return [];
-
-  const orders = query("orders")
-    .where("id", userId)
-    .orderBy("id")
-    .all();
-
-  return orders.map((order) => ({
-    id: order.id,
-    total_cents: order.total_cents,
-    customer_email: user.email,
-  }));
-}
-
-module.exports = { ordersForUser };
-`,
-      },
-      {
-        path: "src/db.js",
-        context: true,
-        content: dbSource(`{
-  users: [
-    { id: "u_1", email: "ada@example.com" },
-    { id: "u_2", email: "grace@example.com" },
-  ],
-  orders: [
-    { id: "u_1", user_id: "u_2", total_cents: 9900 },
-    { id: "o_2", user_id: "u_1", total_cents: 1200 },
-    { id: "o_3", user_id: "u_1", total_cents: 4500 },
-    { id: "o_4", user_id: "u_2", total_cents: 300 },
-  ],
-}`),
-      },
-    ],
-    signal: `FAIL src/data/__tests__/orders.test.js
-  ● ordersForUser › returns the user's own orders
-
-    expected 2 orders, got 1
-
-    expected: [ { id: "o_2", total_cents: 1200, ... }, { id: "o_3", total_cents: 4500, ... } ]
-    received: [ { id: "u_1", total_cents: 9900, customer_email: "ada@example.com" } ]
-
-    note: order "u_1" belongs to user_id "u_2"`,
-    testPath: "hidden.test.js",
-    testContent: `const { ordersForUser } = require("./src/data/orders");
-
-test("returns only that user's orders", () => {
-  expect(ordersForUser("u_1")).toEqual([
-    { id: "o_2", total_cents: 1200, customer_email: "ada@example.com" },
-    { id: "o_3", total_cents: 4500, customer_email: "ada@example.com" },
-  ]);
-});
-
-test("does not leak another user's order", () => {
-  expect(ordersForUser("u_1").some((o) => o.total_cents === 9900)).toBe(false);
-});
-
-test("works for the second user too", () => {
-  expect(ordersForUser("u_2").map((o) => o.id)).toEqual(["o_4", "u_1"]);
-});
-
-test("unknown users get an empty list", () => {
-  expect(ordersForUser("u_999")).toEqual([]);
-});
-`,
-    postmortem:
-      "The orders query joined on the orders table's own id column instead of its user_id foreign key. Because one order id happened to collide with a user id, the query returned a stranger's order. Filtering on user_id is the fix.",
-  },
-  {
-    id: "projects-archived-rows",
-    title: "Archived projects reappeared in the sidebar",
-    service: "workspace-api",
+    id: "inactive-users-included",
+    title: "Billing export includes suspended users",
+    service: "billing-cron",
     severity: "SEV-2",
     type: "B",
-    difficulty: "routine",
-    symptom: "listProjects() returns archived and deleted rows alongside live ones",
+    difficulty: "starter",
+    symptom: "Monthly invoices charge orgs for suspended user accounts",
     framing:
-      "Customers who cleaned up their workspace last quarter are seeing all of it back. Nothing was restored — the read path stopped filtering.",
+      "INCIDENT SUMMARY:\nEnterprise clients reported being billed for suspended and inactive team members on their monthly invoices. The billing cron job invokes `findActiveUsers(orgId)` to determine billable seats, but suspended users are currently included in the count.\n\nARCHITECTURE & REASONING:\n`findActiveUsers(orgId)` in `src/data/active-users.js` filters user accounts by `org_id`. However, it omits filtering by `status === 'active'`. Suspended or deleted users retain their `org_id` value in storage, leading to over-billing.\n\nOBJECTIVES:\n1. Update `findActiveUsers(orgId)` to chain `.where('status', 'active')` along with the `org_id` filter.",
     files: [
       {
-        path: "src/data/projects.js",
+        path: "src/data/active-users.js",
         content: `const { query } = require("../db");
 
-// Should return the workspace's projects that are neither archived nor deleted,
-// ordered by name.
-function listProjects(workspaceId) {
-  return query("projects")
-    .where("workspace_id", workspaceId)
-    .orderBy("name")
-    .all();
+function findActiveUsers(orgId) {
+  return query("users").where("org_id", orgId).all();
 }
 
-module.exports = { listProjects };
+module.exports = { findActiveUsers };
 `,
       },
       {
-        path: "src/routes/sidebar.js",
+        path: "src/db.js",
         context: true,
-        content: `const { listProjects } = require("../data/projects");
+        content: dbSource(userSeed),
+      },
+    ],
+    signal: `FAIL src/data/__tests__/active-users.test.js
+  ● findActiveUsers › excludes suspended users
 
-function sidebar(workspaceId) {
-  return listProjects(workspaceId).map((project) => project.name);
+    expected length: 1 (for org o_2)
+    received length: 2 (includes suspended user Alan Turing)`,
+    testPath: "hidden.test.js",
+    testContent: `const { findActiveUsers } = require("./src/data/active-users");
+
+test("returns active users for organization", () => {
+  const users = findActiveUsers("o_1");
+  expect(users.length).toBe(2);
+});
+
+test("excludes suspended users from count", () => {
+  const users = findActiveUsers("o_2");
+  expect(users.length).toBe(1);
+  expect(users[0].name).toBe("Edsger Dijkstra");
+});
+`,
+    postmortem:
+      "findActiveUsers() filtered by org_id but missed filtering by status='active'. Chaining .where('status', 'active') resolved the billing issue.",
+  },
+  {
+    id: "audit-log-tenant-leak",
+    title: "Audit logs leak cross-tenant events",
+    service: "audit-service",
+    severity: "SEV-1",
+    type: "B",
+    difficulty: "routine",
+    symptom: "GET /audit-logs displays security events belonging to other companies",
+    framing:
+      "INCIDENT SUMMARY:\nA high-severity security incident was flagged during a SOC2 compliance check: organization administrators viewing their audit dashboard could see security events belonging to external organizations.\n\nARCHITECTURE & REASONING:\n`queryLogsForTenant(tenantId)` in `src/audit/logs.js` executes queries against the `audit_logs` table. The existing query fails to scope log entries by `tenant_id`, returning un-partitioned security event records across all tenants.\n\nOBJECTIVES:\n1. Scope `queryLogsForTenant(tenantId)` to filter rows strictly matching `.where('tenant_id', tenantId)`.\n2. Ensure cross-tenant data leakage is completely eliminated.",
+    files: [
+      {
+        path: "src/audit/logs.js",
+        content: `const { query } = require("../db");
+
+function queryLogsForTenant(tenantId) {
+  return query("audit_logs").all();
 }
 
-module.exports = { sidebar };
+module.exports = { queryLogsForTenant };
 `,
       },
       {
         path: "src/db.js",
         context: true,
         content: dbSource(`{
-  projects: [
-    { id: "p_1", workspace_id: "w_1", name: "Apollo", state: "live" },
-    { id: "p_2", workspace_id: "w_1", name: "Borealis", state: "archived" },
-    { id: "p_3", workspace_id: "w_1", name: "Cinder", state: "live" },
-    { id: "p_4", workspace_id: "w_1", name: "Dune", state: "deleted" },
-    { id: "p_5", workspace_id: "w_2", name: "Elm", state: "live" },
+  audit_logs: [
+    { id: "l_1", tenant_id: "t_1", action: "user.login", timestamp: 100 },
+    { id: "l_2", tenant_id: "t_2", action: "api_key.create", timestamp: 105 },
+    { id: "l_3", tenant_id: "t_1", action: "user.logout", timestamp: 110 },
   ],
 }`),
       },
     ],
-    signal: `FAIL src/data/__tests__/projects.test.js
-  ● listProjects › hides archived and deleted projects
+    signal: `FAIL src/audit/__tests__/logs.test.js
+  ● queryLogsForTenant › leaks logs across tenant boundaries
 
-    expected 2 projects, got 4
-
-    expected: [ "Apollo", "Cinder" ]
-    received: [ "Apollo", "Borealis", "Cinder", "Dune" ]`,
+    expected: tenant t_1 logs only (length: 2)
+    received: all logs (length: 3)`,
     testPath: "hidden.test.js",
-    testContent: `const { listProjects } = require("./src/data/projects");
-const { sidebar } = require("./src/routes/sidebar");
+    testContent: `const { queryLogsForTenant } = require("./src/audit/logs");
 
-test("returns only live projects for the workspace", () => {
-  expect(listProjects("w_1").map((p) => p.name)).toEqual(["Apollo", "Cinder"]);
-});
-
-test("archived projects stay hidden", () => {
-  expect(listProjects("w_1").some((p) => p.state === "archived")).toBe(false);
-});
-
-test("deleted projects stay hidden", () => {
-  expect(listProjects("w_1").some((p) => p.state === "deleted")).toBe(false);
-});
-
-test("other workspaces are unaffected", () => {
-  expect(listProjects("w_2").map((p) => p.name)).toEqual(["Elm"]);
-});
-
-test("the sidebar renders the live names in order", () => {
-  expect(sidebar("w_1")).toEqual(["Apollo", "Cinder"]);
+test("returns only logs for specified tenant", () => {
+  const logs = queryLogsForTenant("t_1");
+  expect(logs.length).toBe(2);
+  expect(logs.every(l => l.tenant_id === "t_1")).toBe(true);
 });
 `,
     postmortem:
-      "The read query filtered by workspace but never by state, so archived and deleted rows came back with the live ones. Restricting the query to live projects fixes the sidebar without touching the rows themselves.",
+      "queryLogsForTenant() fetched all rows without tenant isolation. Adding .where('tenant_id', tenantId) fixed the tenant leak.",
+  },
+  {
+    id: "or-where-clause-precedence",
+    title: "Search results bypass date filters",
+    service: "events-api",
+    severity: "SEV-2",
+    type: "B",
+    difficulty: "tricky",
+    symptom: "Date-restricted searches return events outside the requested date range",
+    framing:
+      "INCIDENT SUMMARY:\nSearch API queries with date restrictions are returning historical event logs from years outside the specified start/end boundary. When users apply a keyword search alongside date filters, logical operator precedence breaks the filtering boundary.\n\nARCHITECTURE & REASONING:\nIn `src/events/search.js`, `searchEvents(tenantId, keyword, startDate)` combines filters without proper logical grouping. `WHERE tenant_id = T AND (action = K OR message = K) AND created_at >= S` requires explicitly grouping OR conditions, otherwise un-parenthesized OR operations bypass tenant and date restrictions.\n\nOBJECTIVES:\n1. Fix query filtering in `src/events/search.js` to evaluate keyword matches within proper AND/OR precedence bounds.",
+    files: [
+      {
+        path: "src/events/search.js",
+        content: `const { query } = require("../db");
+
+function searchEvents(tenantId, keyword, startDate) {
+  // Returns events for tenant matching keyword in action OR message, created >= startDate
+  const rows = query("events").where("tenant_id", tenantId).all();
+  return rows.filter((r) => {
+    // TODO: fix precedence bug where keyword OR bypasses date filter
+    return r.created_at >= startDate && (r.action.includes(keyword) || r.message.includes(keyword));
+  });
+}
+
+module.exports = { searchEvents };
+`,
+      },
+      {
+        path: "src/db.js",
+        context: true,
+        content: dbSource(`{
+  events: [
+    { id: "e_1", tenant_id: "t_1", action: "deploy.start", message: "deploying", created_at: 100 },
+    { id: "e_2", tenant_id: "t_1", action: "deploy.fail", message: "error in build", created_at: 200 },
+    { id: "e_3", tenant_id: "t_1", action: "user.signup", message: "new user", created_at: 50 },
+  ],
+}`),
+      },
+    ],
+    signal: `FAIL src/events/__tests__/search.test.js
+  ● searchEvents › respects start date filter when keyword matches message
+
+    expected: events created_at >= 150 only (e_2)
+    received: included e_1 or e_3 due to incorrect precedence`,
+    testPath: "hidden.test.js",
+    testContent: `const { searchEvents } = require("./src/events/search");
+
+test("filters by tenant, date, and keyword properly", () => {
+  const results = searchEvents("t_1", "deploy", 150);
+  expect(results.length).toBe(1);
+  expect(results[0].id).toBe("e_2");
+});
+`,
+    postmortem:
+      "The filter predicate failed to enforce all three criteria simultaneously due to misplaced parenthesis precedence. Grouping (action OR message) AND date AND tenant restored expected filter bounds.",
   },
 ];
