@@ -10,7 +10,7 @@ export const typeCScenarios: Scenario[] = [
     difficulty: "starter",
     symptom: "buildWelcomeEmail() resolves with `to: undefined` and a blank first name",
     framing:
-      "INCIDENT SUMMARY:\nOver 2,000 automated welcome emails were sent out to newly onboarded users rendered as 'Hi undefined'. While user profile records exist in the database, the email worker attempts to read fields off an unresolved Promise object.\n\nARCHITECTURE & REASONING:\n`buildWelcomeEmail(userId)` in `src/notifications/welcome.js` calls `fetchUser(userId)` from `src/notifications/repo.js`. `fetchUser` returns a Promise that resolves after a database round-trip. Because `fetchUser` was invoked without `await`, `user` evaluates to a Promise object instead of the user data record (`user.email` -> `undefined`).\n\nOBJECTIVES:\n1. Update `buildWelcomeEmail(userId)` to `await fetchUser(userId)` before populating email fields.",
+      "Two thousand welcome emails went out saying 'Hi undefined'. The user records are complete — the send path is reading data that hasn't arrived yet.",
     files: [
       {
         path: "src/notifications/welcome.js",
@@ -81,7 +81,7 @@ test("builds personalized welcome email", async () => {
     difficulty: "starter",
     symptom: "HTTP 401 Unauthorized errors persist after background token refresh",
     framing:
-      "INCIDENT SUMMARY:\nLong-running browser client sessions experience continuous HTTP 401 Unauthorized errors after 60 minutes of inactivity. Although background refresh timers acquire a fresh OAuth bearer token, API request helpers continue sending the original expired token string.\n\nARCHITECTURE & REASONING:\n`fetchWithAuth(url)` in `src/api/client.js` captures `currentToken` in a closure or evaluation cache at initialization time without invoking `getToken()` dynamically per request, causing requests to transmit stale headers.\n\nOBJECTIVES:\n1. Update `fetchWithAuth(url)` to call `getToken()` on every request to fetch the latest active access token.",
+      "Long-running browser sessions experience 401 errors after an hour. The token store refreshes in the background, but the HTTP client keeps using the initial token.",
     files: [
       {
         path: "src/api/client.js",
@@ -138,7 +138,7 @@ test("fetches with updated token", async () => {
     difficulty: "routine",
     symptom: "Rapid POST /pay calls issue duplicate payment requests to payment gateway",
     framing:
-      "INCIDENT SUMMARY:\nCustomers with slow network connections clicking the 'Pay Now' button multiple times inadvertently generate duplicate transactions. The payment processing handler fails to guard against concurrent request execution.\n\nARCHITECTURE & REASONING:\n`processPayment(paymentId, amount)` in `src/payments/processor.js` must track pending request locks or verify idempotency status before initiating gateway calls. If an in-flight request exists for `paymentId`, subsequent concurrent requests must be rejected or returned immediately.\n\nOBJECTIVES:\n1. Implement an in-flight request mutex/lock set in `src/payments/processor.js` to block concurrent duplicate submissions.",
+      "Rapidly clicking the payment button submits duplicate charges to the payment gateway. The payment processor needs to lock concurrent requests for the same payment ID.",
     files: [
       {
         path: "src/payments/processor.js",
@@ -197,7 +197,7 @@ test("blocks concurrent duplicate payment attempts", async () => {
     difficulty: "tricky",
     symptom: "FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory",
     framing:
-      "INCIDENT SUMMARY:\nThe nightly data export pipeline crashed with an Out Of Memory (OOM) error when attempting to process 50,000 user records. The exporter attempted to fire all HTTP batch requests simultaneously using `Promise.all()` without concurrency limiting.\n\nARCHITECTURE & REASONING:\n`exportAllBatches(items, batchSize)` in `src/exporter/batch.js` launches an unbounded array of Promises. When `items.length` is large, thousands of unfulfilled promises exhaust V8 heap memory.\n\nOBJECTIVES:\n1. Refactor `exportAllBatches(items, batchSize)` to process batches sequentially or with controlled concurrency chunking.",
+      "Nightly data exports crash with heap memory exhaustion when processing large datasets. Unbounded Promise.all execution launches every item concurrently.",
     files: [
       {
         path: "src/exporter/batch.js",

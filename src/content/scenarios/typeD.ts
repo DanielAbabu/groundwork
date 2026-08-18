@@ -10,7 +10,7 @@ export const typeDScenarios: Scenario[] = [
     difficulty: "starter",
     symptom: "paginate() returns 9 of 10 requested items and undercounts total pages",
     framing:
-      "INCIDENT SUMMARY:\nUsers navigating through paginated table views reported that every page displays 9 items instead of the requested page size of 10. Items at page boundary indices (e.g. item 10, item 20) are missing from search results.\n\nARCHITECTURE & REASONING:\n`paginate(rows, page, pageSize)` in `src/search/paginate.js` calculates slice indices using `rows.slice(start, start + pageSize - 1)`. In JavaScript, `Array.prototype.slice(start, end)` excludes the `end` index element, so subtracting 1 truncates the last item from every page!\n\nOBJECTIVES:\n1. Update slice boundary calculation to `start + pageSize` in `src/search/paginate.js`.\n2. Fix total page count math: `Math.ceil(rows.length / pageSize)`.",
+      "A customer noticed rows vanishing between page 1 and page 2 of their export. Nothing is deleted — the slice boundaries are wrong.",
     files: [
       {
         path: "src/search/paginate.js",
@@ -72,7 +72,7 @@ test("the partial last page returns the remainder", () => {
     difficulty: "starter",
     symptom: "getTopActivity(items, N) returns N - 1 entries",
     framing:
-      "INCIDENT SUMMARY:\nThe user dashboard's 'Recent Activity' widget is configured to display the 5 most recent events, but only displays 4 events. A recent refactor of array slicing introduced an off-by-one boundary mistake.\n\nARCHITECTURE & REASONING:\n`getTopActivity(activities, limit)` in `src/dashboard/activity.js` extracts recent entries using `activities.slice(0, limit - 1)`. Because array slice end indices are exclusive, subtracting 1 drops the Nth activity entry.\n\nOBJECTIVES:\n1. Update `activities.slice(0, limit)` in `src/dashboard/activity.js` to return exactly `limit` entries.",
+      "The dashboard recent activity widget is configured for 5 entries but only renders 4. An array slice boundary error is dropping the Nth item.",
     files: [
       {
         path: "src/dashboard/activity.js",
@@ -111,7 +111,7 @@ test("returns requested limit count", () => {
     difficulty: "routine",
     symptom: "Webhook notifications marked as failed after 2 retries instead of 3",
     framing:
-      "INCIDENT SUMMARY:\nIntegrations team reported that failed webhook notifications are abandoned after 2 retry attempts despite product policy mandating 3 retries (4 total HTTP attempts).\n\nARCHITECTURE & REASONING:\n`shouldRetry(attemptCount, maxRetries)` in `src/webhooks/retry.js` evaluates `attemptCount < maxRetries`. When `maxRetries = 3` and `attemptCount` starts at 1, evaluating `< maxRetries` causes execution to halt at attempt 2!\n\nOBJECTIVES:\n1. Update comparison logic to `attemptCount <= maxRetries` in `src/webhooks/retry.js`.",
+      "Failed webhooks stop retrying after 2 attempts despite product policy requiring 3 retries. The attempt comparison operator is stopping early.",
     files: [
       {
         path: "src/webhooks/retry.js",
@@ -152,7 +152,7 @@ test("allows retries up to maxRetries", () => {
     difficulty: "tricky",
     symptom: "Monthly revenue reports exclude transactions occurring on the final day of the month",
     framing:
-      "INCIDENT SUMMARY:\nAccounting audits uncovered discrepancies between bank settlement reports and internal monthly revenue metrics: transactions occurring on the last day of any month (e.g. March 31st at 14:00) were omitted from end-of-month summaries.\n\nARCHITECTURE & REASONING:\n`filterByDateRange(records, startDate, endDate)` in `src/reports/filter.js` compares `record.timestamp < endDate`. When `endDate` is formatted as `'2026-03-31'`, converting it to a Timestamp defaults to `'2026-03-31T00:00:00.000Z'`, excluding all transactions recorded throughout March 31st!\n\nOBJECTIVES:\n1. Adjust `endDate` in `src/reports/filter.js` to cover the full end-of-day boundary (`23:59:59.999Z` or `<= endDateEndOfDay`).",
+      "End of month revenue reports exclude transactions occurring on the last day of the month. Converting the end date string defaults to 00:00:00 midnight.",
     files: [
       {
         path: "src/reports/filter.js",

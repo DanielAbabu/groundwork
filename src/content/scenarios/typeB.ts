@@ -69,7 +69,7 @@ export const typeBScenarios: Scenario[] = [
     difficulty: "starter",
     symptom: "GET /users/:id returns 404 for ids that definitely exist",
     framing:
-      "INCIDENT SUMMARY:\nCustomer support received 60+ tickets in the past hour from users unable to view account profile pages. Navigating to `/users/u_1` returns HTTP 404 'not_found' error responses despite the database containing valid user records.\n\nARCHITECTURE & REASONING:\n`getUser(req)` in `src/routes/users.js` parses `req.params.id` (e.g. `'u_1'`) and calls `findUserById(id)` in `src/data/users.js`. However, `findUserById` queries `.where('email', id)` instead of matching on the primary key `'id'` column!\n\nOBJECTIVES:\n1. Update `findUserById(id)` in `src/data/users.js` to query `.where('id', id)`.\n2. Ensure user records are returned properly when queried by primary key ID.",
+      "Support has 60 tickets in an hour: everyone's profile page says the account does not exist. The rows are still in the database — the lookup is asking the wrong question.",
     files: [
       {
         path: "src/routes/users.js",
@@ -134,7 +134,7 @@ test("returns null for non-existent ID", () => {
     difficulty: "starter",
     symptom: "Monthly invoices charge orgs for suspended user accounts",
     framing:
-      "INCIDENT SUMMARY:\nEnterprise clients reported being billed for suspended and inactive team members on their monthly invoices. The billing cron job invokes `findActiveUsers(orgId)` to determine billable seats, but suspended users are currently included in the count.\n\nARCHITECTURE & REASONING:\n`findActiveUsers(orgId)` in `src/data/active-users.js` filters user accounts by `org_id`. However, it omits filtering by `status === 'active'`. Suspended or deleted users retain their `org_id` value in storage, leading to over-billing.\n\nOBJECTIVES:\n1. Update `findActiveUsers(orgId)` to chain `.where('status', 'active')` along with the `org_id` filter.",
+      "Customers are getting billed for suspended team members. The active user count query filters by organization ID, but fails to check account status.",
     files: [
       {
         path: "src/data/active-users.js",
@@ -184,7 +184,7 @@ test("excludes suspended users from count", () => {
     difficulty: "routine",
     symptom: "GET /audit-logs displays security events belonging to other companies",
     framing:
-      "INCIDENT SUMMARY:\nA high-severity security incident was flagged during a SOC2 compliance check: organization administrators viewing their audit dashboard could see security events belonging to external organizations.\n\nARCHITECTURE & REASONING:\n`queryLogsForTenant(tenantId)` in `src/audit/logs.js` executes queries against the `audit_logs` table. The existing query fails to scope log entries by `tenant_id`, returning un-partitioned security event records across all tenants.\n\nOBJECTIVES:\n1. Scope `queryLogsForTenant(tenantId)` to filter rows strictly matching `.where('tenant_id', tenantId)`.\n2. Ensure cross-tenant data leakage is completely eliminated.",
+      "A tenant administrator saw audit log events belonging to another company. The tenant ID query parameter is received but never passed to the database filter.",
     files: [
       {
         path: "src/audit/logs.js",
@@ -235,7 +235,7 @@ test("returns only logs for specified tenant", () => {
     difficulty: "tricky",
     symptom: "Date-restricted searches return events outside the requested date range",
     framing:
-      "INCIDENT SUMMARY:\nSearch API queries with date restrictions are returning historical event logs from years outside the specified start/end boundary. When users apply a keyword search alongside date filters, logical operator precedence breaks the filtering boundary.\n\nARCHITECTURE & REASONING:\nIn `src/events/search.js`, `searchEvents(tenantId, keyword, startDate)` combines filters without proper logical grouping. `WHERE tenant_id = T AND (action = K OR message = K) AND created_at >= S` requires explicitly grouping OR conditions, otherwise un-parenthesized OR operations bypass tenant and date restrictions.\n\nOBJECTIVES:\n1. Fix query filtering in `src/events/search.js` to evaluate keyword matches within proper AND/OR precedence bounds.",
+      "Searching with a keyword returns event logs created before the requested start date. The OR condition between action and message overrides the date filter.",
     files: [
       {
         path: "src/events/search.js",

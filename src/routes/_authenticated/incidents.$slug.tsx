@@ -61,64 +61,6 @@ function MissingIncident() {
   );
 }
 
-function IncidentFramingView({ framing }: { framing: string }) {
-  const sections = framing.split("\n\n").filter(Boolean);
-
-  return (
-    <div className="border-b border-border/80 bg-card/40 px-6 py-4 backdrop-blur-xs">
-      <div className="mx-auto flex flex-col gap-3 rounded-xl border border-border/60 bg-background/80 p-4 shadow-xs">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-          <span className="font-mono text-[11px] font-semibold uppercase tracking-widest text-amber-500">
-            Incident Brief & Operational Context
-          </span>
-        </div>
-        <div className="grid gap-3 text-sm leading-relaxed text-foreground/90 md:grid-cols-3">
-          {sections.map((sec, idx) => {
-            const lines = sec.split("\n");
-            const firstLineHasColon = lines[0]?.includes(":");
-            const header = firstLineHasColon ? lines[0] : null;
-            const bodyLines = header ? lines.slice(1) : lines;
-
-            return (
-              <div
-                key={idx}
-                className="flex flex-col gap-2 rounded-lg border border-border/50 bg-secondary/30 p-3.5"
-              >
-                {header ? (
-                  <h4 className="font-mono text-[10px] font-bold uppercase tracking-wider text-primary">
-                    {header.replace(":", "")}
-                  </h4>
-                ) : (
-                  <h4 className="font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Context Overview
-                  </h4>
-                )}
-                <div className="space-y-1.5 text-xs text-muted-foreground leading-relaxed">
-                  {bodyLines.map((line, i) => (
-                    <div key={i}>
-                      {line.startsWith("- ") || /^\d+\./.test(line) ? (
-                        <div className="flex items-start gap-1.5 font-mono text-[11px]">
-                          <span className="font-bold text-primary">▸</span>
-                          <span className="text-foreground/90">
-                            {line.replace(/^-\s*|^\d+\.\s*/, "")}
-                          </span>
-                        </div>
-                      ) : (
-                        <p>{line}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 const storageKey = (id: string) => `incident:edits:${id}`;
 
 function IncidentRoom() {
@@ -226,7 +168,9 @@ function IncidentRoom() {
         </div>
       </header>
 
-      <IncidentFramingView framing={scenario.framing} />
+      <p className="border-b border-border bg-surface px-6 py-3 text-sm text-muted-foreground">
+        {scenario.framing}
+      </p>
 
       <div className="grid flex-1 gap-0 lg:grid-cols-[200px_minmax(0,1fr)_380px]">
         <aside className="border-b border-border bg-sidebar p-3 lg:border-b-0 lg:border-r">
