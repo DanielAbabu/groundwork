@@ -6,7 +6,7 @@ import { DIFFICULTY_LABELS, TYPE_LABELS } from "@/lib/scenarios/types";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Incident — practice debugging and system design under pressure" },
+      { title: "Groundwork — practice debugging and system design under pressure" },
       {
         name: "description",
         content:
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:title",
-        content: "Incident — practice debugging and system design under pressure",
+        content: "Groundwork — practice debugging and system design under pressure",
       },
       {
         property: "og:description",
@@ -34,12 +34,12 @@ const TRACKS = [
     title: "Get paged. Read the signal. Fix the cause.",
     body: "You land in someone else's codebase with a one-line symptom and the exact failing output — a stack trace or a red test. Two to four real files, one root cause, no red herrings. A hidden harness grades behaviour, not style, and the postmortem tells you what actually broke.",
     bullets: [
-      "16 single-cause incidents: missing logic, bad queries, async mistakes, off-by-one",
+      "16 single-cause scenarios: missing logic, bad queries, async mistakes, off-by-one",
       "Monaco editor with the real files, signal panel beside it",
-      "Hidden tests decide pass/fail; attempts are tracked per incident",
+      "Hidden tests decide pass/fail; attempts are tracked per scenario",
     ],
     to: "/incidents" as const,
-    cta: "Open the incident board",
+    cta: "Open the Groundwork board",
   },
   {
     tag: "design review track",
@@ -90,7 +90,7 @@ function Index() {
             code, and a design you have to defend.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            {scenarios.length} single-cause incidents graded by a hidden test harness, and{" "}
+            {scenarios.length} single-cause scenarios graded by a hidden test harness, and{" "}
             {designScenarios.length} stakeholder design review
             {designScenarios.length === 1 ? "" : "s"} graded stage by stage — clarify, size, sketch,
             trade off. No multiple-choice quizzes, no toy puzzles.
@@ -101,7 +101,7 @@ function Index() {
               params={{ slug: first.id }}
               className="inline-flex items-center rounded-md bg-primary px-5 py-2.5 font-mono text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              Start first incident
+              Start first scenario
             </Link>
             <Link
               to="/design/$slug"
@@ -119,10 +119,10 @@ function Index() {
           </div>
           <dl className="mt-12 grid max-w-3xl grid-cols-2 gap-6 border-t border-border pt-8 sm:grid-cols-4">
             {[
-              { k: "incidents", v: String(scenarios.length) },
+              { k: "scenarios", v: String(scenarios.length) },
               { k: "design reviews", v: String(designScenarios.length) },
               { k: "graded stages", v: "4 per review" },
-              { k: "hidden tests", v: "every incident" },
+              { k: "hidden tests", v: "every scenario" },
             ].map((stat) => (
               <div key={stat.k}>
                 <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">

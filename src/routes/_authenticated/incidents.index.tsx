@@ -9,20 +9,19 @@ import { ProgressSummary } from "@/components/ProgressSummary";
 import { Button } from "@/components/ui/button";
 import { TrackTabs } from "@/components/TrackTabs";
 
-
 export const Route = createFileRoute("/_authenticated/incidents/")({
   head: () => ({
     meta: [
-      { title: "Incident board — open pages and resolved incidents" },
+      { title: "Groundwork board — open pages and resolved scenarios" },
       {
         name: "description",
         content:
-          "Every incident in the rotation with difficulty, type, your attempts, and whether you resolved it.",
+          "Every scenario in the rotation with difficulty, type, your attempts, and whether you resolved it.",
       },
-      { property: "og:title", content: "Incident board — open pages and resolved incidents" },
+      { property: "og:title", content: "Groundwork board — open pages and resolved scenarios" },
       {
         property: "og:description",
-        content: "Every incident in the rotation with difficulty, type and your progress.",
+        content: "Every scenario in the rotation with difficulty, type and your progress.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -30,9 +29,6 @@ export const Route = createFileRoute("/_authenticated/incidents/")({
   }),
   component: Board,
 });
-
-
-
 
 function Board() {
   const router = useRouter();
@@ -51,22 +47,27 @@ function Board() {
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-5">
           <div>
-            <Link to="/dashboard" className="font-mono text-xs uppercase tracking-[0.3em] text-primary">
-              incident
+            <Link
+              to="/dashboard"
+              className="font-mono text-xs uppercase tracking-[0.3em] text-primary"
+            >
+              groundwork
             </Link>
-            <h1 className="mt-2 text-xl font-semibold text-foreground">Incident board</h1>
+            <h1 className="mt-2 text-xl font-semibold text-foreground">Groundwork board</h1>
             <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               Each card is a live page: a symptom, the failing signal, and a small codebase with one
-              root cause. Fix it in the editor and a hidden test harness decides whether the incident
-              is resolved. <span className="font-mono text-xs text-primary">{resolved} of {scenarios.length} resolved</span>
+              root cause. Fix it in the editor and a hidden test harness decides whether the
+              scenario is resolved.{" "}
+              <span className="font-mono text-xs text-primary">
+                {resolved} of {scenarios.length} resolved
+              </span>
             </p>
-
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <TrackTabs active="debugging" />
             <Button asChild className="font-mono">
               <Link to="/incidents/$slug" params={{ slug: nextUp.id }}>
-                {resolved === 0 ? "Start first incident" : "Next incident"}
+                {resolved === 0 ? "Start first scenario" : "Next scenario"}
               </Link>
             </Button>
             <Button asChild variant="outline" className="font-mono">
@@ -91,7 +92,6 @@ function Board() {
       </div>
 
       <div className="mx-auto grid max-w-6xl gap-4 px-6 py-10 md:grid-cols-2 xl:grid-cols-3">
-
         {scenarios.map((scenario) => {
           const row = byId.get(scenario.id);
           const status = row?.status === "passed" ? "resolved" : row ? "attempted" : "unattempted";
@@ -133,7 +133,9 @@ function Board() {
               </div>
 
               <p className="mt-3 font-mono text-[10px] text-muted-foreground">
-                {row?.attempts ? `${row.attempts} attempt${row.attempts === 1 ? "" : "s"}` : "no attempts yet"}
+                {row?.attempts
+                  ? `${row.attempts} attempt${row.attempts === 1 ? "" : "s"}`
+                  : "no attempts yet"}
               </p>
             </Link>
           );

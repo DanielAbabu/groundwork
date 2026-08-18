@@ -26,14 +26,14 @@ export const Route = createFileRoute("/_authenticated/incidents/$slug")({
     const scenario = loaderData?.scenario;
     if (!scenario) {
       return {
-        meta: [{ title: "Unavailable — Incident" }, { name: "robots", content: "noindex" }],
+        meta: [{ title: "Unavailable — Groundwork" }, { name: "robots", content: "noindex" }],
       };
     }
     return {
       meta: [
-        { title: `${scenario.title} — Incident room` },
+        { title: `${scenario.title} — Groundwork room` },
         { name: "description", content: scenario.symptom },
-        { property: "og:title", content: `${scenario.title} — Incident room` },
+        { property: "og:title", content: `${scenario.title} — Groundwork room` },
         { property: "og:description", content: scenario.symptom },
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary_large_image" },
@@ -49,7 +49,7 @@ function MissingIncident() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-6 text-center">
       <div>
-        <h1 className="font-mono text-lg text-foreground">No such incident</h1>
+        <h1 className="font-mono text-lg text-foreground">No such scenario</h1>
         <Link
           to="/incidents"
           className="mt-4 inline-block font-mono text-sm text-primary underline"
@@ -136,7 +136,7 @@ function IncidentRoom() {
         outcome.cases.every((c) => c.passed);
       if (didPass) {
         setPassed(true);
-        toast.success("Incident resolved — all hidden tests pass.");
+        toast.success("Scenario resolved — all hidden tests pass.");
       } else {
         setFailedRuns((n) => n + 1);
       }
@@ -152,7 +152,7 @@ function IncidentRoom() {
         <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4">
           <div>
             <Link to="/incidents" className="font-mono text-xs text-primary hover:underline">
-              ← incident board
+              ← groundwork board
             </Link>
             <h1 className="mt-2 text-lg font-semibold text-foreground">{scenario.title}</h1>
             <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">

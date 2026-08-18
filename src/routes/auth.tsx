@@ -9,15 +9,17 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Incident" },
+      { title: "Sign in — Groundwork" },
       {
         name: "description",
-        content: "Sign in to Incident to get paged into broken codebases and track resolved incidents.",
+        content:
+          "Sign in to Groundwork to get paged into broken codebases and track resolved challenges.",
       },
-      { property: "og:title", content: "Sign in — Incident" },
+      { property: "og:title", content: "Sign in — Groundwork" },
       {
         property: "og:description",
-        content: "Sign in to Incident to get paged into broken codebases and track resolved incidents.",
+        content:
+          "Sign in to Groundwork to get paged into broken codebases and track resolved challenges.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -63,13 +65,13 @@ function AuthPage() {
     <main className="grid-noise flex min-h-screen items-center justify-center bg-background px-6">
       <div className="w-full max-w-sm rounded-lg border border-border bg-card p-7">
         <Link to="/" className="font-mono text-xs uppercase tracking-[0.3em] text-primary">
-          incident
+          groundwork
         </Link>
         <h1 className="mt-4 text-xl font-semibold text-foreground">
           {mode === "signin" ? "Sign in to the rotation" : "Join the rotation"}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Your attempts and resolved incidents are saved to your account.
+          Your attempts and resolved scenarios are saved to your account.
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-4">
@@ -110,9 +112,7 @@ function AuthPage() {
           onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
           className="mt-5 w-full text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
         >
-          {mode === "signin"
-            ? "No account yet? Create one"
-            : "Already on the rotation? Sign in"}
+          {mode === "signin" ? "No account yet? Create one" : "Already on the rotation? Sign in"}
         </button>
       </div>
     </main>

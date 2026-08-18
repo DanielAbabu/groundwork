@@ -21,7 +21,7 @@ async function buildWelcomeEmail(userId) {
   const user = fetchUser(userId);
   return {
     to: user.email,
-    subject: "Welcome to Incident",
+    subject: "Welcome to Groundwork",
     body: \`Hi \${user.firstName}, your workspace is ready.\`,
   };
 }

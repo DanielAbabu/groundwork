@@ -29,12 +29,13 @@ export const Route = createFileRoute("/_authenticated/profile")({
       {
         name: "description",
         content:
-          "Track your incident completion, average attempts to pass, daily consistency calendar, and nudge friends back on call.",
+          "Track your Groundwork completion, average attempts to pass, daily consistency calendar, and nudge friends back on call.",
       },
       { property: "og:title", content: "Your profile — streaks, stats and nudges" },
       {
         property: "og:description",
-        content: "Completion stats, a daily consistency calendar, and nudges between on-call friends.",
+        content:
+          "Completion stats, a daily consistency calendar, and nudges between on-call friends.",
       },
       { property: "og:type", content: "profile" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -126,7 +127,7 @@ function ProfilePage() {
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-5">
           <div>
             <Link to="/incidents" className="font-mono text-xs text-primary hover:underline">
-              ← incident board
+              ← groundwork board
             </Link>
             <h1 className="mt-2 text-xl font-semibold text-foreground">
               {profile?.display_name || profile?.username || "Your profile"}

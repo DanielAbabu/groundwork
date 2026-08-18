@@ -18,7 +18,7 @@ function NotFoundComponent() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          no such incident
+          no such scenario
         </p>
         <h1 className="mt-4 font-mono text-7xl font-bold text-foreground">404</h1>
         <p className="mt-3 text-sm text-muted-foreground">
@@ -29,7 +29,7 @@ function NotFoundComponent() {
             to="/incidents"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 font-mono text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Incident board
+            Groundwork board
           </Link>
         </div>
       </div>
@@ -51,7 +51,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           This page didn't load
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something broke on our side — an incident we didn't plan for. Try again or head back.
+          Something broke on our side — an issue we didn't plan for. Try again or head back.
         </p>
         {error?.message && (
           <pre className="mt-4 rounded border border-sev1/40 bg-sev1/10 p-3 font-mono text-xs text-sev1 text-left overflow-auto max-h-40">
@@ -85,13 +85,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Incident — debugging practice for real root causes" },
+      { title: "Groundwork — debugging practice for real root causes" },
       {
         name: "description",
         content:
           "Get paged into small broken codebases, read the real signal, fix the root cause, and run a hidden test harness.",
       },
-      { property: "og:title", content: "Incident — debugging practice for real root causes" },
+      { property: "og:title", content: "Groundwork — debugging practice for real root causes" },
       {
         property: "og:description",
         content:
