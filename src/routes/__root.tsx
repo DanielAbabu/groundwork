@@ -53,6 +53,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <p className="mt-2 text-sm text-muted-foreground">
           Something broke on our side — an incident we didn't plan for. Try again or head back.
         </p>
+        {error?.message && (
+          <pre className="mt-4 rounded border border-sev1/40 bg-sev1/10 p-3 font-mono text-xs text-sev1 text-left overflow-auto max-h-40">
+            {error.message}
+          </pre>
+        )}
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
