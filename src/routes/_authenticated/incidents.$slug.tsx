@@ -25,7 +25,9 @@ export const Route = createFileRoute("/_authenticated/incidents/$slug")({
   head: ({ loaderData }) => {
     const scenario = loaderData?.scenario;
     if (!scenario) {
-      return { meta: [{ title: "Unavailable — Incident" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [{ title: "Unavailable — Incident" }, { name: "robots", content: "noindex" }],
+      };
     }
     return {
       meta: [
@@ -48,11 +50,72 @@ function MissingIncident() {
     <main className="flex min-h-screen items-center justify-center bg-background px-6 text-center">
       <div>
         <h1 className="font-mono text-lg text-foreground">No such incident</h1>
-        <Link to="/incidents" className="mt-4 inline-block font-mono text-sm text-primary underline">
+        <Link
+          to="/incidents"
+          className="mt-4 inline-block font-mono text-sm text-primary underline"
+        >
           Back to the board
         </Link>
       </div>
     </main>
+  );
+}
+
+function IncidentFramingView({ framing }: { framing: string }) {
+  const sections = framing.split("\n\n").filter(Boolean);
+
+  return (
+    <div className="border-b border-border/80 bg-card/40 px-6 py-4 backdrop-blur-xs">
+      <div className="mx-auto flex flex-col gap-3 rounded-xl border border-border/60 bg-background/80 p-4 shadow-xs">
+        <div className="flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+          <span className="font-mono text-[11px] font-semibold uppercase tracking-widest text-amber-500">
+            Incident Brief & Operational Context
+          </span>
+        </div>
+        <div className="grid gap-3 text-sm leading-relaxed text-foreground/90 md:grid-cols-3">
+          {sections.map((sec, idx) => {
+            const lines = sec.split("\n");
+            const firstLineHasColon = lines[0]?.includes(":");
+            const header = firstLineHasColon ? lines[0] : null;
+            const bodyLines = header ? lines.slice(1) : lines;
+
+            return (
+              <div
+                key={idx}
+                className="flex flex-col gap-2 rounded-lg border border-border/50 bg-secondary/30 p-3.5"
+              >
+                {header ? (
+                  <h4 className="font-mono text-[10px] font-bold uppercase tracking-wider text-primary">
+                    {header.replace(":", "")}
+                  </h4>
+                ) : (
+                  <h4 className="font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    Context Overview
+                  </h4>
+                )}
+                <div className="space-y-1.5 text-xs text-muted-foreground leading-relaxed">
+                  {bodyLines.map((line, i) => (
+                    <div key={i}>
+                      {line.startsWith("- ") || /^\d+\./.test(line) ? (
+                        <div className="flex items-start gap-1.5 font-mono text-[11px]">
+                          <span className="font-bold text-primary">▸</span>
+                          <span className="text-foreground/90">
+                            {line.replace(/^-\s*|^\d+\.\s*/, "")}
+                          </span>
+                        </div>
+                      ) : (
+                        <p>{line}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -112,7 +175,9 @@ function IncidentRoom() {
   const dirty = useMemo(
     () =>
       new Set(
-        scenario.files.filter((f) => edits[f.path] !== undefined && edits[f.path] !== f.content).map((f) => f.path),
+        scenario.files
+          .filter((f) => edits[f.path] !== undefined && edits[f.path] !== f.content)
+          .map((f) => f.path),
       ),
     [edits, scenario],
   );
@@ -124,7 +189,9 @@ function IncidentRoom() {
       const outcome = await runHiddenTests(scenarioFileMap(scenario, edits), scenario.testPath);
       setResult(outcome);
       const didPass =
-        outcome.kind === "results" && outcome.cases.length > 0 && outcome.cases.every((c) => c.passed);
+        outcome.kind === "results" &&
+        outcome.cases.length > 0 &&
+        outcome.cases.every((c) => c.passed);
       if (didPass) {
         setPassed(true);
         toast.success("Incident resolved — all hidden tests pass.");
@@ -159,9 +226,7 @@ function IncidentRoom() {
         </div>
       </header>
 
-      <p className="border-b border-border bg-surface px-6 py-3 text-sm text-muted-foreground">
-        {scenario.framing}
-      </p>
+      <IncidentFramingView framing={scenario.framing} />
 
       <div className="grid flex-1 gap-0 lg:grid-cols-[200px_minmax(0,1fr)_380px]">
         <aside className="border-b border-border bg-sidebar p-3 lg:border-b-0 lg:border-r">
@@ -250,79 +315,95 @@ function IncidentRoom() {
 
           <div className="flex-1 overflow-auto p-4">
             {tab === "signal" ? (
-              <pre className="whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-fail">
-                {scenario.signal}
-              </pre>
-            ) : running ? (
-              <p className="font-mono text-xs text-primary">running hidden tests…</p>
-            ) : !result ? (
-              <p className="font-mono text-xs text-muted-foreground">
-                No runs yet. Hit “Run tests” when you think you have the root cause.
-              </p>
-            ) : result.kind === "timeout" ? (
-              <p className="font-mono text-xs text-fail">
-                Timed out after 3s — the sandbox was terminated. Look for an unresolved promise or a
-                loop that never ends.
-              </p>
-            ) : result.kind === "crash" ? (
-              <pre className="whitespace-pre-wrap font-mono text-[11px] text-fail">
-                {result.error}
-              </pre>
-            ) : (
-              <ul className="space-y-2">
-                {result.cases.map((testCase) => (
-                  <li
-                    key={testCase.name}
-                    className="rounded border border-border bg-card p-3 font-mono text-[11px]"
-                  >
-                    <p className={testCase.passed ? "text-pass" : "text-fail"}>
-                      {testCase.passed ? "PASS" : "FAIL"} · {testCase.name}
-                    </p>
-                    {testCase.message && (
-                      <p className="mt-1 whitespace-pre-wrap text-muted-foreground">
-                        {testCase.message}
-                      </p>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            {result?.kind === "results" && result.logs.length > 0 && (
-              <div className="mt-4">
+              <div>
                 <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                  console
+                  failing signal
                 </p>
-                <pre className="mt-1 whitespace-pre-wrap font-mono text-[11px] text-muted-foreground">
-                  {result.logs.join("\n")}
+                <pre className="mt-2 overflow-x-auto rounded bg-background p-3 font-mono text-xs text-muted-foreground">
+                  {scenario.signal}
                 </pre>
               </div>
-            )}
+            ) : (
+              <div>
+                <div className="flex items-center justify-between">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                    hidden tests
+                  </p>
+                  {result?.kind === "results" && (
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {passCount}/{cases.length} passing
+                    </span>
+                  )}
+                </div>
 
-            {showPostmortem && (
-              <div className="mt-5 rounded border border-primary/40 bg-card p-3">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-primary">
-                  postmortem
-                </p>
-                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                  {scenario.postmortem}
-                </p>
+                {!result && !running && (
+                  <p className="mt-4 font-mono text-xs text-muted-foreground">
+                    Click "Run hidden tests" to evaluate your changes.
+                  </p>
+                )}
+
+                {running && (
+                  <p className="mt-4 font-mono text-xs text-muted-foreground animate-pulse">
+                    Running test harness…
+                  </p>
+                )}
+
+                {result?.kind === "crash" && (
+                  <div className="mt-3 rounded border border-sev1/40 bg-sev1/10 p-3 font-mono text-xs text-sev1">
+                    Evaluation error: {result.error}
+                  </div>
+                )}
+
+                {result?.kind === "timeout" && (
+                  <div className="mt-3 rounded border border-sev1/40 bg-sev1/10 p-3 font-mono text-xs text-sev1">
+                    Execution timed out after 3000ms.
+                  </div>
+                )}
+
+                {result?.kind === "results" && (
+                  <ul className="mt-3 space-y-2">
+                    {cases.map((c, i) => (
+                      <li
+                        key={i}
+                        className={`rounded border p-2.5 font-mono text-xs ${
+                          c.passed
+                            ? "border-pass/30 bg-pass/5 text-pass"
+                            : "border-sev1/30 bg-sev1/5 text-sev1"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span>{c.name}</span>
+                          <span>{c.passed ? "PASS" : "FAIL"}</span>
+                        </div>
+                        {c.message && (
+                          <pre className="mt-2 text-[11px] text-muted-foreground whitespace-pre-wrap">
+                            {c.message}
+                          </pre>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
           </div>
+
+          {showPostmortem && (
+            <div className="border-t border-border bg-background p-4">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-primary font-bold">
+                postmortem
+              </p>
+              <p className="mt-2 font-mono text-xs text-muted-foreground">{scenario.postmortem}</p>
+            </div>
+          )}
+
+          <div className="border-t border-border p-4">
+            <Button className="w-full font-mono" onClick={run} disabled={running}>
+              {running ? "Evaluating…" : "Run hidden tests"}
+            </Button>
+          </div>
         </aside>
       </div>
-
-      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-surface px-6 py-3">
-        <p className="font-mono text-xs text-muted-foreground">
-          {result?.kind === "results"
-            ? `${passCount}/${cases.length} tests passing`
-            : "hidden test harness · behavior only"}
-        </p>
-        <Button onClick={run} disabled={running} className="font-mono">
-          {running ? "Running…" : "Run tests"}
-        </Button>
-      </footer>
     </main>
   );
 }
