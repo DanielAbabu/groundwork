@@ -56,6 +56,13 @@ function AuthPage() {
       if (data.session) navigate({ to: "/incidents" });
       else toast.info("Check your inbox to confirm your email, then sign in.");
     } catch (error) {
+      console.error("[Auth Error] Email authentication failed:", {
+        mode,
+        email,
+        error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString(),
+      });
       toast.error(error instanceof Error ? error.message : "Sign-in failed");
     } finally {
       setBusy(false);
@@ -73,6 +80,12 @@ function AuthPage() {
       });
       if (error) throw error;
     } catch (error) {
+      console.error(`[Auth Error] OAuth authentication failed for provider '${provider}':`, {
+        provider,
+        error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString(),
+      });
       toast.error(
         error instanceof Error ? error.message : `Failed to authenticate with ${provider}`,
       );

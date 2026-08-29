@@ -45,6 +45,10 @@ function OAuthConsentPage() {
 
     async function initConsentFlow() {
       if (!authorizationId) {
+        console.error("[OAuth Consent Error] Missing authorization_id parameter in request URL.", {
+          url: window.location.href,
+          timestamp: new Date().toISOString(),
+        });
         setError("Missing authorization_id parameter in request.");
         setLoading(false);
         return;
@@ -54,6 +58,11 @@ function OAuthConsentPage() {
         // 1. Verify user session
         const { data: userData, error: userError } = await supabase.auth.getUser();
         if (userError || !userData.user) {
+          console.warn("[OAuth Consent Notice] Unauthenticated access attempt to consent screen. Redirecting to sign in.", {
+            authorizationId,
+            userError,
+            timestamp: new Date().toISOString(),
+          });
           toast.error("Please sign in to process the authorization request.");
           // Redirect to sign in, preserving search params
           navigate({
@@ -71,10 +80,20 @@ function OAuthConsentPage() {
           await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
 
         if (detailsError) {
+          console.error("[OAuth Consent Error] Supabase returned error fetching authorization details:", {
+            authorizationId,
+            error: detailsError,
+            errorMessage: detailsError.message,
+            timestamp: new Date().toISOString(),
+          });
           throw detailsError;
         }
 
         if (!data) {
+          console.error("[OAuth Consent Error] Received null response when fetching authorization details:", {
+            authorizationId,
+            timestamp: new Date().toISOString(),
+          });
           throw new Error("No authorization details returned.");
         }
 
@@ -90,6 +109,13 @@ function OAuthConsentPage() {
           }
         }
       } catch (err) {
+        console.error("[OAuth Consent Error] Initialization failed:", {
+          authorizationId,
+          error: err,
+          errorMessage: err instanceof Error ? err.message : String(err),
+          stack: err instanceof Error ? err.stack : undefined,
+          timestamp: new Date().toISOString(),
+        });
         if (isMounted) {
           setError(err instanceof Error ? err.message : "Failed to load authorization details.");
         }
@@ -121,6 +147,13 @@ function OAuthConsentPage() {
         window.location.href = data.redirect_url;
       }
     } catch (err) {
+      console.error("[OAuth Consent Error] Approval request failed:", {
+        authorizationId,
+        error: err,
+        errorMessage: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+        timestamp: new Date().toISOString(),
+      });
       toast.error(err instanceof Error ? err.message : "Failed to approve authorization.");
       setActionBusy(null);
     }
@@ -140,6 +173,13 @@ function OAuthConsentPage() {
         window.location.href = data.redirect_url;
       }
     } catch (err) {
+      console.error("[OAuth Consent Error] Denial request failed:", {
+        authorizationId,
+        error: err,
+        errorMessage: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+        timestamp: new Date().toISOString(),
+      });
       toast.error(err instanceof Error ? err.message : "Failed to deny authorization.");
       setActionBusy(null);
     }
