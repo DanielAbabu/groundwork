@@ -627,7 +627,7 @@ function ComponentsStage({
 }
 
 /**
- * Stage 4: Defend the Cache (Field Report)
+ * Stage 4: Defend the Cache (Architectural Field Report)
  */
 function TradeoffStage({
   stage,
@@ -643,36 +643,58 @@ function TradeoffStage({
   const charCount = answer.text.length;
 
   return (
-    <div className="rounded border border-[#3A342C] bg-[#1D1A17] p-6 space-y-5">
-      <div className="border-b border-[#3A342C] pb-3">
-        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] block">
-          FIELD REPORT // TRADE-OFF DEFENSE
+    <div className="rounded-none border border-[#3A342C] bg-[#1D1A17] p-6 space-y-6 shadow-md select-none">
+      {/* Field Report Header */}
+      <div className="flex items-center justify-between border-b border-[#3A342C] pb-4">
+        <div>
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] block">
+            FIELD REPORT // TRADE-OFF DEFENSE
+          </span>
+          <h3 className="font-serif text-lg font-semibold text-[#F2ECE1] mt-0.5">
+            Architectural Defense Statement
+          </h3>
+        </div>
+        <div className="font-mono text-xs text-[#7C7364]">
+          <span>FORM: FR-404</span>
+        </div>
+      </div>
+
+      {/* Prompt guidance */}
+      <div className="rounded-none border-l-2 border-[#C8912B] bg-[#161412] p-3.5 space-y-1">
+        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B]">
+          DEFENSE BRIEF
         </span>
-        <p className="font-serif italic text-xs text-[#B8AE9C] mt-1">
-          Defend one key architectural trade-off accepted in your design (e.g., eventual
-          consistency, cache warming overhead).
+        <p className="font-serif italic text-xs leading-relaxed text-[#B8AE9C]">
+          "Defend one key architectural trade-off accepted in your design (e.g. eventual consistency
+          over strong consistency, cache warming overhead, or fan-out write amplification). Explain
+          why this trade-off is optimal for the workload and how you mitigate failure modes."
         </p>
       </div>
 
+      {/* Engineering Notebook Page Textarea */}
       <div className="relative">
         <Textarea
-          rows={9}
+          rows={10}
           value={answer.text}
           onChange={(event) => onChange({ text: event.target.value })}
-          placeholder="Explain the trade-off you accepted and how you mitigate operational risks..."
-          className="font-serif text-sm leading-relaxed text-[#F2ECE1] bg-[#161412] border-[#3A342C] p-4 focus-visible:ring-1 focus-visible:ring-[#C8912B]"
+          placeholder="Authored architectural defense statement..."
+          className="font-serif text-sm leading-relaxed text-[#F2ECE1] bg-[#161412] border-[#3A342C] p-5 focus-visible:ring-1 focus-visible:ring-[#C8912B] focus-visible:border-b-[#C8912B] rounded-none shadow-inner"
         />
-        <span className="absolute bottom-3 right-3 font-mono text-[10px] text-[#7C7364]">
+        <div className="absolute bottom-3 right-3 font-mono text-[10px] text-[#7C7364] bg-[#1D1A17] px-2 py-0.5 border border-[#3A342C]">
           {charCount} CHARS
-        </span>
+        </div>
       </div>
 
+      {/* Staff Engineer Ideal Defense Strategy Box */}
       {grade && (
-        <details className="rounded border border-[#3A342C] bg-[#161412] p-4">
-          <summary className="cursor-pointer font-mono text-xs uppercase tracking-widest text-[#C8912B] font-bold">
-            💡 Staff Engineer Ideal Defense Strategy
+        <details className="rounded-none border border-[#C8912B]/40 bg-[#C8912B]/5 p-4 transition-all">
+          <summary className="cursor-pointer font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B] flex items-center justify-between">
+            <span>💡 STAFF ENGINEER IDEAL DEFENSE STRATEGY</span>
+            <span className="text-[10px] text-[#7C7364]">[EXPAND]</span>
           </summary>
-          <p className="mt-3 font-sans text-xs leading-relaxed text-[#B8AE9C]">{stage.ideal}</p>
+          <div className="mt-3.5 border-t border-[#C8912B]/20 pt-3">
+            <p className="font-serif text-xs leading-relaxed text-[#F2ECE1]">{stage.ideal}</p>
+          </div>
         </details>
       )}
     </div>
