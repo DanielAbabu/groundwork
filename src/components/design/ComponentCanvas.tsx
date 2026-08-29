@@ -121,8 +121,10 @@ function ComponentNodeView({ data, selected }: NodeProps<CanvasNode>) {
 const nodeTypes = { component: ComponentNodeView };
 
 export interface ComponentCanvasProps {
-  palette: ComponentType[];
-  value: DesignGraph;
+  palette?: ComponentType[];
+  value?: DesignGraph;
+  nodes?: DesignGraph["nodes"];
+  edges?: DesignGraph["edges"];
   onChange: (next: DesignGraph) => void;
 }
 
@@ -131,20 +133,22 @@ function nodeSize(node: CanvasNode) {
   return { w: def.defaultSize.w, h: def.defaultSize.h };
 }
 
-function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
+function CanvasInner({ palette = Object.keys(COMPONENT_TYPES) as ComponentType[], value, nodes: propNodes, edges: propEdges, onChange }: ComponentCanvasProps) {
   const wrapper = useRef<HTMLDivElement>(null);
   const idRef = useRef(1);
   const { screenToFlowPosition, zoomIn, zoomOut, fitView } = useReactFlow();
 
+  const graphValue = value ?? { nodes: propNodes ?? [], edges: propEdges ?? [] };
+
   const initial = useMemo(() => {
-    const nodes: CanvasNode[] = (value.nodes ?? []).map((node, index) => ({
+    const nodes: CanvasNode[] = (graphValue.nodes ?? []).map((node, index) => ({
       id: node.id,
       type: "component" as const,
       position: { x: 80 + (index % 3) * 240, y: 60 + Math.floor(index / 3) * 150 },
       data: { componentType: node.type, instances: node.instances ?? 1 },
     }));
-    const byId = new Map((value.nodes ?? []).map((node) => [node.id, node.type]));
-    const edges: CanvasEdge[] = (value.edges ?? []).flatMap((edge, index) => {
+    const byId = new Map((graphValue.nodes ?? []).map((node) => [node.id, node.type]));
+    const edges: CanvasEdge[] = (graphValue.edges ?? []).flatMap((edge, index) => {
       const from = byId.get(edge.from);
       const to = byId.get(edge.to);
       if (!from || !to) return [];
