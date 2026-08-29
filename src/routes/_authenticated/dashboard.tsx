@@ -5,22 +5,18 @@ import { scenarios } from "@/content/scenarios";
 import { designScenarios } from "@/content/design";
 import { listProgress, type ProgressRow } from "@/lib/progress.functions";
 import { listDesignResults, type DesignStageRow } from "@/lib/design.functions";
-import { ProgressSummary } from "@/components/ProgressSummary";
+import { StreakBadge } from "@/components/StreakBadge";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Your dashboard — debugging and design review progress" },
+      { title: "Engineer Command Center — Groundwork" },
       {
         name: "description",
         content:
-          "One view of both tracks: incidents resolved in the debugging rotation and design reviews completed stage by stage.",
+          "Track your progress in the debugging rotation and system design reviews.",
       },
-      { property: "og:title", content: "Your dashboard — debugging and design review progress" },
-      {
-        property: "og:description",
-        content: "Incidents resolved and design reviews completed, in one place.",
-      },
+      { property: "og:title", content: "Engineer Command Center — Groundwork" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -42,11 +38,11 @@ function Dashboard() {
   });
 
   const debugIds = new Set(scenarios.map((s) => s.id));
-  const resolved = (progress ?? []).filter(
+  const resolvedCount = (progress ?? []).filter(
     (row) => row.status === "passed" && debugIds.has(row.scenario_id),
   ).length;
 
-  const designDone = designScenarios.filter((scenario) => {
+  const designDoneCount = designScenarios.filter((scenario) => {
     const passed = new Set(
       (designResults ?? [])
         .filter((row) => row.scenario_id === scenario.id && row.passed)
@@ -55,80 +51,128 @@ function Dashboard() {
     return scenario.stages.every((stage) => passed.has(stage.id));
   }).length;
 
+  // Streak calculation
+  const streakDays = (() => {
+    const dates = (progress ?? [])
+      .filter((r) => r.first_passed_at)
+      .map((r) => new Date(r.first_passed_at!).toDateString());
+    const unique = Array.from(new Set(dates)).sort(
+      (a, b) => new Date(b).getTime() - new Date(a).getTime(),
+    );
+    let count = 0;
+    let cursor = new Date();
+    cursor.setHours(0, 0, 0, 0);
+    for (const d of unique) {
+      const day = new Date(d);
+      day.setHours(0, 0, 0, 0);
+      const diff = Math.round((cursor.getTime() - day.getTime()) / 86400000);
+      if (diff <= 1) {
+        count++;
+        cursor = day;
+      } else {
+        break;
+      }
+    }
+    return count;
+  })();
+
+  const nextDebugScenario =
+    scenarios.find((s) => {
+      const row = (progress ?? []).find((r) => r.scenario_id === s.id);
+      return !row || row.status !== "passed";
+    }) ?? scenarios[0]!;
+
+  const nextDesignScenario =
+    designScenarios.find((s) => {
+      const passed = new Set(
+        (designResults ?? [])
+          .filter((row) => row.scenario_id === s.id && row.passed)
+          .map((row) => row.stage_id),
+      );
+      return !s.stages.every((st) => passed.has(st.id));
+    }) ?? designScenarios[0]!;
+
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
-      <div className="mb-8">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-amber-500 font-semibold">
-          on-call rotation
-        </p>
-        <h1 className="mt-1 text-2xl font-bold text-foreground">Engineer Command Center</h1>
+    <div className="mx-auto max-w-6xl px-6 py-10 space-y-8 min-h-[calc(100vh-44px)] bg-background">
+      {/* ── Welcome Header ── */}
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Engineer Command Center</h1>
         <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
-          Select a track below to jump directly into interactive debugging or architectural design
-          reviews.
+          Practice debugging realistic production codebases and presenting system design reviews.
         </p>
       </div>
 
+      {/* ── Streak & Metric Hero ── */}
+      <StreakBadge
+        streakDays={streakDays}
+        resolvedCount={resolvedCount}
+        totalScenarios={scenarios.length}
+      />
+
+      {/* ── Track Cards ── */}
       <div className="grid gap-6 md:grid-cols-2">
-        <Link
-          to="/incidents"
-          className="group rounded-xl border border-border bg-card p-6 transition-all hover:border-amber-500/50 hover:bg-accent/40 shadow-xs"
-        >
-          <div className="flex items-center justify-between">
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-amber-500 font-semibold">
-              debugging track
+        {/* Debugging Track */}
+        <div className="group rounded-xl border border-border bg-card p-6 flex flex-col justify-between space-y-4 hover:border-primary/50 transition-all">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-0.5 rounded border border-primary/20">
+                Debugging Track
+              </span>
+              <span className="font-mono text-xs text-muted-foreground">
+                {resolvedCount}/{scenarios.length} solved
+              </span>
+            </div>
+            <h2 className="text-xl font-bold text-foreground">Debugging Rotation</h2>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Get paged into broken codebases, read signals, fix root causes in Monaco, and verify with hidden test harnesses.
             </p>
-            <span className="font-mono text-xs text-muted-foreground group-hover:text-foreground">
-              Explore →
-            </span>
           </div>
-          <h2 className="mt-3 text-3xl font-bold text-foreground">
-            {resolved}/{scenarios.length}{" "}
-            <span className="text-sm font-normal text-muted-foreground">resolved</span>
-          </h2>
-          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-            Get paged into a broken codebase, read real-time signal, fix the root cause in Monaco
-            Editor, and verify against hidden test harnesses.
-          </p>
-        </Link>
 
-        <Link
-          to="/design"
-          className="group rounded-xl border border-border bg-card p-6 transition-all hover:border-amber-500/50 hover:bg-accent/40 shadow-xs"
-        >
-          <div className="flex items-center justify-between">
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-amber-500 font-semibold">
-              design review track
-            </p>
-            <span className="font-mono text-xs text-muted-foreground group-hover:text-foreground">
-              Explore →
-            </span>
-          </div>
-          <h2 className="mt-3 text-3xl font-bold text-foreground">
-            {designDone}/{designScenarios.length}{" "}
-            <span className="text-sm font-normal text-muted-foreground">completed</span>
-          </h2>
-          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-            Present to senior engineering stakeholders across four interactive stages: clarify
-            requirements, calculate capacity, design components, and defend trade-offs.
-          </p>
-        </Link>
-      </div>
-
-      <div className="mt-8 rounded-xl border border-border bg-card p-6 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
-          <div>
-            <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground font-bold">
-              Active Rotation Performance
-            </h3>
-            <p className="text-sm text-foreground mt-1 font-medium">
-              {resolved + designDone === 0
-                ? "Your rotation is ready — start your first incident scenario."
-                : `Overall progress across ${scenarios.length + designScenarios.length} system engineering challenges.`}
-            </p>
+          <div className="pt-4 border-t border-border space-y-3">
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-muted-foreground">Next Up:</span>
+              <span className="text-foreground font-semibold truncate max-w-xs">{nextDebugScenario.title}</span>
+            </div>
+            <Link
+              to="/incidents/$slug"
+              params={{ slug: nextDebugScenario.id }}
+              className="run-btn flex items-center justify-center gap-1.5 w-full py-2.5"
+            >
+              Continue Debugging →
+            </Link>
           </div>
         </div>
-        <div className="pt-4">
-          <ProgressSummary progress={progress ?? []} />
+
+        {/* System Design Track */}
+        <div className="group rounded-xl border border-border bg-card p-6 flex flex-col justify-between space-y-4 hover:border-primary/50 transition-all">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-xs font-bold uppercase tracking-widest text-submit bg-submit/10 px-2.5 py-0.5 rounded border border-submit/20">
+                System Design Track
+              </span>
+              <span className="font-mono text-xs text-muted-foreground">
+                {designDoneCount}/{designScenarios.length} cleared
+              </span>
+            </div>
+            <h2 className="text-xl font-bold text-foreground">Design Review Simulator</h2>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Present to senior engineering stakeholders across four stages: clarify, calculate capacity, sketch canvas, and defend trade-offs.
+            </p>
+          </div>
+
+          <div className="pt-4 border-t border-border space-y-3">
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-muted-foreground">Next Up:</span>
+              <span className="text-foreground font-semibold truncate max-w-xs">{nextDesignScenario.title}</span>
+            </div>
+            <Link
+              to="/design/$slug"
+              params={{ slug: nextDesignScenario.id }}
+              className="submit-btn flex items-center justify-center gap-1.5 w-full py-2.5"
+            >
+              Continue Design Review →
+            </Link>
+          </div>
         </div>
       </div>
     </div>
