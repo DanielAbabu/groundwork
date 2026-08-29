@@ -60,28 +60,28 @@ function Index() {
   const firstDesign = designScenarios[0]!;
 
   return (
-    <div className="min-h-screen bg-[#161412] text-[#F2ECE1] flex flex-col font-sans">
-      {/* ── Fieldnotes Sticky Landing Header ── */}
-      <header className="sticky top-0 z-40 w-full border-b border-[#3A342C] bg-[#1D1A17]">
+    <div className="min-h-screen bg-[#0B0F19] text-[#F8FAFC] flex flex-col font-sans">
+      {/* ── Nordic Sticky Landing Header ── */}
+      <header className="sticky top-0 z-40 w-full border-b border-[#1E293B] bg-[#0F172A]/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
           <BrandLogo href="/" />
 
           <div className="flex items-center gap-5">
             <Link
               to="/incidents"
-              className="hidden sm:inline-block font-sans text-xs text-[#B8AE9C] hover:text-[#F2ECE1] transition-colors"
+              className="hidden sm:inline-block font-sans text-xs text-[#94A3B8] hover:text-[#F8FAFC] transition-colors"
             >
               Debugging Rotation
             </Link>
             <Link
               to="/design"
-              className="hidden sm:inline-block font-sans text-xs text-[#B8AE9C] hover:text-[#F2ECE1] transition-colors"
+              className="hidden sm:inline-block font-sans text-xs text-[#94A3B8] hover:text-[#F8FAFC] transition-colors"
             >
               System Design
             </Link>
             <Link
               to="/dashboard"
-              className="rounded bg-[#C8912B] px-3.5 py-1.5 font-mono text-xs font-bold text-[#161412] hover:bg-[#E8B04A] transition-all brass-emboss"
+              className="rounded-sm bg-[#38BDF8] px-3.5 py-1.5 font-mono text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all shadow-sm"
             >
               Enter Workspace →
             </Link>
@@ -90,19 +90,19 @@ function Index() {
       </header>
 
       <main className="flex-1">
-        {/* ── Hero Section with Paper Grain Texture ── */}
-        <section className="paper-grain border-b border-[#3A342C] bg-[#161412]">
+        {/* ── Hero Section ── */}
+        <section className="border-b border-[#1E293B] bg-[#0B0F19]">
           <div className="mx-auto max-w-6xl px-6 py-20 lg:py-24">
-            <div className="inline-flex items-center gap-2 rounded border border-[#4E4638] bg-[#1D1A17] px-3 py-1 font-mono text-xs text-[#C8912B] brass-emboss">
-              <span className="inline-block size-1.5 rounded-full bg-[#C8912B]" />
+            <div className="inline-flex items-center gap-2 rounded-sm border border-[#334155] bg-[#0F172A] px-3 py-1 font-mono text-xs text-[#38BDF8]">
+              <span className="inline-block size-1.5 rounded-full bg-[#38BDF8]" />
               No copilot. No shortcuts. Just you and the incident.
             </div>
 
-            <h1 className="mt-6 max-w-3xl font-serif text-4xl font-semibold leading-[1.1] tracking-tight text-[#F2ECE1] sm:text-5xl lg:text-6xl">
+            <h1 className="mt-6 max-w-3xl font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-[#F8FAFC] sm:text-5xl lg:text-6xl">
               Prove your engineering mastery under real-world pressure.
             </h1>
 
-            <p className="mt-5 max-w-2xl font-sans text-base leading-relaxed text-[#B8AE9C]">
+            <p className="mt-5 max-w-2xl font-sans text-base leading-relaxed text-[#94A3B8]">
               {scenarios.length} single-cause scenarios graded by a hidden Pyodide test harness, and{" "}
               {designScenarios.length} stakeholder design review
               {designScenarios.length === 1 ? "" : "s"} graded stage by stage — clarify, size,
@@ -113,55 +113,55 @@ function Index() {
               <Link
                 to="/incidents/$slug"
                 params={{ slug: first.id }}
-                className="inline-flex items-center rounded bg-[#C8912B] px-5 py-2.5 font-mono text-xs font-bold text-[#161412] hover:bg-[#E8B04A] transition-all brass-emboss"
+                className="inline-flex items-center rounded-sm bg-[#38BDF8] px-5 py-2.5 font-mono text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all shadow-sm"
               >
                 Start First Scenario →
               </Link>
               <Link
                 to="/design/$slug"
                 params={{ slug: firstDesign.id }}
-                className="inline-flex items-center rounded border border-[#3A342C] bg-[#1D1A17] px-5 py-2.5 font-mono text-xs font-medium text-[#F2ECE1] hover:border-[#4E4638] hover:bg-[#26221D] transition-all"
+                className="inline-flex items-center rounded-sm border border-[#1E293B] bg-[#0F172A] px-5 py-2.5 font-mono text-xs font-semibold text-[#F8FAFC] hover:border-[#334155] hover:bg-[#1E293B] transition-all"
               >
                 Start Design Review
               </Link>
               <Link
                 to="/dashboard"
-                className="inline-flex items-center rounded px-3 py-2.5 font-mono text-xs text-[#7C7364] hover:text-[#C8912B] transition-colors"
+                className="inline-flex items-center rounded-sm px-3 py-2.5 font-mono text-xs text-[#64748B] hover:text-[#38BDF8] transition-colors"
               >
                 View Dashboard →
               </Link>
             </div>
 
             {/* ── Instrument Cluster Dial Counters ── */}
-            <div className="mt-14 pt-8 border-t border-[#3A342C]">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#7C7364] mb-4">
+            <div className="mt-14 pt-8 border-t border-[#1E293B]">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#64748B] mb-4">
                 Telemetry Instrument Cluster
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
-                <div className="rounded border border-[#4E4638] bg-[#1D1A17] p-4 brass-emboss">
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-[#7C7364]">
+                <div className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-4">
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-[#64748B]">
                     Total Debugging Scenarios
                   </div>
-                  <div className="mt-1 font-mono text-2xl font-bold text-[#F2ECE1]">
+                  <div className="mt-1 font-display text-2xl font-bold text-[#F8FAFC]">
                     {scenarios.length}{" "}
-                    <span className="text-xs text-[#7FB88A] font-normal">Active</span>
+                    <span className="text-xs text-[#10B981] font-medium">Active</span>
                   </div>
                 </div>
-                <div className="rounded border border-[#4E4638] bg-[#1D1A17] p-4 brass-emboss">
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-[#7C7364]">
+                <div className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-4">
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-[#64748B]">
                     Design Reviews
                   </div>
-                  <div className="mt-1 font-mono text-2xl font-bold text-[#F2ECE1]">
+                  <div className="mt-1 font-display text-2xl font-bold text-[#F8FAFC]">
                     {designScenarios.length}{" "}
-                    <span className="text-xs text-[#C8912B] font-normal">Graded</span>
+                    <span className="text-xs text-[#38BDF8] font-medium">Graded</span>
                   </div>
                 </div>
-                <div className="rounded border border-[#4E4638] bg-[#1D1A17] p-4 brass-emboss">
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-[#7C7364]">
+                <div className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-4">
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-[#64748B]">
                     Hidden Harnesses
                   </div>
-                  <div className="mt-1 font-mono text-2xl font-bold text-[#F2ECE1]">
-                    100% <span className="text-xs text-[#7A93A6] font-normal">Pyodide</span>
+                  <div className="mt-1 font-display text-2xl font-bold text-[#F8FAFC]">
+                    100% <span className="text-xs text-[#6366F1] font-medium">Pyodide</span>
                   </div>
                 </div>
               </div>
@@ -171,29 +171,29 @@ function Index() {
 
         {/* ── Dual Track Showcase Case Files ── */}
         <section className="mx-auto max-w-6xl px-6 py-16">
-          <p className="font-mono text-xs uppercase tracking-[0.25em] text-[#C8912B]">
-            Two Tracks, One Workshop
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#38BDF8]">
+            Two Tracks, One Platform
           </p>
           <div className="mt-8 grid gap-8 lg:grid-cols-2">
             {TRACKS.map((track) => (
               <article
                 key={track.fileNo}
-                className="flex flex-col rounded border border-[#3A342C] bg-[#1D1A17] overflow-hidden"
+                className="flex flex-col rounded-sm border border-[#1E293B] bg-[#0F172A] overflow-hidden shadow-sm"
               >
                 {/* Folder Tab Header */}
-                <div className="border-b border-[#3A342C] bg-[#26221D] px-5 py-2.5 flex items-center justify-between">
-                  <span className="font-mono text-[11px] font-semibold uppercase tracking-widest text-[#C8912B]">
+                <div className="border-b border-[#1E293B] bg-[#1E293B]/50 px-5 py-2.5 flex items-center justify-between">
+                  <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-[#38BDF8]">
                     {track.fileNo}
                   </span>
-                  <span className="font-mono text-[10px] text-[#7C7364]">HANDLED BY HAND</span>
+                  <span className="font-mono text-[10px] text-[#64748B]">HANDLED BY HAND</span>
                 </div>
 
                 <div className="p-7 flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="font-serif text-2xl font-semibold leading-tight text-[#F2ECE1]">
+                    <h3 className="font-display text-2xl font-bold leading-tight text-[#F8FAFC]">
                       {track.title}
                     </h3>
-                    <p className="mt-3 font-sans text-sm leading-relaxed text-[#B8AE9C]">
+                    <p className="mt-3 font-sans text-sm leading-relaxed text-[#94A3B8]">
                       {track.body}
                     </p>
 
@@ -201,19 +201,19 @@ function Index() {
                       {track.bullets.map((bullet) => (
                         <li
                           key={bullet}
-                          className="flex gap-2.5 font-sans text-xs leading-relaxed text-[#B8AE9C]"
+                          className="flex gap-2.5 font-sans text-xs leading-relaxed text-[#94A3B8]"
                         >
-                          <span className="text-[#C8912B]">▸</span>
+                          <span className="text-[#38BDF8]">▸</span>
                           {bullet}
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="mt-8 pt-5 border-t border-[#3A342C]">
+                  <div className="mt-8 pt-5 border-t border-[#1E293B]">
                     <Link
                       to={track.to}
-                      className="inline-flex items-center rounded border border-[#4E4638] bg-[#26221D] px-4 py-2 font-mono text-xs font-medium text-[#F2ECE1] hover:border-[#C8912B] hover:text-[#C8912B] transition-all"
+                      className="inline-flex items-center rounded-sm border border-[#334155] bg-[#1E293B] px-4 py-2 font-mono text-xs font-semibold text-[#F8FAFC] hover:border-[#38BDF8] hover:text-[#38BDF8] transition-all"
                     >
                       {track.cta} →
                     </Link>
@@ -225,57 +225,57 @@ function Index() {
         </section>
 
         {/* ── How It Works ── */}
-        <section className="border-t border-[#3A342C] bg-[#1D1A17]/60 py-16">
+        <section className="border-t border-[#1E293B] bg-[#0F172A]/50 py-16">
           <div className="mx-auto max-w-6xl px-6">
-            <p className="font-mono text-xs uppercase tracking-[0.25em] text-[#7C7364]">
+            <p className="font-mono text-xs uppercase tracking-[0.25em] text-[#64748B]">
               Workflow Execution
             </p>
-            <h2 className="mt-2 font-serif text-3xl font-semibold text-[#F2ECE1]">
+            <h2 className="mt-2 font-display text-3xl font-bold text-[#F8FAFC]">
               How RAW // SKILL works
             </h2>
             <div className="mt-8 grid gap-6 md:grid-cols-3">
-              <article className="rounded border border-[#3A342C] bg-[#1D1A17] p-6 border-l-2 border-l-[#C8912B]">
-                <p className="font-mono text-xs font-bold text-[#C8912B]">01</p>
-                <h3 className="mt-3 font-serif text-lg font-semibold text-[#F2ECE1]">
+              <article className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-6 border-l-2 border-l-[#38BDF8]">
+                <p className="font-mono text-xs font-bold text-[#38BDF8]">01</p>
+                <h3 className="mt-3 font-display text-lg font-bold text-[#F8FAFC]">
                   You get paged
                 </h3>
-                <p className="mt-2 font-sans text-sm leading-relaxed text-[#B8AE9C]">
+                <p className="mt-2 font-sans text-sm leading-relaxed text-[#94A3B8]">
                   A real symptom, severity tier, and failing signal exactly as it landed on call.
                 </p>
               </article>
-              <article className="rounded border border-[#3A342C] bg-[#1D1A17] p-6 border-l-2 border-l-[#C8912B]">
-                <p className="font-mono text-xs font-bold text-[#C8912B]">02</p>
-                <h3 className="mt-3 font-serif text-lg font-semibold text-[#F2ECE1]">
+              <article className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-6 border-l-2 border-l-[#38BDF8]">
+                <p className="font-mono text-xs font-bold text-[#38BDF8]">02</p>
+                <h3 className="mt-3 font-display text-lg font-bold text-[#F8FAFC]">
                   You work the problem
                 </h3>
-                <p className="mt-2 font-sans text-sm leading-relaxed text-[#B8AE9C]">
+                <p className="mt-2 font-sans text-sm leading-relaxed text-[#94A3B8]">
                   Real files in Monaco IDE, or interactive node graph canvas with latency heatmaps.
                 </p>
               </article>
-              <article className="rounded border border-[#3A342C] bg-[#1D1A17] p-6 border-l-2 border-l-[#C8912B]">
-                <p className="font-mono text-xs font-bold text-[#C8912B]">03</p>
-                <h3 className="mt-3 font-serif text-lg font-semibold text-[#F2ECE1]">
+              <article className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-6 border-l-2 border-l-[#38BDF8]">
+                <p className="font-mono text-xs font-bold text-[#38BDF8]">03</p>
+                <h3 className="mt-3 font-display text-lg font-bold text-[#F8FAFC]">
                   You get graded honestly
                 </h3>
-                <p className="mt-2 font-sans text-sm leading-relaxed text-[#B8AE9C]">
+                <p className="mt-2 font-sans text-sm leading-relaxed text-[#94A3B8]">
                   Hidden test harness for code, topology verification for designs, and a senior
                   debrief.
                 </p>
               </article>
             </div>
-            <p className="mt-8 font-mono text-xs text-[#7C7364]">
+            <p className="mt-8 font-mono text-xs text-[#64748B]">
               First scenario in rotation — Starter · Debugging ·{" "}
-              <span className="text-[#F2ECE1] font-medium">{first.title}</span>
+              <span className="text-[#F8FAFC] font-medium">{first.title}</span>
             </p>
           </div>
         </section>
       </main>
 
       {/* ── Brand Footer ── */}
-      <footer className="border-t border-[#3A342C] bg-[#1D1A17] py-8 px-6">
+      <footer className="border-t border-[#1E293B] bg-[#0F172A] py-8 px-6">
         <div className="mx-auto flex max-w-6xl flex-col sm:flex-row items-center justify-between gap-4">
           <BrandLogo showTagline href="/" />
-          <span className="font-mono text-xs text-[#7C7364]">
+          <span className="font-mono text-xs text-[#64748B]">
             © {new Date().getFullYear()} RAW // SKILL. All rights reserved.
           </span>
         </div>

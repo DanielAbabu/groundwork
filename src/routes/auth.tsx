@@ -86,25 +86,25 @@ function AuthPage() {
   };
 
   return (
-    <main className="paper-grain flex min-h-screen items-center justify-center bg-[#161412] px-6">
-      {/* Stamped ID Card / Workshop Badge Card */}
-      <div className="w-full max-w-sm rounded border border-[#4E4638] bg-[#1D1A17] p-7 brass-emboss">
-        <div className="flex items-center justify-between border-b border-[#3A342C] pb-4 mb-5">
+    <main className="flex min-h-screen items-center justify-center bg-[#0B0F19] px-6">
+      {/* Nordic ID Credential Card */}
+      <div className="w-full max-w-sm rounded-sm border border-[#1E293B] bg-[#0F172A] p-7 shadow-sm">
+        <div className="flex items-center justify-between border-b border-[#1E293B] pb-4 mb-5">
           <BrandLogo href="/" />
-          <span className="font-mono text-[9px] uppercase tracking-widest text-[#7C7364]">
+          <span className="font-mono text-[9px] uppercase tracking-widest text-[#64748B]">
             ID // CREDENTIAL
           </span>
         </div>
 
         {/* Mode Toggle Underline Switch */}
-        <div className="flex border-b border-[#3A342C] mb-5">
+        <div className="flex border-b border-[#1E293B] mb-5">
           <button
             type="button"
             onClick={() => setMode("signin")}
             className={`flex-1 pb-2 font-mono text-xs uppercase tracking-wider transition-colors border-b-2 ${
               mode === "signin"
-                ? "border-[#C8912B] text-[#F2ECE1] font-semibold"
-                : "border-transparent text-[#7C7364] hover:text-[#B8AE9C]"
+                ? "border-[#38BDF8] text-[#F8FAFC] font-bold"
+                : "border-transparent text-[#64748B] hover:text-[#94A3B8]"
             }`}
           >
             Sign In
@@ -114,18 +114,18 @@ function AuthPage() {
             onClick={() => setMode("signup")}
             className={`flex-1 pb-2 font-mono text-xs uppercase tracking-wider transition-colors border-b-2 ${
               mode === "signup"
-                ? "border-[#C8912B] text-[#F2ECE1] font-semibold"
-                : "border-transparent text-[#7C7364] hover:text-[#B8AE9C]"
+                ? "border-[#38BDF8] text-[#F8FAFC] font-bold"
+                : "border-transparent text-[#64748B] hover:text-[#94A3B8]"
             }`}
           >
             Create Account
           </button>
         </div>
 
-        <h1 className="font-serif text-xl font-semibold text-[#F2ECE1]">
+        <h1 className="font-display text-xl font-bold text-[#F8FAFC]">
           {mode === "signin" ? "Sign in to the rotation" : "Join the rotation"}
         </h1>
-        <p className="mt-1 font-sans text-xs text-[#B8AE9C]">
+        <p className="mt-1 font-sans text-xs text-[#94A3B8]">
           Your attempts and resolved scenarios are saved to your account.
         </p>
 
@@ -135,10 +135,10 @@ function AuthPage() {
             type="button"
             disabled={busyProvider !== null || busy}
             onClick={() => handleOAuthLogin("google")}
-            className="flex w-full items-center justify-center gap-2.5 rounded border border-[#4E4638] bg-[#26221D] px-4 py-2.5 font-mono text-xs text-[#F2ECE1] transition-all hover:bg-[#312C25] hover:border-[#C8912B] active:scale-[0.98] disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2.5 rounded-sm border border-[#334155] bg-[#1E293B] px-4 py-2.5 font-mono text-xs text-[#F8FAFC] transition-all hover:bg-[#334155] hover:border-[#38BDF8] active:scale-[0.98] disabled:opacity-50"
           >
             {busyProvider === "google" ? (
-              <span className="text-[#C8912B]">Connecting to Google…</span>
+              <span className="text-[#38BDF8]">Connecting to Google…</span>
             ) : (
               <>
                 <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
@@ -167,8 +167,8 @@ function AuthPage() {
 
         {/* ── Divider ── */}
         <div className="relative my-5 flex items-center justify-center">
-          <div className="w-full border-t border-[#3A342C]" />
-          <span className="absolute bg-[#1D1A17] px-2.5 font-sans text-[10px] uppercase tracking-widest text-[#7C7364]">
+          <div className="w-full border-t border-[#1E293B]" />
+          <span className="absolute bg-[#0F172A] px-2.5 font-sans text-[10px] uppercase tracking-widest text-[#64748B]">
             or continue with
           </span>
         </div>
@@ -177,7 +177,7 @@ function AuthPage() {
           <div className="space-y-1.5">
             <Label
               htmlFor="email"
-              className="font-mono text-xs uppercase tracking-wider text-[#B8AE9C]"
+              className="font-mono text-xs uppercase tracking-wider text-[#94A3B8]"
             >
               Email
             </Label>
@@ -188,13 +188,13 @@ function AuthPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-[#26221D] border-[#3A342C] text-[#F2ECE1] focus:border-[#C8912B]"
+              className="bg-[#1E293B] border-[#334155] text-[#F8FAFC] focus:border-[#38BDF8]"
             />
           </div>
           <div className="space-y-1.5">
             <Label
               htmlFor="password"
-              className="font-mono text-xs uppercase tracking-wider text-[#B8AE9C]"
+              className="font-mono text-xs uppercase tracking-wider text-[#94A3B8]"
             >
               Password
             </Label>
@@ -206,13 +206,13 @@ function AuthPage() {
               autoComplete={mode === "signup" ? "new-password" : "current-password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="bg-[#26221D] border-[#3A342C] text-[#F2ECE1] focus:border-[#C8912B]"
+              className="bg-[#1E293B] border-[#334155] text-[#F8FAFC] focus:border-[#38BDF8]"
             />
           </div>
           <Button
             type="submit"
             disabled={busy || busyProvider !== null}
-            className="w-full font-mono text-xs font-bold uppercase tracking-wider bg-[#C8912B] text-[#161412] hover:bg-[#E8B04A] brass-emboss"
+            className="w-full font-mono text-xs font-bold uppercase tracking-wider bg-[#38BDF8] text-[#0B0F19] hover:bg-[#7DD3FC]"
           >
             {busy
               ? "Working…"

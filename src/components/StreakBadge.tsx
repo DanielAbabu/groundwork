@@ -13,23 +13,23 @@ export function StreakBadge({ streakDays, resolvedCount, totalScenarios }: Strea
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       {/* Logbook Strip / Punch-Card Hero Card */}
-      <div className="rounded border border-[#4E4638] bg-[#1D1A17] p-5 brass-emboss">
+      <div className="rounded-none border border-[#334155] bg-[#0F172A] p-5 shadow-sm">
         <div className="flex items-center justify-between">
-          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B]">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#38BDF8]">
             LOGBOOK STREAK STRIP
           </span>
-          <span className="font-mono text-[10px] text-[#7C7364]">{streakDays} DAYS ACTIVE</span>
+          <span className="font-mono text-[10px] text-[#64748B]">{streakDays} DAYS ACTIVE</span>
         </div>
 
         {/* Stamped Squares */}
-        <div className="mt-3 flex items-center justify-between gap-1.5 pt-2 border-t border-[#3A342C]">
+        <div className="mt-3 flex items-center justify-between gap-1.5 pt-2 border-t border-[#1E293B]">
           {days.map((active, idx) => (
             <div
               key={idx}
-              className={`flex size-7 items-center justify-center rounded-[2px] font-mono text-[10px] font-bold transition-all ${
+              className={`flex size-7 items-center justify-center rounded-none font-mono text-[10px] font-bold transition-all ${
                 active
-                  ? "bg-[#C8912B] text-[#161412] brass-emboss"
-                  : "border border-[#3A342C] bg-[#161412] text-[#7C7364]"
+                  ? "bg-[#38BDF8] text-[#0B0F19]"
+                  : "border border-[#1E293B] bg-[#0B0F19] text-[#64748B]"
               }`}
               title={`Day ${idx + 1}: ${active ? "Logged" : "Missed"}`}
             >
@@ -37,48 +37,48 @@ export function StreakBadge({ streakDays, resolvedCount, totalScenarios }: Strea
             </div>
           ))}
         </div>
-        <p className="font-sans text-[11px] text-[#B8AE9C] mt-2.5">
+        <p className="font-sans text-[11px] text-[#94A3B8] mt-2.5">
           {streakDays >= 7
             ? "Hard-won reps logbook active."
             : "Complete 1 scenario daily to log your rep."}
         </p>
       </div>
 
-      {/* Debugging Solved (Sage Accent) */}
-      <div className="rounded border border-[#3A342C] bg-[#1D1A17] p-5">
+      {/* Debugging Solved (Emerald Accent) */}
+      <div className="rounded-none border border-[#1E293B] bg-[#0F172A] p-5">
         <div className="flex items-center justify-between">
-          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#7C7364]">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
             DEBUGGING DOCKET
           </span>
-          <span className="font-mono text-[10px] text-[#7FB88A] font-semibold">
+          <span className="font-mono text-[10px] text-[#10B981] font-bold">
             {resolvedCount}/{totalScenarios} CLEARED
           </span>
         </div>
         <div className="flex items-baseline gap-2 mt-2">
-          <span className="font-mono text-2xl font-bold text-[#F2ECE1]">{pct}%</span>
-          <span className="font-sans text-xs text-[#B8AE9C]">completion score</span>
+          <span className="font-display text-2xl font-bold text-[#F8FAFC]">{pct}%</span>
+          <span className="font-sans text-xs text-[#94A3B8]">completion score</span>
         </div>
-        <div className="mt-2.5 h-1.5 w-full rounded-[1px] bg-[#26221D] overflow-hidden">
+        <div className="mt-2.5 h-1.5 w-full rounded-none bg-[#1E293B] overflow-hidden">
           <div
-            className="h-full bg-[#7FB88A] transition-all duration-500"
+            className="h-full bg-[#10B981] transition-all duration-500"
             style={{ width: `${pct}%` }}
           />
         </div>
       </div>
 
-      {/* Design Simulator (Slate Accent) */}
-      <div className="rounded border border-[#3A342C] bg-[#1D1A17] p-5">
+      {/* Design Simulator (Ice Blue Accent) */}
+      <div className="rounded-none border border-[#1E293B] bg-[#0F172A] p-5">
         <div className="flex items-center justify-between">
-          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#7C7364]">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
             DESIGN SIMULATOR
           </span>
-          <span className="font-mono text-[10px] text-[#7A93A6] font-semibold">ACTIVE ROOMS</span>
+          <span className="font-mono text-[10px] text-[#38BDF8] font-bold">ACTIVE ROOMS</span>
         </div>
         <div className="flex items-baseline gap-2 mt-2">
-          <span className="font-mono text-2xl font-bold text-[#F2ECE1]">3</span>
-          <span className="font-sans text-xs text-[#B8AE9C]">architectural scenarios</span>
+          <span className="font-display text-2xl font-bold text-[#F8FAFC]">3</span>
+          <span className="font-sans text-xs text-[#94A3B8]">architectural scenarios</span>
         </div>
-        <p className="font-sans text-[11px] text-[#7C7364] mt-2.5">
+        <p className="font-sans text-[11px] text-[#64748B] mt-2.5">
           Clarify → Capacity → Components → Trade-offs
         </p>
       </div>

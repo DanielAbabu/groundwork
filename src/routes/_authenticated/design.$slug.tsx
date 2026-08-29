@@ -126,7 +126,7 @@ function DesignRoom() {
   const stageNames = ["01 CLARIFY", "02 SIZE", "03 SKETCH", "04 DEFEND"];
 
   return (
-    <div className="flex h-[calc(100vh-44px)] flex-col bg-[#161412] text-[#F2ECE1] overflow-hidden">
+    <div className="flex h-[calc(100vh-44px)] flex-col bg-[#0B0F19] text-[#F8FAFC] overflow-hidden">
       {/* ── Problem Bar ── */}
       <ProblemBar
         title={scenario.title}
@@ -137,10 +137,10 @@ function DesignRoom() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowSummary((v) => !v)}
-              className={`rounded border px-3 py-1 font-mono text-xs transition-colors ${
+              className={`rounded-sm border px-3 py-1 font-mono text-xs transition-colors ${
                 showSummary
-                  ? "border-[#C8912B] bg-[#C8912B]/10 text-[#C8912B] font-semibold"
-                  : "border-[#3A342C] bg-[#1D1A17] text-[#7C7364] hover:text-[#F2ECE1]"
+                  ? "border-[#38BDF8] bg-[#38BDF8]/10 text-[#38BDF8] font-bold"
+                  : "border-[#1E293B] bg-[#0F172A] text-[#64748B] hover:text-[#F8FAFC]"
               }`}
             >
               {showSummary ? "← Back to Stage Workspace" : "Review Scorecard"}
@@ -149,7 +149,7 @@ function DesignRoom() {
               <button
                 onClick={onSubmit}
                 disabled={submitting}
-                className="flex items-center gap-1.5 rounded bg-[#C8912B] px-3.5 py-1.5 font-mono text-xs font-bold text-[#161412] hover:bg-[#E8B04A] transition-all brass-emboss disabled:opacity-50"
+                className="flex items-center gap-1.5 rounded-sm bg-[#38BDF8] px-3.5 py-1.5 font-mono text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all shadow-sm disabled:opacity-50"
               >
                 {submitting ? "Grading…" : "Submit Stage"}
               </button>
@@ -160,7 +160,7 @@ function DesignRoom() {
 
       {/* ── 3.1 Top Horizontal Ruler Stage Stepper ── */}
       {!showSummary && (
-        <div className="border-b border-[#3A342C] bg-[#1D1A17] px-6 py-2.5 flex items-center justify-between overflow-x-auto shrink-0 select-none">
+        <div className="border-b border-[#1E293B] bg-[#0F172A] px-6 py-2.5 flex items-center justify-between overflow-x-auto shrink-0 select-none">
           <div className="flex items-center gap-1 min-w-max w-full justify-between max-w-5xl mx-auto">
             {scenario.stages.map((st, idx) => {
               const isCurrent = idx === index;
@@ -173,12 +173,12 @@ function DesignRoom() {
                     setIndex(idx);
                     setShowSummary(false);
                   }}
-                  className={`group relative flex items-center gap-2 px-4 py-1.5 font-mono text-xs transition-all ${
+                  className={`group relative flex items-center gap-2 px-4 py-1.5 font-mono text-xs transition-all rounded-sm ${
                     isCurrent
-                      ? "bg-[#C8912B] text-[#161412] font-bold brass-emboss"
+                      ? "bg-[#38BDF8] text-[#0B0F19] font-bold shadow-sm"
                       : isCleared
-                        ? "border border-[#7FB88A]/30 bg-[#7FB88A]/5 text-[#7FB88A] hover:bg-[#7FB88A]/10"
-                        : "border border-[#3A342C] bg-[#161412] text-[#7C7364] hover:text-[#F2ECE1] hover:border-[#4E4638]"
+                        ? "border border-[#10B981]/30 bg-[#10B981]/10 text-[#10B981] hover:bg-[#10B981]/20 font-bold"
+                        : "border border-[#1E293B] bg-[#0B0F19] text-[#64748B] hover:text-[#F8FAFC] hover:border-[#334155]"
                   }`}
                 >
                   {isCleared && !isCurrent && <span className="text-xs">✓</span>}
@@ -191,7 +191,7 @@ function DesignRoom() {
       )}
 
       {showSummary ? (
-        <div className="flex-1 overflow-y-auto p-6 bg-[#161412]">
+        <div className="flex-1 overflow-y-auto p-6 bg-[#0B0F19]">
           <div className="mx-auto max-w-4xl">
             <Summary
               grades={grades}
@@ -208,51 +208,51 @@ function DesignRoom() {
         /* ── Full-Viewport 2-Panel Workspace ── */
         <div className="flex flex-1 overflow-hidden">
           {/* ── 3.2 Left Column: "Case File" Panel (320px) ── */}
-          <aside className="w-80 shrink-0 flex flex-col border-r border-[#3A342C] bg-[#1D1A17] overflow-y-auto p-5 space-y-6">
+          <aside className="w-80 shrink-0 flex flex-col border-r border-[#1E293B] bg-[#0F172A] overflow-y-auto p-5 space-y-6">
             {/* STAKEHOLDER Section */}
-            <div className="space-y-2 border-b border-[#3A342C] pb-4">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#7C7364] block">
+            <div className="space-y-2 border-b border-[#1E293B] pb-4">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#64748B] block">
                 STAKEHOLDER
               </span>
               <div className="flex items-center gap-3 pt-1">
-                <div className="size-9 rounded-full border border-[#C8912B]/40 bg-[#C8912B]/10 font-serif text-sm font-bold text-[#C8912B] flex items-center justify-center brass-emboss shrink-0 select-none">
+                <div className="size-9 rounded-full border border-[#38BDF8]/40 bg-[#38BDF8]/10 font-display text-sm font-bold text-[#38BDF8] flex items-center justify-center shrink-0 select-none">
                   {initials}
                 </div>
                 <div>
-                  <h4 className="font-serif text-sm font-semibold text-[#F2ECE1]">
+                  <h4 className="font-display text-sm font-bold text-[#F8FAFC]">
                     {scenario.stakeholder}
                   </h4>
-                  <p className="font-mono text-[11px] text-[#7C7364]">{scenario.stakeholderRole}</p>
+                  <p className="font-mono text-[11px] text-[#64748B]">{scenario.stakeholderRole}</p>
                 </div>
               </div>
             </div>
 
             {/* CONTEXT Section */}
-            <div className="space-y-2 border-b border-[#3A342C] pb-4">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#7C7364] block">
+            <div className="space-y-2 border-b border-[#1E293B] pb-4">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#64748B] block font-bold">
                 CONTEXT
               </span>
-              <p className="font-serif text-xs leading-relaxed text-[#B8AE9C] italic">
+              <p className="font-sans text-xs leading-relaxed text-[#94A3B8] italic">
                 "{scenario.framing}"
               </p>
             </div>
 
             {/* THIS STAGE Section */}
-            <div className="space-y-2 border-l-2 border-[#C8912B] pl-3 py-1">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] block">
+            <div className="space-y-2 border-l-2 border-[#38BDF8] pl-3 py-1">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#38BDF8] block">
                 THIS STAGE // FOCUS
               </span>
-              <h3 className="font-serif text-sm font-semibold text-[#F2ECE1]">{stage.title}</h3>
-              <p className="font-sans text-xs leading-relaxed text-[#B8AE9C]">{stage.prompt}</p>
+              <h3 className="font-display text-sm font-bold text-[#F8FAFC]">{stage.title}</h3>
+              <p className="font-sans text-xs leading-relaxed text-[#94A3B8]">{stage.prompt}</p>
             </div>
 
             {/* Stage Grade Status pill if graded */}
             {grade && (
               <div
-                className={`rounded border p-3 font-mono text-xs space-y-1 ${
+                className={`rounded-sm border p-3 font-mono text-xs space-y-1 ${
                   grade.passed
-                    ? "border-[#7FB88A]/40 bg-[#7FB88A]/10 text-[#7FB88A]"
-                    : "border-[#C4593F]/40 bg-[#C4593F]/10 text-[#C4593F]"
+                    ? "border-[#10B981]/40 bg-[#10B981]/10 text-[#10B981]"
+                    : "border-[#F43F5E]/40 bg-[#F43F5E]/10 text-[#F43F5E]"
                 }`}
               >
                 <div className="flex items-center justify-between font-bold">
@@ -267,7 +267,7 @@ function DesignRoom() {
           </aside>
 
           {/* ── Right Panel: Stage Workspace Canvas / Interactive UI ── */}
-          <section className="flex flex-1 flex-col overflow-hidden bg-[#161412]">
+          <section className="flex flex-1 flex-col overflow-hidden bg-[#0B0F19]">
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {stage.kind === "clarify" && (
                 <StakeholderChat
@@ -311,11 +311,11 @@ function DesignRoom() {
             </div>
 
             {/* Bottom Navigation Bar */}
-            <div className="flex shrink-0 items-center justify-between border-t border-[#3A342C] bg-[#1D1A17] px-6 py-3">
+            <div className="flex shrink-0 items-center justify-between border-t border-[#1E293B] bg-[#0F172A] px-6 py-3">
               <button
                 disabled={index === 0}
                 onClick={() => setIndex((i) => i - 1)}
-                className="font-mono text-xs text-[#7C7364] hover:text-[#F2ECE1] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="font-mono text-xs text-[#64748B] hover:text-[#F8FAFC] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 ← Previous Stage
               </button>
@@ -324,14 +324,14 @@ function DesignRoom() {
                 {index < scenario.stages.length - 1 ? (
                   <button
                     onClick={() => setIndex((i) => i + 1)}
-                    className="font-mono text-xs text-[#F2ECE1] hover:text-[#C8912B] transition-colors"
+                    className="font-mono text-xs text-[#F8FAFC] hover:text-[#38BDF8] font-bold transition-colors"
                   >
                     Next Stage →
                   </button>
                 ) : (
                   <button
                     onClick={() => setShowSummary(true)}
-                    className="font-mono text-xs font-bold text-[#7FB88A] hover:underline"
+                    className="font-mono text-xs font-bold text-[#10B981] hover:underline"
                   >
                     See Final Scorecard 🏆
                   </button>

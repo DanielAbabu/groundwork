@@ -79,45 +79,45 @@ function DesignBoard() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-44px)] bg-[#161412] text-[#F2ECE1] pb-16">
+    <div className="min-h-[calc(100vh-44px)] bg-[#0B0F19] text-[#F8FAFC] pb-16">
       {/* ── Page Header ── */}
-      <div className="border-b border-[#3A342C] bg-[#1D1A17] px-6 py-6">
+      <div className="border-b border-[#1E293B] bg-[#0F172A] px-6 py-6">
         <div className="mx-auto max-w-6xl">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B]">
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#38BDF8]">
               FILE // SYSTEM-DESIGN-TRACK
             </span>
-            <span className="text-[#3A342C]">/</span>
-            <span className="font-mono text-xs text-[#7C7364]">DESIGN REVIEW SIMULATOR</span>
+            <span className="text-[#1E293B]">/</span>
+            <span className="font-mono text-xs text-[#64748B]">DESIGN REVIEW SIMULATOR</span>
           </div>
-          <h1 className="font-serif text-3xl font-semibold text-[#F2ECE1]">
+          <h1 className="font-display text-3xl font-bold text-[#F8FAFC]">
             System Design Interview Simulator
           </h1>
-          <p className="mt-1 max-w-3xl font-sans text-sm leading-relaxed text-[#B8AE9C]">
+          <p className="mt-1 max-w-3xl font-sans text-sm leading-relaxed text-[#94A3B8]">
             Step into staff-level design reviews across four dedicated stages: clarify requirements,
             calculate capacity ledgers, sketch component topologies, and defend trade-offs.
           </p>
 
           {/* Search & Filter Toolbar */}
-          <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-[#3A342C]">
+          <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-[#1E293B]">
             <Input
               type="text"
               placeholder="Search design cases by title or system tag..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="max-w-md font-mono text-xs bg-[#161412] border-[#3A342C] text-[#F2ECE1] placeholder:text-[#7C7364]"
+              className="max-w-md font-mono text-xs bg-[#0B0F19] border-[#1E293B] text-[#F8FAFC] placeholder:text-[#64748B]"
             />
 
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs text-[#7C7364]">Difficulty:</span>
+              <span className="font-mono text-xs text-[#64748B]">Difficulty:</span>
               {["all", "easy", "medium", "hard"].map((diff) => (
                 <button
                   key={diff}
                   onClick={() => setDifficultyFilter(diff)}
-                  className={`rounded-none border px-2.5 py-1 font-mono text-xs font-semibold uppercase tracking-wider transition-colors ${
+                  className={`rounded-sm border px-2.5 py-1 font-mono text-xs font-bold uppercase tracking-wider transition-colors ${
                     difficultyFilter === diff
-                      ? "border-[#C8912B] bg-[#C8912B]/10 text-[#C8912B]"
-                      : "border-[#3A342C] bg-[#161412] text-[#7C7364] hover:text-[#F2ECE1]"
+                      ? "border-[#38BDF8] bg-[#38BDF8]/10 text-[#38BDF8]"
+                      : "border-[#1E293B] bg-[#0B0F19] text-[#64748B] hover:text-[#F8FAFC]"
                   }`}
                 >
                   {diff}
@@ -161,22 +161,22 @@ function DesignBoard() {
           return (
             <div key={tierGroup.id} className="space-y-6">
               {/* 2.1 "Case Tiers" Ledger Header Strip */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#3A342C] pb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1E293B] pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="size-10 rounded-none border border-[#C8912B]/40 bg-[#C8912B]/10 font-serif text-xl font-bold text-[#C8912B] flex items-center justify-center brass-emboss select-none">
+                  <div className="size-10 rounded-sm border border-[#38BDF8]/40 bg-[#38BDF8]/10 font-display text-xl font-bold text-[#38BDF8] flex items-center justify-center select-none">
                     {tierGroup.num}
                   </div>
                   <div>
-                    <h2 className="font-serif text-xl font-semibold text-[#F2ECE1]">
+                    <h2 className="font-display text-xl font-bold text-[#F8FAFC]">
                       Tier {tierGroup.num} — {tierGroup.title}
                     </h2>
-                    <p className="font-mono text-xs text-[#7C7364] mt-0.5">{tierGroup.subtitle}</p>
+                    <p className="font-mono text-xs text-[#64748B] mt-0.5">{tierGroup.subtitle}</p>
                   </div>
                 </div>
 
                 {/* Compact Fraction + Ledger Bar */}
                 <div className="text-left sm:text-right">
-                  <span className="font-mono text-xs font-bold text-[#C8912B] block">
+                  <span className="font-mono text-xs font-bold text-[#38BDF8] block">
                     {clearedScenariosInTier}/{totalScenariosInTier} CLEARED
                   </span>
                   <div className="flex items-center gap-1 mt-1.5 justify-start sm:justify-end">
@@ -188,7 +188,7 @@ function DesignBoard() {
                           key={scenario.id}
                           title={scenario.title}
                           className={`h-1.5 w-6 rounded-none transition-colors ${
-                            isComplete ? "bg-[#C8912B]" : "bg-[#3A342C] border border-[#4E4638]"
+                            isComplete ? "bg-[#38BDF8]" : "bg-[#0B0F19] border border-[#1E293B]"
                           }`}
                         />
                       );
@@ -209,21 +209,21 @@ function DesignBoard() {
                       key={scenario.id}
                       to="/design/$slug"
                       params={{ slug: scenario.id }}
-                      className="group relative flex flex-col justify-between rounded-none border border-[#3A342C] bg-[#1D1A17] p-5 transition-all hover:border-[#C8912B]/50 hover:bg-[#26221D]/60 min-h-[220px]"
+                      className="group relative flex flex-col justify-between rounded-sm border border-[#1E293B] bg-[#0F172A] p-5 transition-all hover:border-[#38BDF8]/50 hover:bg-[#1E293B]/60 min-h-[220px] shadow-sm"
                     >
                       {/* Corner Brackets Crop Marks */}
-                      <CornerBrackets className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                      <CornerBrackets className="opacity-40 group-hover:opacity-100 transition-opacity text-[#38BDF8]" />
 
                       <div className="space-y-3">
                         {/* Zone 1: Header Strip */}
-                        <div className="flex items-center justify-between gap-2 border-b border-[#3A342C]/60 pb-3">
+                        <div className="flex items-center justify-between gap-2 border-b border-[#1E293B]/80 pb-3">
                           <StampedTag
                             label={scenario.difficulty.toUpperCase()}
                             tone={difficultyToneMap[scenario.difficulty] ?? "slate"}
                           />
 
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[10px] text-[#7C7364]">
+                            <span className="font-mono text-[10px] text-[#64748B]">
                               {done}/{scenario.stages.length}
                             </span>
                             <DialGlyph
@@ -237,22 +237,22 @@ function DesignBoard() {
                         {/* Zone 2: Body with Title, Brief & Topology Icon */}
                         <div className="relative pt-1 pr-8">
                           <TopologyIcon className="absolute top-0 right-0" />
-                          <h3 className="font-serif text-lg font-semibold text-[#F2ECE1] group-hover:text-[#C8912B] transition-colors leading-tight">
+                          <h3 className="font-display text-lg font-bold text-[#F8FAFC] group-hover:text-[#38BDF8] transition-colors leading-tight">
                             {scenario.title}
                           </h3>
-                          <p className="mt-2 font-sans text-xs leading-relaxed text-[#B8AE9C] line-clamp-2">
+                          <p className="mt-2 font-sans text-xs leading-relaxed text-[#94A3B8] line-clamp-2">
                             {scenario.summary}
                           </p>
                         </div>
                       </div>
 
                       {/* Zone 3: Footer Strip */}
-                      <div className="mt-5 pt-3 border-t border-[#3A342C] flex items-center justify-between">
-                        <span className="font-mono text-[10px] uppercase tracking-wider text-[#7C7364] bg-[#161412] px-2.5 py-1 rounded-none border border-[#3A342C]">
+                      <div className="mt-5 pt-3 border-t border-[#1E293B] flex items-center justify-between">
+                        <span className="font-mono text-[10px] uppercase tracking-wider text-[#64748B] bg-[#0B0F19] px-2.5 py-1 rounded-sm border border-[#1E293B]">
                           {scenario.system}
                         </span>
 
-                        <span className="font-mono text-xs font-bold text-[#C8912B] group-hover:translate-x-0.5 transition-transform">
+                        <span className="font-mono text-xs font-bold text-[#38BDF8] group-hover:translate-x-0.5 transition-transform">
                           {isComplete ? "REVIEW ✓" : "ENTER REVIEW →"}
                         </span>
                       </div>

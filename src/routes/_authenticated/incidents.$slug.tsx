@@ -162,7 +162,7 @@ function IncidentRoom() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-44px)] flex-col bg-[#161412] text-[#F2ECE1] overflow-hidden">
+    <div className="flex h-[calc(100vh-44px)] flex-col bg-[#0B0F19] text-[#F8FAFC] overflow-hidden">
       {/* ── Problem Bar ── */}
       <ProblemBar
         title={scenario.title}
@@ -179,13 +179,13 @@ function IncidentRoom() {
       <div className="flex flex-1 overflow-hidden">
         {/* ── Left: Problem Description (fixed 320px, collapsible) ── */}
         <aside
-          className={`hidden lg:flex flex-col border-r border-[#3A342C] bg-[#1D1A17] overflow-hidden transition-all duration-200 ${descCollapsed ? "w-0" : "w-80 shrink-0"}`}
+          className={`hidden lg:flex flex-col border-r border-[#1E293B] bg-[#0F172A] overflow-hidden transition-all duration-200 ${descCollapsed ? "w-0" : "w-80 shrink-0"}`}
         >
           <div className="flex-1 overflow-y-auto">
             {/* Collapse toggle */}
             <button
               onClick={() => setDescCollapsed((v) => !v)}
-              className="absolute left-[318px] top-[88px] z-10 flex size-5 items-center justify-center rounded-r border border-l-0 border-[#3A342C] bg-[#1D1A17] text-[#7C7364] hover:text-[#F2ECE1] transition-colors"
+              className="absolute left-[318px] top-[88px] z-10 flex size-5 items-center justify-center rounded-r-sm border border-l-0 border-[#1E293B] bg-[#0F172A] text-[#64748B] hover:text-[#F8FAFC] transition-colors"
             >
               <svg className="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -201,40 +201,40 @@ function IncidentRoom() {
               {/* Severity + type */}
               <div className="flex flex-wrap items-center gap-2">
                 <span
-                  className={`rounded border px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-widest ${scenario.severity === "SEV-1" ? "border-[#C4593F]/40 bg-[#C4593F]/10 text-[#C4593F]" : scenario.severity === "SEV-2" ? "border-[#D99B26]/40 bg-[#D99B26]/10 text-[#D99B26]" : "border-[#7A93A6]/40 bg-[#7A93A6]/10 text-[#7A93A6]"}`}
+                  className={`rounded-sm border px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest ${scenario.severity === "SEV-1" ? "border-[#F43F5E]/40 bg-[#F43F5E]/10 text-[#F43F5E]" : scenario.severity === "SEV-2" ? "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#F59E0B]" : "border-[#6366F1]/40 bg-[#6366F1]/10 text-[#6366F1]"}`}
                 >
                   {scenario.severity}
                 </span>
-                <span className="rounded border border-[#3A342C] bg-[#161412] px-1.5 py-0.5 font-mono text-[10px] text-[#B8AE9C]">
+                <span className="rounded-sm border border-[#1E293B] bg-[#0B0F19] px-1.5 py-0.5 font-mono text-[10px] text-[#94A3B8]">
                   {scenario.service}
                 </span>
-                <span className="rounded border border-[#3A342C] bg-[#161412] px-1.5 py-0.5 font-mono text-[10px] text-[#B8AE9C]">
+                <span className="rounded-sm border border-[#1E293B] bg-[#0B0F19] px-1.5 py-0.5 font-mono text-[10px] text-[#94A3B8]">
                   {TYPE_LABELS[scenario.type]}
                 </span>
               </div>
 
               {/* Framing */}
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-widest text-[#7C7364] mb-1.5">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-[#64748B] mb-1.5 font-bold">
                   Incident Context
                 </p>
-                <p className="font-sans text-xs leading-relaxed text-[#F2ECE1]">
+                <p className="font-sans text-xs leading-relaxed text-[#F8FAFC]">
                   {scenario.framing}
                 </p>
               </div>
 
               {/* Symptom */}
-              <div className="rounded border border-[#3A342C] bg-[#161412] px-3 py-2.5">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-[#7C7364] mb-1">
+              <div className="rounded-sm border border-[#1E293B] bg-[#0B0F19] px-3 py-2.5">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-[#64748B] mb-1 font-bold">
                   Alert Symptom
                 </p>
-                <p className="font-mono text-xs text-[#F2ECE1]">{scenario.symptom}</p>
+                <p className="font-mono text-xs text-[#F8FAFC]">{scenario.symptom}</p>
               </div>
 
               {/* Hints */}
               {scenario.hints && scenario.hints.length > 0 && (
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-[#7C7364] mb-1.5">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-[#64748B] mb-1.5 font-bold">
                     Hints
                   </p>
                   <HintDrawer hints={scenario.hints} />
@@ -244,14 +244,14 @@ function IncidentRoom() {
               {/* Concept tags */}
               {scenario.concepts && scenario.concepts.length > 0 && (
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-[#7C7364] mb-1.5">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-[#64748B] mb-1.5 font-bold">
                     Concepts
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {scenario.concepts.map((c) => (
                       <span
                         key={c}
-                        className="rounded border border-[#C8912B]/30 bg-[#C8912B]/5 px-2 py-0.5 font-mono text-[10px] text-[#C8912B]"
+                        className="rounded-sm border border-[#38BDF8]/30 bg-[#38BDF8]/10 px-2 py-0.5 font-mono text-[10px] text-[#38BDF8] font-semibold"
                       >
                         {c}
                       </span>
@@ -262,33 +262,33 @@ function IncidentRoom() {
 
               {/* Postmortem */}
               {showPostmortem && (
-                <div className="rounded border border-[#D99B26]/30 bg-[#D99B26]/5 p-3.5 space-y-2">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-[#D99B26] font-bold">
+                <div className="rounded-sm border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-3.5 space-y-2">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-[#F59E0B] font-bold">
                     Incident Postmortem
                   </p>
                   {typeof scenario.postmortem === "string" ? (
-                    <p className="font-sans text-xs leading-relaxed text-[#B8AE9C]">
+                    <p className="font-sans text-xs leading-relaxed text-[#94A3B8]">
                       {scenario.postmortem}
                     </p>
                   ) : (
                     <div className="space-y-2 text-xs">
                       <div>
-                        <span className="font-mono text-[10px] uppercase font-bold text-[#C4593F]">
+                        <span className="font-mono text-[10px] uppercase font-bold text-[#F43F5E]">
                           Root Cause:{" "}
                         </span>
-                        <span className="text-[#F2ECE1]">{scenario.postmortem.rootCause}</span>
+                        <span className="text-[#F8FAFC]">{scenario.postmortem.rootCause}</span>
                       </div>
                       <div>
-                        <span className="font-mono text-[10px] uppercase font-bold text-[#D99B26]">
+                        <span className="font-mono text-[10px] uppercase font-bold text-[#F59E0B]">
                           Impact:{" "}
                         </span>
-                        <span className="text-[#B8AE9C]">{scenario.postmortem.impact}</span>
+                        <span className="text-[#94A3B8]">{scenario.postmortem.impact}</span>
                       </div>
                       <div>
-                        <span className="font-mono text-[10px] uppercase font-bold text-[#7FB88A]">
+                        <span className="font-mono text-[10px] uppercase font-bold text-[#10B981]">
                           Prevention:{" "}
                         </span>
-                        <span className="text-[#B8AE9C]">{scenario.postmortem.prevention}</span>
+                        <span className="text-[#94A3B8]">{scenario.postmortem.prevention}</span>
                       </div>
                     </div>
                   )}
@@ -299,10 +299,10 @@ function IncidentRoom() {
         </aside>
 
         {/* ── Center: Editor ── */}
-        <section className="flex flex-1 flex-col overflow-hidden border-r border-[#3A342C]">
+        <section className="flex flex-1 flex-col overflow-hidden border-r border-[#1E293B]">
           {/* File tabs */}
           <div
-            className="flex shrink-0 items-center overflow-x-auto border-b border-[#3A342C] bg-[#161412]"
+            className="flex shrink-0 items-center overflow-x-auto border-b border-[#1E293B] bg-[#0B0F19]"
             style={{ scrollbarWidth: "none" }}
           >
             {scenario.files.map((file) => {
@@ -313,38 +313,38 @@ function IncidentRoom() {
                   key={file.path}
                   onClick={() => setActivePath(file.path)}
                   title={file.path}
-                  className={`flex h-9 shrink-0 items-center gap-1.5 border-r border-[#3A342C] px-3 font-mono text-xs transition-colors whitespace-nowrap ${
+                  className={`flex h-9 shrink-0 items-center gap-1.5 border-r border-[#1E293B] px-3 font-mono text-xs transition-colors whitespace-nowrap ${
                     isActive
-                      ? "border-b-2 border-b-[#C8912B] bg-[#1D1A17] text-[#F2ECE1] font-semibold"
-                      : "text-[#7C7364] hover:bg-[#1D1A17]/50 hover:text-[#F2ECE1]"
+                      ? "border-b-2 border-b-[#38BDF8] bg-[#0F172A] text-[#F8FAFC] font-bold"
+                      : "text-[#64748B] hover:bg-[#0F172A]/50 hover:text-[#F8FAFC]"
                   }`}
                 >
-                  {isDirty && <span className="text-[#D99B26] text-[8px]">●</span>}
+                  {isDirty && <span className="text-[#F59E0B] text-[8px]">●</span>}
                   {file.path.split("/").pop()}
-                  {file.context && <span className="text-[9px] text-[#7C7364]">ro</span>}
+                  {file.context && <span className="text-[9px] text-[#64748B]">ro</span>}
                 </button>
               );
             })}
             {/* Reset button in tab row */}
             <button
               onClick={() => persist({})}
-              className="ml-auto shrink-0 px-3 font-mono text-[10px] text-[#7C7364] hover:text-[#F2ECE1] transition-colors"
+              className="ml-auto shrink-0 px-3 font-mono text-[10px] text-[#64748B] hover:text-[#F8FAFC] transition-colors"
             >
               Reset File Edits
             </button>
           </div>
 
           {/* Monaco editor */}
-          <div className="flex-1 overflow-hidden bg-[#161412]">
+          <div className="flex-1 overflow-hidden bg-[#0B0F19]">
             <ClientOnly
               fallback={
-                <pre className="h-full overflow-auto p-4 font-mono text-xs text-[#B8AE9C]">
+                <pre className="h-full overflow-auto p-4 font-mono text-xs text-[#94A3B8]">
                   {activeValue}
                 </pre>
               }
             >
               <Suspense
-                fallback={<p className="p-4 font-mono text-xs text-[#7C7364]">loading editor…</p>}
+                fallback={<p className="p-4 font-mono text-xs text-[#64748B]">loading editor…</p>}
               >
                 <CodeEditor
                   path={activePath}
@@ -357,11 +357,11 @@ function IncidentRoom() {
           </div>
 
           {/* Editor bottom mini-bar */}
-          <div className="flex shrink-0 items-center justify-between border-t border-[#3A342C] bg-[#161412] px-3 py-1">
-            <span className="font-mono text-[10px] text-[#7C7364]">
+          <div className="flex shrink-0 items-center justify-between border-t border-[#1E293B] bg-[#0B0F19] px-3 py-1">
+            <span className="font-mono text-[10px] text-[#64748B]">
               {activePath.split(".").pop()?.toUpperCase() ?? "JS"}
             </span>
-            <span className="font-mono text-[10px] text-[#7C7364]">JetBrains Mono</span>
+            <span className="font-mono text-[10px] text-[#64748B]">JetBrains Mono</span>
           </div>
         </section>
 
@@ -377,12 +377,12 @@ function IncidentRoom() {
         </div>
 
         {/* Mobile: bottom panel tabs */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 border-t border-[#3A342C] bg-[#161412] z-30">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 border-t border-[#1E293B] bg-[#0B0F19] z-30">
           <div className="flex">
             <button
               onClick={run}
               disabled={running || passed}
-              className="flex-1 py-3 bg-[#C8912B] font-mono text-xs font-bold text-[#161412] brass-emboss disabled:opacity-50"
+              className="flex-1 py-3 bg-[#38BDF8] font-mono text-xs font-bold text-[#0B0F19] disabled:opacity-50"
             >
               {running ? "Running…" : passed ? "✓ VERDICT: PASSED" : "▶ Run Tests"}
             </button>

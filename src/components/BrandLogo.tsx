@@ -9,7 +9,7 @@ interface BrandLogoProps {
 export function GaugeNotchIcon({ className = "size-4" }: { className?: string }) {
   return (
     <svg
-      className={`shrink-0 text-[#C8912B] ${className}`}
+      className={`shrink-0 text-[#38BDF8] ${className}`}
       viewBox="0 0 20 20"
       fill="none"
       stroke="currentColor"
@@ -18,14 +18,11 @@ export function GaugeNotchIcon({ className = "size-4" }: { className?: string })
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      {/* Outer instrument dial arc / bezel notch */}
-      <circle cx="10" cy="10" r="7.5" stroke="#3A342C" strokeWidth="1" />
-      <path d="M5.5 14.5 A 6.5 6.5 0 1 1 14.5 14.5" stroke="#4E4638" strokeWidth="1.25" />
-      {/* Gauge tick mark / needle rest notch */}
-      <line x1="10" y1="10" x2="13.5" y2="6.5" stroke="#C8912B" strokeWidth="1.75" />
-      <circle cx="10" cy="10" r="1.25" fill="#C8912B" stroke="none" />
-      {/* Zero rest tick */}
-      <line x1="5.5" y1="13.5" x2="6.5" y2="12.5" stroke="#C8912B" strokeWidth="1.25" />
+      <circle cx="10" cy="10" r="7.5" stroke="#1E293B" strokeWidth="1.2" />
+      <path d="M5.5 14.5 A 6.5 6.5 0 1 1 14.5 14.5" stroke="#334155" strokeWidth="1.5" />
+      <line x1="10" y1="10" x2="13.5" y2="6.5" stroke="#38BDF8" strokeWidth="1.75" />
+      <circle cx="10" cy="10" r="1.25" fill="#38BDF8" stroke="none" />
+      <line x1="5.5" y1="13.5" x2="6.5" y2="12.5" stroke="#38BDF8" strokeWidth="1.25" />
     </svg>
   );
 }
@@ -38,18 +35,16 @@ export function BrandLogo({
   const logoContent = (
     <div className={`flex flex-col ${className}`}>
       <div className="flex items-center gap-2 group select-none">
-        {/* Gauge Notch Mark */}
         <GaugeNotchIcon className="size-4.5 transition-transform group-hover:scale-105" />
 
-        {/* Dual-Typography Wordmark: RAW (Serif 600) // (Mono Brass) SKILL (Mono 500) */}
         <span className="flex items-baseline gap-1 text-sm tracking-tight">
-          <span className="font-serif font-semibold text-[#F2ECE1]">RAW</span>
-          <span className="font-mono text-xs font-normal text-[#C8912B] opacity-80">//</span>
-          <span className="font-mono text-xs font-medium tracking-wider text-[#F2ECE1]">SKILL</span>
+          <span className="font-display font-extrabold tracking-tight text-[#F8FAFC]">RAW</span>
+          <span className="font-mono text-xs font-semibold text-[#38BDF8]">//</span>
+          <span className="font-mono text-xs font-bold tracking-widest text-[#F8FAFC]">SKILL</span>
         </span>
       </div>
       {showTagline && (
-        <p className="mt-1 font-mono text-[11px] text-[#7C7364]">
+        <p className="mt-1 font-mono text-[11px] text-[#94A3B8]">
           No copilot. No shortcuts. Just you and the incident.
         </p>
       )}

@@ -125,29 +125,29 @@ function Board() {
   };
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-44px)] bg-[#161412] text-[#F2ECE1]">
+    <div className="flex flex-col min-h-[calc(100vh-44px)] bg-[#0B0F19] text-[#F8FAFC]">
       {/* ── Page Header: Case Docket Title ── */}
-      <div className="border-b border-[#3A342C] bg-[#1D1A17] px-6 py-5">
+      <div className="border-b border-[#1E293B] bg-[#0F172A] px-6 py-5">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B]">
+                <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#38BDF8]">
                   FILE // DOCKET-INDEX
                 </span>
-                <span className="text-[#3A342C]">/</span>
-                <span className="font-mono text-xs text-[#7C7364]">ACTIVE ROTATION BOARD</span>
+                <span className="text-[#1E293B]">/</span>
+                <span className="font-mono text-xs text-[#64748B]">ACTIVE ROTATION BOARD</span>
               </div>
-              <h1 className="font-serif text-2xl font-semibold text-[#F2ECE1]">
+              <h1 className="font-display text-2xl font-bold text-[#F8FAFC]">
                 Debugging Rotation
               </h1>
-              <p className="mt-0.5 font-sans text-xs text-[#B8AE9C]">
+              <p className="mt-0.5 font-sans text-xs text-[#94A3B8]">
                 Read the signal · fix the root cause · verify against hidden tests
               </p>
             </div>
             <button
               onClick={randomUnsolved}
-              className="flex items-center gap-1.5 rounded bg-[#C8912B] px-3.5 py-1.5 font-mono text-xs font-bold text-[#161412] hover:bg-[#E8B04A] transition-all brass-emboss"
+              className="flex items-center gap-1.5 rounded-sm bg-[#38BDF8] px-3.5 py-1.5 font-mono text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all shadow-sm"
             >
               <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -161,18 +161,18 @@ function Board() {
             </button>
           </div>
 
-          {/* Logbook Progress Bar */}
-          <div className="mt-4 pt-3 border-t border-[#3A342C]">
+          {/* Rotation Clearance Progress Bar */}
+          <div className="mt-4 pt-3 border-t border-[#1E293B]">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="font-mono text-xs text-[#7C7364]">
-                Rotation Clearance: <span className="text-[#F2ECE1] font-semibold">{resolved}</span>{" "}
+              <span className="font-mono text-xs text-[#64748B]">
+                Rotation Clearance: <span className="text-[#F8FAFC] font-semibold">{resolved}</span>{" "}
                 / {scenarios.length} resolved
               </span>
-              <span className="font-mono text-xs font-semibold text-[#C8912B]">{pct}%</span>
+              <span className="font-mono text-xs font-bold text-[#38BDF8]">{pct}%</span>
             </div>
-            <div className="h-1.5 w-full rounded-[1px] bg-[#26221D] overflow-hidden border border-[#3A342C]">
+            <div className="h-1.5 w-full rounded-none bg-[#0B0F19] overflow-hidden border border-[#1E293B]">
               <div
-                className="h-full bg-[#C8912B] transition-all duration-500"
+                className="h-full bg-[#38BDF8] transition-all duration-500"
                 style={{ width: `${pct}%` }}
               />
             </div>
@@ -181,12 +181,12 @@ function Board() {
       </div>
 
       {/* ── Filter Bar ── */}
-      <div className="border-b border-[#3A342C] bg-[#161412] px-6 py-3">
+      <div className="border-b border-[#1E293B] bg-[#0B0F19] px-6 py-3">
         <div className="mx-auto max-w-6xl flex flex-wrap items-center gap-4">
           {/* Search */}
-          <div className="flex min-w-[240px] flex-1 items-center gap-2 rounded border border-[#3A342C] bg-[#1D1A17] px-3 py-1.5">
+          <div className="flex min-w-[240px] flex-1 items-center gap-2 rounded-sm border border-[#1E293B] bg-[#0F172A] px-3 py-1.5">
             <svg
-              className="size-3.5 shrink-0 text-[#7C7364]"
+              className="size-3.5 shrink-0 text-[#64748B]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -203,10 +203,10 @@ function Board() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search docket scenarios, services, concepts…"
-              className="flex-1 bg-transparent font-mono text-xs text-[#F2ECE1] placeholder:text-[#7C7364] focus:outline-none"
+              className="flex-1 bg-transparent font-mono text-xs text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none"
             />
             {search && (
-              <button onClick={() => setSearch("")} className="text-[#7C7364] hover:text-[#F2ECE1]">
+              <button onClick={() => setSearch("")} className="text-[#64748B] hover:text-[#F8FAFC]">
                 <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -221,15 +221,15 @@ function Board() {
 
           {/* Difficulty filter */}
           <div className="flex items-center gap-1.5 font-mono text-xs">
-            <span className="text-[#7C7364] text-[10px] uppercase tracking-wider">Diff:</span>
+            <span className="text-[#64748B] text-[10px] uppercase tracking-wider">Diff:</span>
             {(["ALL", "starter", "routine", "tricky"] as const).map((d) => (
               <button
                 key={d}
                 onClick={() => setDiffFilter(d)}
-                className={`rounded px-2 py-0.5 transition-colors ${
+                className={`rounded-sm px-2 py-0.5 transition-colors ${
                   diffFilter === d
-                    ? "bg-[#C8912B] text-[#161412] font-semibold"
-                    : "text-[#7C7364] hover:text-[#F2ECE1]"
+                    ? "bg-[#38BDF8] text-[#0B0F19] font-bold"
+                    : "text-[#64748B] hover:text-[#F8FAFC]"
                 }`}
               >
                 {d === "ALL" ? "All" : DIFFICULTY_LABELS[d]}
@@ -239,15 +239,15 @@ function Board() {
 
           {/* Status filter */}
           <div className="flex items-center gap-1.5 font-mono text-xs">
-            <span className="text-[#7C7364] text-[10px] uppercase tracking-wider">Status:</span>
+            <span className="text-[#64748B] text-[10px] uppercase tracking-wider">Status:</span>
             {(["ALL", "resolved", "attempted", "unattempted"] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`rounded px-2 py-0.5 capitalize transition-colors ${
+                className={`rounded-sm px-2 py-0.5 capitalize transition-colors ${
                   statusFilter === s
-                    ? "bg-[#C8912B] text-[#161412] font-semibold"
-                    : "text-[#7C7364] hover:text-[#F2ECE1]"
+                    ? "bg-[#38BDF8] text-[#0B0F19] font-bold"
+                    : "text-[#64748B] hover:text-[#F8FAFC]"
                 }`}
               >
                 {s === "ALL" ? "All" : s}
@@ -262,7 +262,7 @@ function Board() {
         <div className="mx-auto max-w-6xl px-6 py-6">
           <table className="w-full border-collapse text-xs">
             <thead>
-              <tr className="border-b border-[#3A342C] bg-[#26221D]">
+              <tr className="border-b border-[#1E293B] bg-[#0F172A]">
                 {(
                   [
                     { key: "index", label: "NO.", cls: "w-12 pl-4" },
@@ -275,7 +275,7 @@ function Board() {
                   <th
                     key={key}
                     onClick={() => toggleSort(key)}
-                    className={`py-3 pr-4 text-left font-mono text-[10px] font-bold uppercase tracking-wider text-[#7C7364] cursor-pointer select-none hover:text-[#F2ECE1] transition-colors ${cls}`}
+                    className={`py-3 pr-4 text-left font-mono text-[10px] font-bold uppercase tracking-wider text-[#64748B] cursor-pointer select-none hover:text-[#F8FAFC] transition-colors ${cls}`}
                   >
                     {label}
                     <SortIcon col={key} />
@@ -283,7 +283,7 @@ function Board() {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#3A342C]/60">
+            <tbody className="divide-y divide-[#1E293B]/80">
               {filtered.map((scenario) => {
                 const row = byId.get(scenario.id);
                 const status = scenario._status;
@@ -293,10 +293,10 @@ function Board() {
                     onClick={() =>
                       navigate({ to: "/incidents/$slug", params: { slug: scenario.id } })
                     }
-                    className="group cursor-pointer hover:bg-[#1D1A17] transition-colors"
+                    className="group cursor-pointer hover:bg-[#0F172A] transition-colors"
                   >
                     {/* # */}
-                    <td className="py-3.5 pr-4 pl-4 font-mono text-xs text-[#7C7364]">
+                    <td className="py-3.5 pr-4 pl-4 font-mono text-xs text-[#64748B]">
                       {scenario._index < 10 ? `0${scenario._index}` : scenario._index}
                     </td>
 
@@ -304,14 +304,14 @@ function Board() {
                     <td className="py-3.5 pr-4">
                       <div className="flex items-center gap-3">
                         <span
-                          className={`inline-block size-2 shrink-0 rounded-full ${SEV_DOT[scenario.severity] ?? "bg-[#3A342C]"}`}
+                          className={`inline-block size-2 shrink-0 rounded-full ${SEV_DOT[scenario.severity] ?? "bg-[#1E293B]"}`}
                           title={scenario.severity}
                         />
                         <div>
-                          <span className="font-sans text-sm font-semibold text-[#F2ECE1] group-hover:text-[#C8912B] transition-colors">
+                          <span className="font-display text-sm font-bold text-[#F8FAFC] group-hover:text-[#38BDF8] transition-colors">
                             {scenario.title}
                           </span>
-                          <p className="mt-0.5 font-mono text-[10px] text-[#7C7364] truncate max-w-sm">
+                          <p className="mt-0.5 font-mono text-[10px] text-[#64748B] truncate max-w-sm">
                             {scenario.service} · {scenario.symptom}
                           </p>
                         </div>
@@ -320,7 +320,7 @@ function Board() {
 
                     {/* Type */}
                     <td className="py-3.5 pr-4 hidden sm:table-cell">
-                      <span className="rounded border border-[#3A342C] bg-[#1D1A17] px-2 py-0.5 font-mono text-[10px] text-[#B8AE9C]">
+                      <span className="rounded-sm border border-[#1E293B] bg-[#0F172A] px-2 py-0.5 font-mono text-[10px] text-[#94A3B8]">
                         {scenario.type}
                       </span>
                     </td>
@@ -330,21 +330,21 @@ function Board() {
                       <DifficultyPill difficulty={scenario.difficulty} />
                     </td>
 
-                    {/* Fieldnotes Signal Ink Status */}
+                    {/* Status Badge */}
                     <td className="py-3.5 pr-4">
                       {status === "resolved" ? (
-                        <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold text-[#7FB88A]">
-                          <span className="size-1.5 rounded-full bg-[#7FB88A]" />
+                        <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold text-[#10B981]">
+                          <span className="size-1.5 rounded-full bg-[#10B981]" />
                           RESOLVED
                         </span>
                       ) : status === "attempted" ? (
-                        <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-medium text-[#D99B26]">
-                          <span className="size-1.5 rounded-full bg-[#D99B26]" />
+                        <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold text-[#F59E0B]">
+                          <span className="size-1.5 rounded-full bg-[#F59E0B]" />
                           IN PROGRESS ({row?.attempts ?? 1})
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-[#7C7364]">
-                          <span className="size-1.5 rounded-full border border-[#4E4638]" />
+                        <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-[#64748B]">
+                          <span className="size-1.5 rounded-full border border-[#334155]" />
                           OPEN
                         </span>
                       )}
@@ -356,8 +356,8 @@ function Board() {
           </table>
 
           {filtered.length === 0 && (
-            <div className="py-16 text-center border-t border-[#3A342C]">
-              <p className="font-mono text-sm text-[#7C7364]">
+            <div className="py-16 text-center border-t border-[#1E293B]">
+              <p className="font-mono text-sm text-[#64748B]">
                 No docket cases match your search filter.
               </p>
               <button
@@ -367,7 +367,7 @@ function Board() {
                   setDiffFilter("ALL");
                   setStatusFilter("ALL");
                 }}
-                className="mt-3 font-mono text-xs text-[#C8912B] hover:underline"
+                className="mt-3 font-mono text-xs text-[#38BDF8] hover:underline"
               >
                 Clear all filters
               </button>
