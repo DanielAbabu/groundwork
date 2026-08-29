@@ -57,15 +57,15 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       {/* ── Slim 44px Global Top Header ── */}
-      <header className="sticky top-0 z-40 w-full border-b border-border bg-[#161616]">
+      <header className="sticky top-0 z-40 w-full border-b border-border bg-[#14141f]/90 backdrop-blur-md">
         <div className="flex h-11 items-center justify-between gap-4 px-4 sm:px-6">
           {/* Brand */}
           <Link to="/dashboard" className="flex items-center gap-2 group shrink-0">
-            <span className="font-mono text-base font-bold text-primary select-none">
-              &lt;/&gt;
+            <span className="font-mono text-base font-bold text-primary select-none drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]">
+              ⚡
             </span>
-            <span className="hidden sm:block font-mono text-xs font-bold uppercase tracking-[0.2em] text-foreground">
-              Groundwork
+            <span className="hidden sm:block font-mono text-xs font-bold uppercase tracking-[0.25em] text-foreground group-hover:text-primary transition-colors">
+              RAW // SKILL
             </span>
           </Link>
 
@@ -75,21 +75,21 @@ export function AppShell({ children }: AppShellProps) {
               to="/incidents"
               className={`flex h-full items-center px-4 font-mono text-xs uppercase tracking-wider transition-colors border-b-2 ${
                 isIncidents
-                  ? "border-primary text-foreground"
+                  ? "border-primary text-primary font-bold drop-shadow-[0_0_8px_rgba(0,240,255,0.4)]"
                   : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
               }`}
             >
-              Debugging
+              Debugging Rotation
             </Link>
             <Link
               to="/design"
               className={`flex h-full items-center px-4 font-mono text-xs uppercase tracking-wider transition-colors border-b-2 ${
                 isDesign
-                  ? "border-primary text-foreground"
+                  ? "border-primary text-primary font-bold drop-shadow-[0_0_8px_rgba(0,240,255,0.4)]"
                   : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
               }`}
             >
-              Design Review
+              System Design
             </Link>
           </nav>
 
@@ -97,9 +97,9 @@ export function AppShell({ children }: AppShellProps) {
           <div className="flex items-center gap-3 shrink-0">
             {/* Streak */}
             {streak > 0 && (
-              <span className="hidden sm:flex items-center gap-1 font-mono text-xs text-muted-foreground">
-                <span className={streak >= 7 ? "animate-pulse" : ""}>🔥</span>
-                <span className="text-foreground font-semibold">{streak}</span>
+              <span className="hidden sm:flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 font-mono text-[11px] text-primary shadow-[0_0_10px_rgba(0,240,255,0.15)]">
+                <span className={streak >= 7 ? "animate-pulse" : ""}>⚡</span>
+                <span className="font-bold">{streak}d Streak</span>
               </span>
             )}
 

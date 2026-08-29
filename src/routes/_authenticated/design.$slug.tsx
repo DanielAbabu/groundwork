@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_authenticated/design/$slug")({
     if (!loaderData) {
       return { meta: [{ title: "Unavailable" }, { name: "robots", content: "noindex" }] };
     }
-    const title = `Design Review — ${loaderData.title}`;
+    const title = `Design Review — ${loaderData.title} — RawSkill`;
     return {
       meta: [
         { title },

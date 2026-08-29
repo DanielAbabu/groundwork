@@ -24,11 +24,11 @@ export const Route = createFileRoute("/_authenticated/incidents/$slug")({
     const scenario = loaderData?.scenario;
     if (!scenario)
       return {
-        meta: [{ title: "Unavailable — Groundwork" }, { name: "robots", content: "noindex" }],
+        meta: [{ title: "Unavailable — RawSkill" }, { name: "robots", content: "noindex" }],
       };
     return {
       meta: [
-        { title: `${scenario.title} — Groundwork` },
+        { title: `${scenario.title} — RawSkill` },
         { name: "description", content: scenario.symptom },
         { property: "og:title", content: scenario.title },
         { property: "og:description", content: scenario.symptom },

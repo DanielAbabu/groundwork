@@ -25,13 +25,13 @@ import {
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
-      { title: "Your profile — streaks, stats and nudges" },
+      { title: "Profile — RawSkill" },
       {
         name: "description",
         content:
-          "Track your Groundwork completion, average attempts to pass, daily consistency calendar, and nudge friends back on call.",
+          "Track your RawSkill completion, average attempts to pass, daily consistency calendar, and nudge friends back on call.",
       },
-      { property: "og:title", content: "Your profile — streaks, stats and nudges" },
+      { property: "og:title", content: "Profile — RawSkill" },
       {
         property: "og:description",
         content:

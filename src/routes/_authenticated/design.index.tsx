@@ -8,13 +8,13 @@ import { DifficultyPill } from "@/components/DifficultyPill";
 export const Route = createFileRoute("/_authenticated/design/")({
   head: () => ({
     meta: [
-      { title: "System Design Review Simulator — Groundwork" },
+      { title: "System Design Review Simulator — RawSkill" },
       {
         name: "description",
         content:
           "Walk a stakeholder review stage by stage: clarify the ask, size the system, sketch the components, defend one trade-off.",
       },
-      { property: "og:title", content: "System Design Review Simulator — Groundwork" },
+      { property: "og:title", content: "System Design Review Simulator — RawSkill" },
       {
         property: "og:description",
         content: "Clarify, size, sketch and defend — system design reviews with real grading.",

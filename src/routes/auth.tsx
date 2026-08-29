@@ -9,17 +9,17 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Groundwork" },
+      { title: "Sign in — RawSkill" },
       {
         name: "description",
         content:
-          "Sign in to Groundwork to get paged into broken codebases and track resolved challenges.",
+          "Sign in to RawSkill to get paged into broken codebases and track resolved challenges.",
       },
-      { property: "og:title", content: "Sign in — Groundwork" },
+      { property: "og:title", content: "Sign in — RawSkill" },
       {
         property: "og:description",
         content:
-          "Sign in to Groundwork to get paged into broken codebases and track resolved challenges.",
+          "Sign in to RawSkill to get paged into broken codebases and track resolved challenges.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -83,8 +83,13 @@ function AuthPage() {
   return (
     <main className="grid-noise flex min-h-screen items-center justify-center bg-background px-6">
       <div className="w-full max-w-sm rounded-lg border border-border bg-card p-7 shadow-2xl">
-        <Link to="/" className="font-mono text-xs uppercase tracking-[0.3em] text-primary">
-          groundwork
+        <Link to="/" className="flex items-center gap-2 group">
+          <span className="font-mono text-base font-bold text-primary select-none drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]">
+            ⚡
+          </span>
+          <span className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-foreground group-hover:text-primary transition-colors">
+            RAW // SKILL
+          </span>
         </Link>
         <h1 className="mt-4 text-xl font-semibold text-foreground">
           {mode === "signin" ? "Sign in to the rotation" : "Join the rotation"}

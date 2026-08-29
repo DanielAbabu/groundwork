@@ -6,9 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Groundwork — LeetCode/HackerRank Fusion Design System
- * Near-black surfaces · Blue interactive actions · Amber SEV badges · Teal submit
- * Electric-green = AC/pass · Red = WA/fail
+ * RawSkill — High-Density Engineering Platform Design System
+ * Deep Obsidian surfaces · Electric Cyan primary actions · Mint Emerald pass · Raw Crimson fail
  */
 
 @theme inline {
@@ -69,74 +68,73 @@
 :root {
   --radius: 0.375rem;
 
-  /* Surfaces */
-  --background: #0f0f0f;
-  --surface: #161616;
-  --surface-strong: #121212;
-  --card: #1c1c1c;
-  --card-foreground: #e8e8e8;
-  --popover: #1c1c1c;
-  --popover-foreground: #e8e8e8;
+  /* RawSkill Deep Obsidian Surfaces */
+  --background: #08080c;
+  --surface: #111118;
+  --surface-strong: #0c0c12;
+  --card: #14141f;
+  --card-foreground: #ececfa;
+  --popover: #14141f;
+  --popover-foreground: #ececfa;
 
-  /* Borders */
-  --border: #2a2a2a;
-  --input: #2a2a2a;
+  /* Borders & Inputs */
+  --border: #27273a;
+  --input: #27273a;
 
-  /* Text */
-  --foreground: #e8e8e8;
-  --muted: #1c1c1c;
-  --muted-foreground: #8a8a8a;
+  /* Typography */
+  --foreground: #ececfa;
+  --muted: #181824;
+  --muted-foreground: #8484a0;
 
-  /* Primary — LeetCode Blue for interactive elements */
-  --primary: #3b82f6;
-  --primary-foreground: #ffffff;
-  --ring: #3b82f6;
+  /* Primary — Electric Cyan Accent */
+  --primary: #00f0ff;
+  --primary-foreground: #08080c;
+  --ring: #00f0ff;
 
-  /* Secondary / Accent */
-  --secondary: #262626;
-  --secondary-foreground: #e8e8e8;
-  --accent: #262626;
-  --accent-foreground: #e8e8e8;
+  /* Secondary & Accents */
+  --secondary: #1e1e2d;
+  --secondary-foreground: #ececfa;
+  --accent: #1e1e2d;
+  --accent-foreground: #ececfa;
 
-  /* Destructive */
-  --destructive: #ef4444;
+  /* Destructive — Raw Crimson */
+  --destructive: #ff2e5b;
   --destructive-foreground: #ffffff;
 
-  /* Submit — HackerRank Teal for design-track submit CTA */
-  --submit: #00b8a3;
+  /* Submit Button CTA */
+  --submit: #00f0ff;
 
-  /* Verdicts */
-  --pass: #00c2a0;
-  --pass-foreground: #0f2e28;
-  --fail: #ef4444;
+  /* Verdicts & Performance */
+  --pass: #00e699;
+  --pass-foreground: #042417;
+  --fail: #ff2e5b;
   --fail-foreground: #ffffff;
 
-  /* Difficulty pills */
-  --easy: #00c2a0;
-  --medium: #f59e0b;
-  --hard: #ef4444;
+  /* Difficulty & Incident Severity */
+  --easy: #00e699;
+  --medium: #ffaa00;
+  --hard: #ff2e5b;
 
-  /* SEV severity — amber retained for incident context */
-  --sev1: #ef4444;
-  --sev2: #f59e0b;
-  --sev3: #3b82f6;
+  --sev1: #ff2e5b;
+  --sev2: #ffaa00;
+  --sev3: #00f0ff;
 
   /* Charts */
-  --chart-1: #3b82f6;
-  --chart-2: #00c2a0;
-  --chart-3: #ef4444;
-  --chart-4: #f59e0b;
+  --chart-1: #00f0ff;
+  --chart-2: #00e699;
+  --chart-3: #ff2e5b;
+  --chart-4: #ffaa00;
   --chart-5: #a855f7;
 
   /* Sidebar */
-  --sidebar: #141414;
-  --sidebar-foreground: #e0e0e0;
-  --sidebar-primary: #3b82f6;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #262626;
-  --sidebar-accent-foreground: #e8e8e8;
-  --sidebar-border: #2a2a2a;
-  --sidebar-ring: #3b82f6;
+  --sidebar: #0f0f17;
+  --sidebar-foreground: #dedeff;
+  --sidebar-primary: #00f0ff;
+  --sidebar-primary-foreground: #08080c;
+  --sidebar-accent: #1e1e2d;
+  --sidebar-accent-foreground: #ececfa;
+  --sidebar-border: #27273a;
+  --sidebar-ring: #00f0ff;
 }
 
 .dark {
@@ -160,85 +158,101 @@
   }
 
   ::selection {
-    background-color: rgb(59 130 246 / 25%);
+    background-color: rgb(0 240 255 / 25%);
+    color: #ffffff;
   }
 }
 
-/* ─── Difficulty pills ────────────────────────────────────────────── */
+/* ─── Glow Utility Classes ─────────────────────────────────────── */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.18);
+}
+.glow-emerald {
+  box-shadow: 0 0 20px rgba(0, 230, 153, 0.18);
+}
+.glow-crimson {
+  box-shadow: 0 0 20px rgba(255, 46, 91, 0.18);
+}
+
+/* ─── Difficulty & Severity Badges ────────────────────────────── */
 .difficulty-easy {
   color: var(--easy);
-  background: rgb(0 194 160 / 10%);
-  border: 1px solid rgb(0 194 160 / 30%);
+  background: rgba(0, 230, 153, 0.1);
+  border: 1px solid rgba(0, 230, 153, 0.3);
 }
 .difficulty-medium {
   color: var(--medium);
-  background: rgb(245 158 11 / 10%);
-  border: 1px solid rgb(245 158 11 / 30%);
+  background: rgba(255, 170, 0, 0.1);
+  border: 1px solid rgba(255, 170, 0, 0.3);
 }
 .difficulty-hard {
   color: var(--hard);
-  background: rgb(239 68 68 / 10%);
-  border: 1px solid rgb(239 68 68 / 30%);
+  background: rgba(255, 46, 91, 0.1);
+  border: 1px solid rgba(255, 46, 91, 0.3);
 }
 
 /* ─── CTA Buttons ────────────────────────────────────────────────── */
 .run-btn {
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-foreground);
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 0.375rem 0.875rem;
   border-radius: var(--radius);
-  transition: background 150ms;
+  transition: all 150ms ease-in-out;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
 }
 .run-btn:hover {
-  background: #2563eb;
+  background: #33f3ff;
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.35);
 }
 .run-btn:active {
-  background: #1d4ed8;
+  transform: scale(0.98);
 }
 
 .submit-btn {
-  background: var(--submit);
-  color: #fff;
+  background: var(--pass);
+  color: var(--pass-foreground);
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 0.375rem 0.875rem;
   border-radius: var(--radius);
-  transition: background 150ms;
+  transition: all 150ms ease-in-out;
+  box-shadow: 0 0 12px rgba(0, 230, 153, 0.2);
 }
 .submit-btn:hover {
-  background: #00a090;
+  background: #24f0a9;
+  box-shadow: 0 0 18px rgba(0, 230, 153, 0.35);
 }
 .submit-btn:active {
-  background: #008f80;
+  transform: scale(0.98);
 }
 
-/* ─── Panel surface ─────────────────────────────────────────────── */
+/* ─── Panel Surface ─────────────────────────────────────────────── */
 .panel-surface {
   background: var(--card);
   border: 1px solid var(--border);
 }
 
-/* ─── Accepted flash animation ─────────────────────────────────── */
+/* ─── Accepted Flash Animation ─────────────────────────────────── */
 @keyframes accepted-flash {
   0% {
-    background-color: rgb(0 194 160 / 0%);
+    background-color: rgba(0, 230, 153, 0);
   }
   30% {
-    background-color: rgb(0 194 160 / 12%);
+    background-color: rgba(0, 230, 153, 0.15);
   }
   100% {
-    background-color: rgb(0 194 160 / 0%);
+    background-color: rgba(0, 230, 153, 0);
   }
 }
 .accepted-flash {
   animation: accepted-flash 1s ease-out forwards;
 }
 
-/* ─── Console drawer slide in ───────────────────────────────────── */
+/* ─── Console Drawer Slide Up ───────────────────────────────────── */
 @keyframes slide-up {
   from {
     transform: translateY(8px);
@@ -253,7 +267,7 @@
   animation: slide-up 180ms ease-out forwards;
 }
 
-/* ─── Pager pulse (kept for SEV badge) ─────────────────────────── */
+/* ─── Pager Pulse ────────────────────────────────────────────────── */
 @utility pager-pulse {
   animation: pager-pulse 1.8s ease-in-out infinite;
 }
@@ -267,15 +281,15 @@
   }
 }
 
-/* ─── Grid noise utility ────────────────────────────────────────── */
+/* ─── Grid Noise Utility ────────────────────────────────────────── */
 @utility grid-noise {
   background-image:
-    linear-gradient(to right, rgb(255 255 255 / 2%) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 2%) 1px, transparent 1px);
+    linear-gradient(to right, rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 
-/* ─── File tab active underline ─────────────────────────────────── */
+/* ─── File Tab Active Underline ─────────────────────────────────── */
 .file-tab-active {
   border-bottom: 2px solid var(--primary);
   background: var(--card);
@@ -288,7 +302,7 @@
   font-size: 0.6rem;
 }
 
-/* ─── React Flow chrome ──────────────────────────────────────────── */
+/* ─── React Flow Chrome ──────────────────────────────────────────── */
 .react-flow__controls {
   border: 1px solid var(--border);
   border-radius: var(--radius);

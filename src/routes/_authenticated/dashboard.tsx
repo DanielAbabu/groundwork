@@ -10,12 +10,12 @@ import { StreakBadge } from "@/components/StreakBadge";
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Engineer Command Center — Groundwork" },
+      { title: "Engineer Command Center — RawSkill" },
       {
         name: "description",
         content: "Track your progress in the debugging rotation and system design reviews.",
       },
-      { property: "og:title", content: "Engineer Command Center — Groundwork" },
+      { property: "og:title", content: "Engineer Command Center — RawSkill" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -95,9 +95,16 @@ function Dashboard() {
     <div className="mx-auto max-w-6xl px-6 py-10 space-y-8 min-h-[calc(100vh-44px)] bg-background">
       {/* ── Welcome Header ── */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Engineer Command Center</h1>
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+            ⚡ RAW // SKILL
+          </span>
+          <span className="text-border">/</span>
+          <span className="font-mono text-xs text-muted-foreground">ENGINEER COMMAND CENTER</span>
+        </div>
+        <h1 className="mt-2 text-2xl font-extrabold text-foreground">Engineer Command Center</h1>
         <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
-          Practice debugging realistic production codebases and presenting system design reviews.
+          Track your progress in the debugging rotation and system design reviews under real-world pressure.
         </p>
       </div>
 
@@ -111,11 +118,11 @@ function Dashboard() {
       {/* ── Track Cards ── */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Debugging Track */}
-        <div className="group rounded-xl border border-border bg-card p-6 flex flex-col justify-between space-y-4 hover:border-primary/50 transition-all">
+        <div className="group rounded-xl border border-border bg-card p-6 flex flex-col justify-between space-y-4 hover:border-primary/50 hover:shadow-[0_0_20px_rgba(0,240,255,0.08)] transition-all">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-0.5 rounded border border-primary/20">
-                Debugging Track
+              <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-0.5 rounded border border-primary/30">
+                Debugging Rotation
               </span>
               <span className="font-mono text-xs text-muted-foreground">
                 {resolvedCount}/{scenarios.length} solved
@@ -124,7 +131,7 @@ function Dashboard() {
             <h2 className="text-xl font-bold text-foreground">Debugging Rotation</h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Get paged into broken codebases, read signals, fix root causes in Monaco, and verify
-              with hidden test harnesses.
+              with hidden Pyodide test harnesses.
             </p>
           </div>
 
@@ -146,11 +153,11 @@ function Dashboard() {
         </div>
 
         {/* System Design Track */}
-        <div className="group rounded-xl border border-border bg-card p-6 flex flex-col justify-between space-y-4 hover:border-primary/50 transition-all">
+        <div className="group rounded-xl border border-border bg-card p-6 flex flex-col justify-between space-y-4 hover:border-pass/50 hover:shadow-[0_0_20px_rgba(0,230,153,0.08)] transition-all">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-xs font-bold uppercase tracking-widest text-submit bg-submit/10 px-2.5 py-0.5 rounded border border-submit/20">
-                System Design Track
+              <span className="font-mono text-xs font-bold uppercase tracking-widest text-pass bg-pass/10 px-2.5 py-0.5 rounded border border-pass/30">
+                System Design Simulator
               </span>
               <span className="font-mono text-xs text-muted-foreground">
                 {designDoneCount}/{designScenarios.length} cleared

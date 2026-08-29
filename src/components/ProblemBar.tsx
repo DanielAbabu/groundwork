@@ -35,7 +35,7 @@ export function ProblemBar({
   rightSlot,
 }: ProblemBarProps) {
   return (
-    <div className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-border bg-[#161616] px-4">
+    <div className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-border bg-[#14141f] px-4">
       {/* Left: breadcrumb + badges + title */}
       <div className="flex min-w-0 items-center gap-2">
         <Link

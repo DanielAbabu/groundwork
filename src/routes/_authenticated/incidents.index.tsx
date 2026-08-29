@@ -15,13 +15,13 @@ import { DifficultyPill } from "@/components/DifficultyPill";
 export const Route = createFileRoute("/_authenticated/incidents/")({
   head: () => ({
     meta: [
-      { title: "Debugging Rotation — Groundwork" },
+      { title: "Debugging Rotation — RawSkill" },
       {
         name: "description",
         content:
           "Every scenario in the rotation with difficulty, type, your attempts, and whether you resolved it.",
       },
-      { property: "og:title", content: "Debugging Rotation — Groundwork" },
+      { property: "og:title", content: "Debugging Rotation — RawSkill" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
