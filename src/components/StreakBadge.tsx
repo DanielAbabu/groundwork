@@ -7,67 +7,80 @@ interface StreakBadgeProps {
 export function StreakBadge({ streakDays, resolvedCount, totalScenarios }: StreakBadgeProps) {
   const pct = Math.round((resolvedCount / totalScenarios) * 100);
 
+  // Generate 7 logbook punch-card squares representing active streak
+  const days = Array.from({ length: 7 }, (_, i) => i < Math.min(streakDays, 7));
+
   return (
     <div className="grid gap-4 sm:grid-cols-3">
-      {/* Streak Hero Card */}
-      <div className="flex items-center gap-4 rounded-xl border border-primary/30 bg-card p-5 relative overflow-hidden shadow-[0_0_15px_rgba(0,240,255,0.08)]">
-        <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10 border border-primary/30 text-2xl font-mono text-primary shadow-[0_0_10px_rgba(0,240,255,0.2)]">
-          <span className={streakDays >= 7 ? "animate-pulse" : ""}>⚡</span>
-        </div>
-        <div>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-primary">
-            On-Call Streak
+      {/* Logbook Strip / Punch-Card Hero Card */}
+      <div className="rounded border border-[#4E4638] bg-[#1D1A17] p-5 brass-emboss">
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B]">
+            LOGBOOK STREAK STRIP
           </span>
-          <div className="flex items-baseline gap-1.5 mt-0.5">
-            <span className="font-mono text-2xl font-extrabold text-foreground">{streakDays}</span>
-            <span className="font-mono text-xs text-muted-foreground">days active</span>
-          </div>
-          <p className="font-mono text-[10px] text-muted-foreground/80 mt-0.5">
-            {streakDays >= 7 ? "⚡ Outstanding momentum!" : "Complete 1 scenario daily"}
-          </p>
+          <span className="font-mono text-[10px] text-[#7C7364]">{streakDays} DAYS ACTIVE</span>
+        </div>
+
+        {/* Stamped Squares */}
+        <div className="mt-3 flex items-center justify-between gap-1.5 pt-2 border-t border-[#3A342C]">
+          {days.map((active, idx) => (
+            <div
+              key={idx}
+              className={`flex size-7 items-center justify-center rounded-[2px] font-mono text-[10px] font-bold transition-all ${
+                active
+                  ? "bg-[#C8912B] text-[#161412] brass-emboss"
+                  : "border border-[#3A342C] bg-[#161412] text-[#7C7364]"
+              }`}
+              title={`Day ${idx + 1}: ${active ? "Logged" : "Missed"}`}
+            >
+              {active ? "✓" : idx + 1}
+            </div>
+          ))}
+        </div>
+        <p className="font-sans text-[11px] text-[#B8AE9C] mt-2.5">
+          {streakDays >= 7
+            ? "Hard-won reps logbook active."
+            : "Complete 1 scenario daily to log your rep."}
+        </p>
+      </div>
+
+      {/* Debugging Solved (Sage Accent) */}
+      <div className="rounded border border-[#3A342C] bg-[#1D1A17] p-5">
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#7C7364]">
+            DEBUGGING DOCKET
+          </span>
+          <span className="font-mono text-[10px] text-[#7FB88A] font-semibold">
+            {resolvedCount}/{totalScenarios} CLEARED
+          </span>
+        </div>
+        <div className="flex items-baseline gap-2 mt-2">
+          <span className="font-mono text-2xl font-bold text-[#F2ECE1]">{pct}%</span>
+          <span className="font-sans text-xs text-[#B8AE9C]">completion score</span>
+        </div>
+        <div className="mt-2.5 h-1.5 w-full rounded-[1px] bg-[#26221D] overflow-hidden">
+          <div
+            className="h-full bg-[#7FB88A] transition-all duration-500"
+            style={{ width: `${pct}%` }}
+          />
         </div>
       </div>
 
-      {/* Debugging Solved */}
-      <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-5">
-        <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-pass/10 border border-pass/30 text-xl font-mono text-pass font-bold shadow-[0_0_10px_rgba(0,230,153,0.15)]">
-          ✓
-        </div>
-        <div>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
-            Debugging Rotation
+      {/* Design Simulator (Slate Accent) */}
+      <div className="rounded border border-[#3A342C] bg-[#1D1A17] p-5">
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#7C7364]">
+            DESIGN SIMULATOR
           </span>
-          <div className="flex items-baseline gap-1.5 mt-0.5">
-            <span className="font-mono text-2xl font-extrabold text-foreground">
-              {resolvedCount}
-            </span>
-            <span className="font-mono text-xs text-muted-foreground">
-              / {totalScenarios} cleared ({pct}%)
-            </span>
-          </div>
-          <div className="mt-1.5 h-1.5 w-32 rounded-full bg-border overflow-hidden">
-            <div className="h-full bg-pass rounded-full transition-all duration-300" style={{ width: `${pct}%` }} />
-          </div>
+          <span className="font-mono text-[10px] text-[#7A93A6] font-semibold">ACTIVE ROOMS</span>
         </div>
-      </div>
-
-      {/* Target Signal */}
-      <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-5">
-        <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10 border border-primary/30 text-xl font-mono text-primary font-bold shadow-[0_0_10px_rgba(0,240,255,0.15)]">
-          🎯
+        <div className="flex items-baseline gap-2 mt-2">
+          <span className="font-mono text-2xl font-bold text-[#F2ECE1]">3</span>
+          <span className="font-sans text-xs text-[#B8AE9C]">architectural scenarios</span>
         </div>
-        <div>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
-            System Design Reviews
-          </span>
-          <div className="flex items-baseline gap-1.5 mt-0.5">
-            <span className="font-mono text-2xl font-extrabold text-foreground">3</span>
-            <span className="font-mono text-xs text-muted-foreground">Tier tracks active</span>
-          </div>
-          <p className="font-mono text-[10px] text-muted-foreground/80 mt-0.5">
-            Staff review interview simulator
-          </p>
-        </div>
+        <p className="font-sans text-[11px] text-[#7C7364] mt-2.5">
+          Clarify → Capacity → Components → Trade-offs
+        </p>
       </div>
     </div>
   );

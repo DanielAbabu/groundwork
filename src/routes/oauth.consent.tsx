@@ -2,8 +2,18 @@ import { useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ShieldCheck, AlertTriangle, ExternalLink, UserCheck, Lock, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import {
+  ShieldCheck,
+  AlertTriangle,
+  ExternalLink,
+  UserCheck,
+  Lock,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/BrandLogo";
 import type { OAuthAuthorizationDetails, OAuthRedirect } from "@supabase/auth-js";
 
 type ConsentSearch = {
@@ -58,11 +68,14 @@ function OAuthConsentPage() {
         // 1. Verify user session
         const { data: userData, error: userError } = await supabase.auth.getUser();
         if (userError || !userData.user) {
-          console.warn("[OAuth Consent Notice] Unauthenticated access attempt to consent screen. Redirecting to sign in.", {
-            authorizationId,
-            userError,
-            timestamp: new Date().toISOString(),
-          });
+          console.warn(
+            "[OAuth Consent Notice] Unauthenticated access attempt to consent screen. Redirecting to sign in.",
+            {
+              authorizationId,
+              userError,
+              timestamp: new Date().toISOString(),
+            },
+          );
           toast.error("Please sign in to process the authorization request.");
           // Redirect to sign in, preserving search params
           navigate({
@@ -80,20 +93,26 @@ function OAuthConsentPage() {
           await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
 
         if (detailsError) {
-          console.error("[OAuth Consent Error] Supabase returned error fetching authorization details:", {
-            authorizationId,
-            error: detailsError,
-            errorMessage: detailsError.message,
-            timestamp: new Date().toISOString(),
-          });
+          console.error(
+            "[OAuth Consent Error] Supabase returned error fetching authorization details:",
+            {
+              authorizationId,
+              error: detailsError,
+              errorMessage: detailsError.message,
+              timestamp: new Date().toISOString(),
+            },
+          );
           throw detailsError;
         }
 
         if (!data) {
-          console.error("[OAuth Consent Error] Received null response when fetching authorization details:", {
-            authorizationId,
-            timestamp: new Date().toISOString(),
-          });
+          console.error(
+            "[OAuth Consent Error] Received null response when fetching authorization details:",
+            {
+              authorizationId,
+              timestamp: new Date().toISOString(),
+            },
+          );
           throw new Error("No authorization details returned.");
         }
 
@@ -163,8 +182,7 @@ function OAuthConsentPage() {
     if (!authorizationId) return;
     setActionBusy("deny");
     try {
-      const { data, error: denyErr } =
-        await supabase.auth.oauth.denyAuthorization(authorizationId);
+      const { data, error: denyErr } = await supabase.auth.oauth.denyAuthorization(authorizationId);
 
       if (denyErr) throw denyErr;
 
@@ -205,16 +223,9 @@ function OAuthConsentPage() {
     <main className="grid-noise flex min-h-screen items-center justify-center bg-background px-4 py-12">
       <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 sm:p-8 shadow-2xl space-y-6">
         {/* Brand Header */}
-        <div className="flex items-center justify-between border-b border-border/60 pb-4">
-          <Link to="/" className="flex items-center gap-2 group">
-            <span className="font-mono text-base font-bold text-primary select-none drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]">
-              ⚡
-            </span>
-            <span className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-foreground group-hover:text-primary transition-colors">
-              RAW // SKILL
-            </span>
-          </Link>
-          <div className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[10px] font-mono text-primary">
+        <div className="flex items-center justify-between border-b border-[#3A342C] pb-4">
+          <BrandLogo href="/" />
+          <div className="flex items-center gap-1.5 rounded border border-[#C8912B]/30 bg-[#C8912B]/10 px-2.5 py-0.5 text-[10px] font-mono text-[#C8912B]">
             <Lock className="h-3 w-3" />
             <span>OAuth 2.1</span>
           </div>
@@ -324,7 +335,9 @@ function OAuthConsentPage() {
 
             {/* Security Notice */}
             <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
-              By authorizing, you allow <span className="text-foreground font-semibold">{details.client.name}</span> to access your identity details according to their terms. You can revoke access at any time.
+              By authorizing, you allow{" "}
+              <span className="text-foreground font-semibold">{details.client.name}</span> to access
+              your identity details according to their terms. You can revoke access at any time.
             </p>
 
             {/* Actions */}

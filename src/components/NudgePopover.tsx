@@ -49,7 +49,7 @@ export function NudgePopover() {
   const nudgeMutation = useMutation({
     mutationFn: (toUserId: string) => triggerNudge({ data: { toUserId } }),
     onSuccess: () => {
-      toast.success("Nudge sent! ⚡");
+      toast.success("Nudge sent");
       queryClient.invalidateQueries({ queryKey: ["nudges"] });
     },
     onError: (err) => toast.error(err instanceof Error ? err.message : "Could not send nudge"),
@@ -82,7 +82,7 @@ export function NudgePopover() {
       {/* Bell / Nudge Icon Button */}
       <button
         onClick={() => setOpen(!open)}
-        className="relative flex items-center justify-center rounded-lg border border-border bg-card p-2 text-muted-foreground transition-all hover:border-amber-500/50 hover:text-foreground"
+        className="relative flex items-center justify-center rounded border border-[#3A342C] bg-[#1D1A17] p-2 text-[#B8AE9C] transition-all hover:border-[#C8912B] hover:text-[#F2ECE1]"
         title="On-Call Nudges"
         aria-label="Nudges"
       >
@@ -96,7 +96,7 @@ export function NudgePopover() {
         </svg>
 
         {unreadCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-amber-500 font-mono text-[9px] font-bold text-slate-950 shadow-[0_0_8px_rgba(245,158,11,0.8)]">
+          <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-[#C8912B] font-mono text-[9px] font-bold text-[#161412] brass-emboss">
             {unreadCount}
           </span>
         )}
@@ -104,43 +104,43 @@ export function NudgePopover() {
 
       {/* Nudge Dropdown Popup */}
       {open && (
-        <div className="absolute right-0 top-full mt-2.5 w-80 sm:w-96 rounded-xl border border-border bg-card p-4 shadow-2xl z-50 font-mono">
-          <div className="flex items-center justify-between border-b border-border pb-3">
+        <div className="absolute right-0 top-full mt-2.5 w-80 sm:w-96 rounded border border-[#3A342C] bg-[#1D1A17] p-4 shadow-xl z-50 font-mono">
+          <div className="flex items-center justify-between border-b border-[#3A342C] pb-3">
             <div className="flex items-center gap-2">
-              <span className="pager-pulse inline-block size-2 rounded-full bg-amber-500" />
-              <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
+              <span className="inline-block size-2 rounded-full bg-[#C8912B]" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#F2ECE1]">
                 On-Call Nudges
               </h3>
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="text-xs text-muted-foreground hover:text-foreground"
+              className="text-xs text-[#7C7364] hover:text-[#F2ECE1]"
             >
               ✕
             </button>
           </div>
 
           {/* Sub Tabs */}
-          <div className="mt-3 flex rounded-lg bg-background p-0.5 border border-border text-xs">
+          <div className="mt-3 flex rounded bg-[#161412] p-0.5 border border-[#3A342C] text-xs">
             <button
               onClick={() => setActiveTab("received")}
-              className={`flex-1 rounded-md py-1.5 text-center font-medium transition-all ${
+              className={`flex-1 rounded py-1.5 text-center font-medium transition-all ${
                 activeTab === "received"
-                  ? "bg-amber-500 text-slate-950 font-bold shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-[#C8912B] text-[#161412] font-bold brass-emboss"
+                  : "text-[#7C7364] hover:text-[#F2ECE1]"
               }`}
             >
               Received ({unreadCount})
             </button>
             <button
               onClick={() => setActiveTab("send")}
-              className={`flex-1 rounded-md py-1.5 text-center font-medium transition-all ${
+              className={`flex-1 rounded py-1.5 text-center font-medium transition-all ${
                 activeTab === "send"
-                  ? "bg-amber-500 text-slate-950 font-bold shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-[#C8912B] text-[#161412] font-bold brass-emboss"
+                  : "text-[#7C7364] hover:text-[#F2ECE1]"
               }`}
             >
-              Send Nudge ⚡
+              Send Nudge
             </button>
           </div>
 
@@ -148,7 +148,7 @@ export function NudgePopover() {
           <div className="mt-3 max-h-80 overflow-y-auto pr-1">
             {activeTab === "received" ? (
               received.length === 0 ? (
-                <div className="py-8 text-center text-xs text-muted-foreground">
+                <div className="py-8 text-center text-xs text-[#7C7364]">
                   <p>No incoming nudges right now.</p>
                   <p className="mt-1 text-[10px]">Your on-call rotation is quiet! ☕</p>
                 </div>
@@ -157,20 +157,20 @@ export function NudgePopover() {
                   {received.map((nudge) => (
                     <li
                       key={nudge.id}
-                      className="rounded-lg border border-border bg-background p-3 transition-colors hover:border-border/80"
+                      className="rounded border border-[#3A342C] bg-[#161412] p-3 transition-colors hover:border-[#4E4638]"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className="text-xs font-bold text-amber-500">
+                          <p className="text-xs font-bold text-[#C8912B]">
                             @{nudge.counterpart?.username ?? "engineer"}
                           </p>
-                          <p className="mt-1 text-xs leading-relaxed text-foreground">
+                          <p className="mt-1 font-sans text-xs leading-relaxed text-[#F2ECE1]">
                             {nudge.message}
                           </p>
                         </div>
                         <button
                           onClick={() => dismissMutation.mutate(nudge.id)}
-                          className="text-[10px] text-muted-foreground hover:text-fail"
+                          className="text-[10px] text-[#7C7364] hover:text-[#C4593F]"
                           title="Dismiss"
                         >
                           Clear
@@ -179,9 +179,9 @@ export function NudgePopover() {
                       {nudge.counterpart?.id && (
                         <button
                           onClick={() => nudgeMutation.mutate(nudge.counterpart!.id)}
-                          className="mt-2 text-[10px] font-bold text-amber-500 hover:underline"
+                          className="mt-2 text-[10px] font-bold text-[#C8912B] hover:underline"
                         >
-                          ⚡ Nudge back
+                          Nudge back
                         </button>
                       )}
                     </li>
@@ -195,37 +195,35 @@ export function NudgePopover() {
                   placeholder="Search engineer by username…"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-amber-500 focus:outline-none"
+                  className="w-full rounded border border-[#3A342C] bg-[#161412] px-3 py-1.5 text-xs text-[#F2ECE1] placeholder:text-[#7C7364] focus:border-[#C8912B] focus:outline-none"
                 />
 
                 {debouncedTerm.trim().length >= 2 &&
                   !isFetching &&
                   (searchResults?.length ?? 0) === 0 && (
-                    <p className="py-2 text-center text-xs text-muted-foreground">
-                      No matching users.
-                    </p>
+                    <p className="py-2 text-center text-xs text-[#7C7364]">No matching users.</p>
                   )}
 
                 {/* Search Results */}
                 {debouncedTerm.trim().length >= 2 && (searchResults?.length ?? 0) > 0 && (
-                  <ul className="space-y-2 border-b border-border/60 pb-3">
+                  <ul className="space-y-2 border-b border-[#3A342C] pb-3">
                     {(searchResults ?? []).map((user) => (
                       <li
                         key={user.id}
-                        className="flex items-center justify-between rounded-lg border border-border bg-background p-2.5"
+                        className="flex items-center justify-between rounded border border-[#3A342C] bg-[#161412] p-2.5"
                       >
                         <div>
-                          <p className="text-xs font-bold text-foreground">@{user.username}</p>
+                          <p className="text-xs font-bold text-[#F2ECE1]">@{user.username}</p>
                           {user.display_name && (
-                            <p className="text-[10px] text-muted-foreground">{user.display_name}</p>
+                            <p className="text-[10px] text-[#7C7364]">{user.display_name}</p>
                           )}
                         </div>
                         <button
                           onClick={() => nudgeMutation.mutate(user.id)}
                           disabled={nudgeMutation.isPending}
-                          className="rounded bg-amber-500 px-2.5 py-1 text-[10px] font-bold text-slate-950 hover:bg-amber-400"
+                          className="rounded bg-[#C8912B] px-2.5 py-1 text-[10px] font-bold text-[#161412] hover:bg-[#E8B04A] brass-emboss"
                         >
-                          Nudge ⚡
+                          Nudge
                         </button>
                       </li>
                     ))}
@@ -235,29 +233,27 @@ export function NudgePopover() {
                 {/* People You Nudged Before Section */}
                 {previouslyNudged.length > 0 && (
                   <div className="pt-1">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#7C7364] mb-2">
                       People You Nudged Before
                     </p>
                     <ul className="space-y-2">
                       {previouslyNudged.map((user) => (
                         <li
                           key={user.id}
-                          className="flex items-center justify-between rounded-lg border border-border/80 bg-background/60 p-2.5"
+                          className="flex items-center justify-between rounded border border-[#3A342C] bg-[#161412] p-2.5"
                         >
                           <div>
-                            <p className="text-xs font-bold text-foreground">@{user.username}</p>
+                            <p className="text-xs font-bold text-[#F2ECE1]">@{user.username}</p>
                             {user.display_name && (
-                              <p className="text-[10px] text-muted-foreground">
-                                {user.display_name}
-                              </p>
+                              <p className="text-[10px] text-[#7C7364]">{user.display_name}</p>
                             )}
                           </div>
                           <button
                             onClick={() => nudgeMutation.mutate(user.id)}
                             disabled={nudgeMutation.isPending}
-                            className="rounded border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold text-amber-500 hover:bg-amber-500 hover:text-slate-950 transition-all"
+                            className="rounded border border-[#C8912B]/40 bg-[#C8912B]/10 px-2.5 py-1 text-[10px] font-bold text-[#C8912B] hover:bg-[#C8912B] hover:text-[#161412] transition-all"
                           >
-                            ⚡ Nudge again
+                            Nudge again
                           </button>
                         </li>
                       ))}

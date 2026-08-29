@@ -46,36 +46,38 @@ function DesignBoard() {
       id: "tier-1",
       title: "Tier 1 — Core Web Architecture",
       subtitle: "Fundamental stateless scaling, caching, and database read/write separation.",
-      borderAccent: "border-l-primary",
+      borderAccent: "border-l-[#C8912B]",
     },
     {
       id: "tier-2",
       title: "Tier 2 — High-Scale & Async Pipelines",
       subtitle: "Fan-out push queues, high-throughput workers, and timeline Redis caching.",
-      borderAccent: "border-l-medium",
+      borderAccent: "border-l-[#D99B26]",
     },
     {
       id: "tier-3",
       title: "Tier 3 — Advanced Distributed Infrastructure",
       subtitle: "Sub-millisecond rate limiters, presigned S3 chunked uploads, and deduplication.",
-      borderAccent: "border-l-hard",
+      borderAccent: "border-l-[#C4593F]",
     },
   ];
 
   return (
-    <div className="min-h-[calc(100vh-44px)] bg-background pb-16">
+    <div className="min-h-[calc(100vh-44px)] bg-[#161412] text-[#F2ECE1] pb-16">
       {/* Header */}
-      <div className="border-b border-border bg-[#161616] px-6 py-6">
+      <div className="border-b border-[#3A342C] bg-[#1D1A17] px-6 py-6">
         <div className="mx-auto max-w-6xl">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-0.5 rounded border border-primary/20">
-              Interactive Design Room
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B]">
+              FILE // SYSTEM-DESIGN-TRACK
             </span>
+            <span className="text-[#3A342C]">/</span>
+            <span className="font-mono text-xs text-[#7C7364]">DESIGN REVIEW SIMULATOR</span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground mt-2">
+          <h1 className="font-serif text-3xl font-semibold text-[#F2ECE1]">
             System Design Interview Simulator
           </h1>
-          <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-1 max-w-3xl font-sans text-sm leading-relaxed text-[#B8AE9C]">
             Step into staff-level design reviews: clarify requirements with interactive
             stakeholders, calculate capacity, sketch canvas resiliency, and defend architectural
             trade-offs.
@@ -93,10 +95,10 @@ function DesignBoard() {
           return (
             <div key={tierGroup.id} className="space-y-4">
               <div>
-                <h2 className="text-base font-bold text-foreground">{tierGroup.title}</h2>
-                <p className="font-mono text-xs text-muted-foreground mt-0.5">
-                  {tierGroup.subtitle}
-                </p>
+                <h2 className="font-serif text-lg font-semibold text-[#F2ECE1]">
+                  {tierGroup.title}
+                </h2>
+                <p className="font-mono text-xs text-[#7C7364] mt-0.5">{tierGroup.subtitle}</p>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -110,7 +112,7 @@ function DesignBoard() {
                       key={scenario.id}
                       to="/design/$slug"
                       params={{ slug: scenario.id }}
-                      className={`group flex flex-col justify-between rounded-lg border border-border border-l-4 ${tierGroup.borderAccent} bg-card p-5 transition-all hover:border-primary/50 hover:bg-[#1c1c1c] shadow-sm`}
+                      className={`group flex flex-col justify-between rounded border border-[#3A342C] border-l-4 ${tierGroup.borderAccent} bg-[#1D1A17] p-5 transition-all hover:border-[#C8912B] hover:bg-[#26221D]/60`}
                     >
                       <div className="space-y-3">
                         <div className="flex items-center justify-between gap-2">
@@ -118,28 +120,28 @@ function DesignBoard() {
                           <span
                             className={`font-mono text-xs font-semibold uppercase tracking-wider ${
                               isComplete
-                                ? "text-pass"
+                                ? "text-[#7FB88A]"
                                 : done > 0
-                                  ? "text-primary"
-                                  : "text-muted-foreground"
+                                  ? "text-[#C8912B]"
+                                  : "text-[#7C7364]"
                             }`}
                           >
-                            {isComplete ? "Cleared ✓" : `${done}/${scenario.stages.length} stages`}
+                            {isComplete ? "CLEARED ✓" : `${done}/${scenario.stages.length} STAGES`}
                           </span>
                         </div>
 
                         <div>
-                          <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                          <h3 className="font-serif text-lg font-semibold text-[#F2ECE1] group-hover:text-[#C8912B] transition-colors">
                             {scenario.title}
                           </h3>
-                          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-2">
+                          <p className="mt-1.5 font-sans text-xs leading-relaxed text-[#B8AE9C] line-clamp-2">
                             {scenario.summary}
                           </p>
                         </div>
                       </div>
 
-                      <div className="mt-5 pt-3 border-t border-border/60 flex items-center justify-between">
-                        <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground bg-secondary px-2 py-0.5 rounded">
+                      <div className="mt-5 pt-3 border-t border-[#3A342C] flex items-center justify-between">
+                        <span className="font-mono text-[10px] uppercase tracking-wider text-[#7C7364] bg-[#161412] px-2 py-0.5 rounded border border-[#3A342C]">
                           {scenario.system}
                         </span>
 
@@ -151,10 +153,10 @@ function DesignBoard() {
                               title={stage.title}
                               className={`size-2 rounded-full ${
                                 passed.has(stage.id)
-                                  ? "bg-pass"
+                                  ? "bg-[#7FB88A]"
                                   : idx === done
-                                    ? "bg-primary animate-pulse"
-                                    : "bg-border"
+                                    ? "bg-[#C8912B]"
+                                    : "bg-[#26221D] border border-[#4E4638]"
                               }`}
                             />
                           ))}

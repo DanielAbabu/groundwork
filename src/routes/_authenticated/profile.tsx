@@ -122,27 +122,44 @@ function ProfilePage() {
   const sent = (nudges ?? []).filter((row) => row.direction === "sent");
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-8">
-      <div className="border-b border-border pb-6 mb-8">
-        <h1 className="text-2xl font-bold text-foreground">
-          {profile?.display_name || profile?.username || "Your Profile"}
-        </h1>
-        <p className="font-mono text-xs text-amber-500 mt-1">@{profile?.username ?? "engineer"}</p>
+    <div className="min-h-[calc(100vh-44px)] bg-[#161412] text-[#F2ECE1] pb-16">
+      {/* Header */}
+      <div className="border-b border-[#3A342C] bg-[#1D1A17] px-6 py-6">
+        <div className="mx-auto max-w-5xl">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B]">
+              DOSSIER // ENGINEER CREDENTIAL
+            </span>
+            <span className="text-[#3A342C]">/</span>
+            <span className="font-mono text-xs text-[#7C7364]">WORKSHOP PROFILE</span>
+          </div>
+          <h1 className="font-serif text-3xl font-semibold text-[#F2ECE1]">
+            {profile?.display_name || profile?.username || "Your Profile"}
+          </h1>
+          <p className="font-mono text-xs text-[#C8912B] mt-1">
+            @{profile?.username ?? "engineer"}
+          </p>
+        </div>
       </div>
 
-      <div className="mx-auto grid max-w-5xl gap-6 px-6 py-10">
+      <div className="mx-auto grid max-w-5xl gap-8 px-6 py-8">
         <ProgressSummary progress={progress ?? []} />
-        <div className="overflow-x-auto rounded-lg border border-border bg-card p-5">
-          <h2 className="mb-4 font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            Activity History
+
+        <div className="overflow-x-auto rounded border border-[#3A342C] bg-[#1D1A17] p-5">
+          <h2 className="mb-4 font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#7C7364]">
+            LOGBOOK // ACTIVITY HISTORY
           </h2>
           <ActivityCalendar days={activity ?? []} />
         </div>
 
-        <section className="rounded-lg border border-border bg-card p-5">
-          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            identity
-          </h2>
+        {/* Identity Credentials */}
+        <section className="rounded border border-[#3A342C] bg-[#1D1A17] p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-[#3A342C] pb-3">
+            <h2 className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#C8912B]">
+              FILE // IDENTITY CREDENTIALS
+            </h2>
+            <span className="font-mono text-[10px] text-[#7C7364]">STAMPED RECORD</span>
+          </div>
           <form
             className="mt-4 grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
             onSubmit={(event) => {
@@ -151,123 +168,135 @@ function ProfilePage() {
             }}
           >
             <div className="space-y-2">
-              <Label htmlFor="username" className="font-mono text-xs">
-                Username
+              <Label htmlFor="username" className="font-mono text-xs text-[#B8AE9C]">
+                Username Handle
               </Label>
               <Input
                 id="username"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
-                className="font-mono"
+                className="font-mono text-xs bg-[#161412] border-[#3A342C] text-[#F2ECE1]"
                 placeholder="oncall_hero"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="displayName" className="font-mono text-xs">
-                Display name
+              <Label htmlFor="displayName" className="font-mono text-xs text-[#B8AE9C]">
+                Display Name
               </Label>
               <Input
                 id="displayName"
                 value={displayName}
                 onChange={(event) => setDisplayName(event.target.value)}
+                className="font-sans text-xs bg-[#161412] border-[#3A342C] text-[#F2ECE1]"
                 placeholder="Ada Lovelace"
               />
             </div>
-            <Button type="submit" className="font-mono" disabled={saveMutation.isPending}>
-              {saveMutation.isPending ? "Saving…" : "Save"}
+            <Button
+              type="submit"
+              className="font-mono text-xs font-bold bg-[#C8912B] text-[#161412] hover:bg-[#E8B04A] brass-emboss"
+              disabled={saveMutation.isPending}
+            >
+              {saveMutation.isPending ? "Saving…" : "Save Record"}
             </Button>
           </form>
         </section>
 
-        <section className="rounded-lg border border-border bg-card p-5">
-          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            find on-call friends
+        {/* Search Engineers */}
+        <section className="rounded border border-[#3A342C] bg-[#1D1A17] p-6 space-y-4">
+          <h2 className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#7C7364]">
+            ON-CALL ROSTER // FIND ENGINEERS
           </h2>
           <Input
             value={term}
             onChange={(event) => setTerm(event.target.value)}
-            placeholder="Search by username…"
-            className="mt-4 font-mono"
+            placeholder="Search by handle or name…"
+            className="mt-2 font-mono text-xs bg-[#161412] border-[#3A342C] text-[#F2ECE1]"
           />
           <ul className="mt-4 space-y-2">
             {debounced.trim().length >= 2 && !isFetching && (results?.length ?? 0) === 0 && (
-              <li className="font-mono text-xs text-muted-foreground">No matching usernames.</li>
+              <li className="font-mono text-xs text-[#7C7364]">
+                No matching engineer handles found.
+              </li>
             )}
             {(results ?? []).map((person) => (
               <li
                 key={person.id}
-                className="flex items-center justify-between gap-3 rounded border border-border bg-surface px-4 py-3"
+                className="flex items-center justify-between gap-3 rounded border border-[#3A342C] bg-[#161412] px-4 py-3"
               >
                 <div>
-                  <p className="font-mono text-sm text-foreground">@{person.username}</p>
+                  <p className="font-mono text-xs font-bold text-[#F2ECE1]">@{person.username}</p>
                   {person.display_name && (
-                    <p className="text-xs text-muted-foreground">{person.display_name}</p>
+                    <p className="font-sans text-xs text-[#B8AE9C]">{person.display_name}</p>
                   )}
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="font-mono"
+                  className="font-mono text-xs border-[#4E4638] bg-[#26221D] text-[#C8912B] hover:border-[#C8912B]"
                   disabled={nudgeMutation.isPending}
                   onClick={() => nudgeMutation.mutate(person.id)}
                 >
-                  Nudge
+                  Send Nudge
                 </Button>
               </li>
             ))}
           </ul>
         </section>
 
-        <section className="rounded-lg border border-border bg-card p-5">
-          <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            nudges
+        {/* Nudge Activity */}
+        <section className="rounded border border-[#3A342C] bg-[#1D1A17] p-6 space-y-4">
+          <h2 className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#7C7364]">
+            COMMUNICATIONS // NUDGE LOG
           </h2>
           <div className="mt-4 grid gap-6 md:grid-cols-2">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-primary">
-                received
+              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B]">
+                RECEIVED NUDGES
               </p>
               <ul className="mt-3 space-y-2">
                 {received.length === 0 && (
-                  <li className="font-mono text-xs text-muted-foreground">Nothing yet.</li>
+                  <li className="font-mono text-xs text-[#7C7364]">No incoming nudges logged.</li>
                 )}
                 {received.map((row) => (
                   <li
                     key={row.id}
-                    className="flex items-start justify-between gap-3 rounded border border-border bg-surface px-4 py-3"
+                    className="flex items-start justify-between gap-3 rounded border border-[#3A342C] bg-[#161412] px-4 py-3"
                   >
                     <div>
-                      <p className="font-mono text-xs text-foreground">
+                      <p className="font-mono text-xs font-bold text-[#C8912B]">
                         @{row.counterpart?.username ?? "someone"}
                       </p>
-                      <p className="mt-1 text-sm text-muted-foreground">{row.message}</p>
+                      <p className="mt-1 font-sans text-xs text-[#B8AE9C]">{row.message}</p>
                     </div>
                     <button
-                      className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
+                      className="font-mono text-[10px] uppercase tracking-widest text-[#7C7364] hover:text-[#F2ECE1]"
                       onClick={() => dismissMutation.mutate(row.id)}
                     >
-                      clear
+                      CLEAR
                     </button>
                   </li>
                 ))}
               </ul>
             </div>
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                sent
+              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#7C7364]">
+                SENT NUDGES
               </p>
               <ul className="mt-3 space-y-2">
                 {sent.length === 0 && (
-                  <li className="font-mono text-xs text-muted-foreground">
-                    Nudge someone to get them back on call.
+                  <li className="font-mono text-xs text-[#7C7364]">
+                    Nudge teammates to remind them of on-call rotation.
                   </li>
                 )}
                 {sent.map((row) => (
-                  <li key={row.id} className="rounded border border-border bg-surface px-4 py-3">
-                    <p className="font-mono text-xs text-foreground">
+                  <li
+                    key={row.id}
+                    className="rounded border border-[#3A342C] bg-[#161412] px-4 py-3"
+                  >
+                    <p className="font-mono text-xs font-bold text-[#F2ECE1]">
                       @{row.counterpart?.username ?? "someone"}
                     </p>
-                    <p className="mt-1 text-sm text-muted-foreground">{row.message}</p>
+                    <p className="mt-1 font-sans text-xs text-[#B8AE9C]">{row.message}</p>
                   </li>
                 ))}
               </ul>

@@ -5,21 +5,22 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — RawSkill" },
+      { title: "Sign in — RAW // SKILL" },
       {
         name: "description",
         content:
-          "Sign in to RawSkill to get paged into broken codebases and track resolved challenges.",
+          "Sign in to RAW // SKILL to get paged into broken codebases and track resolved challenges.",
       },
-      { property: "og:title", content: "Sign in — RawSkill" },
+      { property: "og:title", content: "Sign in — RAW // SKILL" },
       {
         property: "og:description",
         content:
-          "Sign in to RawSkill to get paged into broken codebases and track resolved challenges.",
+          "Sign in to RAW // SKILL to get paged into broken codebases and track resolved challenges.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -41,11 +42,7 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: `${window.location.origin}/incidents` },
-        });
+        const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         toast.success("Account created — you're on call.");
       } else {
@@ -80,34 +77,55 @@ function AuthPage() {
       });
       if (error) throw error;
     } catch (error) {
-      console.error(`[Auth Error] OAuth authentication failed for provider '${provider}':`, {
-        provider,
-        error,
-        errorMessage: error instanceof Error ? error.message : String(error),
-        timestamp: new Date().toISOString(),
-      });
       toast.error(
         error instanceof Error ? error.message : `Failed to authenticate with ${provider}`,
       );
+    } finally {
       setBusyProvider(null);
     }
   };
 
   return (
-    <main className="grid-noise flex min-h-screen items-center justify-center bg-background px-6">
-      <div className="w-full max-w-sm rounded-lg border border-border bg-card p-7 shadow-2xl">
-        <Link to="/" className="flex items-center gap-2 group">
-          <span className="font-mono text-base font-bold text-primary select-none drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]">
-            ⚡
+    <main className="paper-grain flex min-h-screen items-center justify-center bg-[#161412] px-6">
+      {/* Stamped ID Card / Workshop Badge Card */}
+      <div className="w-full max-w-sm rounded border border-[#4E4638] bg-[#1D1A17] p-7 brass-emboss">
+        <div className="flex items-center justify-between border-b border-[#3A342C] pb-4 mb-5">
+          <BrandLogo href="/" />
+          <span className="font-mono text-[9px] uppercase tracking-widest text-[#7C7364]">
+            ID // CREDENTIAL
           </span>
-          <span className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-foreground group-hover:text-primary transition-colors">
-            RAW // SKILL
-          </span>
-        </Link>
-        <h1 className="mt-4 text-xl font-semibold text-foreground">
+        </div>
+
+        {/* Mode Toggle Underline Switch */}
+        <div className="flex border-b border-[#3A342C] mb-5">
+          <button
+            type="button"
+            onClick={() => setMode("signin")}
+            className={`flex-1 pb-2 font-mono text-xs uppercase tracking-wider transition-colors border-b-2 ${
+              mode === "signin"
+                ? "border-[#C8912B] text-[#F2ECE1] font-semibold"
+                : "border-transparent text-[#7C7364] hover:text-[#B8AE9C]"
+            }`}
+          >
+            Sign In
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("signup")}
+            className={`flex-1 pb-2 font-mono text-xs uppercase tracking-wider transition-colors border-b-2 ${
+              mode === "signup"
+                ? "border-[#C8912B] text-[#F2ECE1] font-semibold"
+                : "border-transparent text-[#7C7364] hover:text-[#B8AE9C]"
+            }`}
+          >
+            Create Account
+          </button>
+        </div>
+
+        <h1 className="font-serif text-xl font-semibold text-[#F2ECE1]">
           {mode === "signin" ? "Sign in to the rotation" : "Join the rotation"}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 font-sans text-xs text-[#B8AE9C]">
           Your attempts and resolved scenarios are saved to your account.
         </p>
 
@@ -117,13 +135,13 @@ function AuthPage() {
             type="button"
             disabled={busyProvider !== null || busy}
             onClick={() => handleOAuthLogin("google")}
-            className="flex w-full items-center justify-center gap-2.5 rounded-md border border-border/80 bg-secondary/40 px-4 py-2.5 font-mono text-xs text-foreground transition-all hover:bg-secondary hover:border-border active:scale-[0.98] disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2.5 rounded border border-[#4E4638] bg-[#26221D] px-4 py-2.5 font-mono text-xs text-[#F2ECE1] transition-all hover:bg-[#312C25] hover:border-[#C8912B] active:scale-[0.98] disabled:opacity-50"
           >
             {busyProvider === "google" ? (
-              <span>Connecting to Google…</span>
+              <span className="text-[#C8912B]">Connecting to Google…</span>
             ) : (
               <>
-                <svg className="h-4 w-4" viewBox="0 0 24 24">
+                <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -149,15 +167,18 @@ function AuthPage() {
 
         {/* ── Divider ── */}
         <div className="relative my-5 flex items-center justify-center">
-          <div className="w-full border-t border-border/60" />
-          <span className="absolute bg-card px-2.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          <div className="w-full border-t border-[#3A342C]" />
+          <span className="absolute bg-[#1D1A17] px-2.5 font-sans text-[10px] uppercase tracking-widest text-[#7C7364]">
             or continue with
           </span>
         </div>
 
         <form onSubmit={submit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email" className="font-mono text-xs uppercase tracking-widest">
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="email"
+              className="font-mono text-xs uppercase tracking-wider text-[#B8AE9C]"
+            >
               Email
             </Label>
             <Input
@@ -167,10 +188,14 @@ function AuthPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="bg-[#26221D] border-[#3A342C] text-[#F2ECE1] focus:border-[#C8912B]"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password" className="font-mono text-xs uppercase tracking-widest">
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="password"
+              className="font-mono text-xs uppercase tracking-wider text-[#B8AE9C]"
+            >
               Password
             </Label>
             <Input
@@ -181,12 +206,13 @@ function AuthPage() {
               autoComplete={mode === "signup" ? "new-password" : "current-password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="bg-[#26221D] border-[#3A342C] text-[#F2ECE1] focus:border-[#C8912B]"
             />
           </div>
           <Button
             type="submit"
             disabled={busy || busyProvider !== null}
-            className="w-full font-mono"
+            className="w-full font-mono text-xs font-bold uppercase tracking-wider bg-[#C8912B] text-[#161412] hover:bg-[#E8B04A] brass-emboss"
           >
             {busy
               ? "Working…"
@@ -195,14 +221,6 @@ function AuthPage() {
                 : "Create Account with Email"}
           </Button>
         </form>
-
-        <button
-          type="button"
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="mt-5 w-full text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
-        >
-          {mode === "signin" ? "No account yet? Create one" : "Already on the rotation? Sign in"}
-        </button>
       </div>
     </main>
   );

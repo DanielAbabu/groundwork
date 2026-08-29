@@ -23,12 +23,12 @@ export function VerticalStepper({
         const isLast = idx === stages.length - 1;
 
         return (
-          <div key={stage.id} className="relative flex items-start gap-3 px-4 py-2.5">
+          <div key={stage.id} className="relative flex items-start gap-3 px-4 py-3">
             {/* Connecting line */}
             {!isLast && (
               <span
-                className={`absolute left-[27px] top-[32px] bottom-[-10px] w-0.5 ${
-                  isDone ? "bg-pass/50" : "bg-border"
+                className={`absolute left-[27px] top-[34px] bottom-[-12px] w-0.5 ${
+                  isDone ? "bg-[#7FB88A]" : "bg-[#3A342C]"
                 }`}
               />
             )}
@@ -39,12 +39,12 @@ export function VerticalStepper({
               onClick={() => onSelectStage(idx)}
               className={`relative z-10 flex size-6 shrink-0 items-center justify-center rounded-full font-mono text-xs font-bold transition-all ${
                 isDone
-                  ? "bg-pass text-pass-foreground shadow-sm shadow-pass/20 hover:scale-105"
+                  ? "bg-[#7FB88A] text-[#161412] font-extrabold"
                   : isActive
-                    ? "bg-primary text-white ring-4 ring-primary/20 animate-pulse"
+                    ? "bg-[#C8912B] text-[#161412] brass-emboss ring-2 ring-[#C8912B]/30"
                     : isLocked
-                      ? "border border-border bg-card text-muted-foreground/40 cursor-not-allowed"
-                      : "border border-border bg-card text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                      ? "border border-[#3A342C] bg-[#161412] text-[#4E4638] cursor-not-allowed"
+                      : "border border-[#3A342C] bg-[#26221D] text-[#7C7364] hover:border-[#C8912B] hover:text-[#F2ECE1]"
               }`}
             >
               {isDone ? (
@@ -73,19 +73,19 @@ export function VerticalStepper({
                 <span
                   className={`font-mono text-xs font-bold tracking-wide uppercase ${
                     isActive
-                      ? "text-primary"
+                      ? "text-[#C8912B]"
                       : isDone
-                        ? "text-foreground"
-                        : "text-muted-foreground group-hover:text-foreground"
+                        ? "text-[#F2ECE1]"
+                        : "text-[#7C7364] group-hover:text-[#F2ECE1]"
                   }`}
                 >
                   {stage.title}
                 </span>
                 {isDone && (
-                  <span className="font-mono text-[10px] font-semibold text-pass">✓ Passed</span>
+                  <span className="font-mono text-[10px] font-bold text-[#7FB88A]">✓ CLEARED</span>
                 )}
               </div>
-              <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-1 leading-snug">
+              <p className="mt-0.5 font-sans text-[11px] text-[#B8AE9C] line-clamp-1 leading-snug">
                 {stage.prompt}
               </p>
             </button>

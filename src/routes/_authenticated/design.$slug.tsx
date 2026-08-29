@@ -117,7 +117,7 @@ function DesignRoom() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-44px)] flex-col bg-background overflow-hidden">
+    <div className="flex h-[calc(100vh-44px)] flex-col bg-[#161412] text-[#F2ECE1] overflow-hidden">
       {/* ── Problem Bar ── */}
       <ProblemBar
         title={scenario.title}
@@ -130,17 +130,17 @@ function DesignRoom() {
               onClick={() => setShowSummary((v) => !v)}
               className={`rounded border px-3 py-1 font-mono text-xs transition-colors ${
                 showSummary
-                  ? "border-primary bg-primary/10 text-primary font-semibold"
-                  : "border-border bg-card text-muted-foreground hover:text-foreground"
+                  ? "border-[#C8912B] bg-[#C8912B]/10 text-[#C8912B] font-semibold"
+                  : "border-[#3A342C] bg-[#1D1A17] text-[#7C7364] hover:text-[#F2ECE1]"
               }`}
             >
-              {showSummary ? "← Back to Stage" : "Review Scorecard"}
+              {showSummary ? "← Back to Stage Workspace" : "Review Scorecard"}
             </button>
             {!showSummary && (
               <button
                 onClick={onSubmit}
                 disabled={submitting}
-                className="submit-btn flex items-center gap-1.5 disabled:opacity-50"
+                className="flex items-center gap-1.5 rounded bg-[#C8912B] px-3.5 py-1.5 font-mono text-xs font-bold text-[#161412] hover:bg-[#E8B04A] transition-all brass-emboss disabled:opacity-50"
               >
                 {submitting ? "Grading…" : "Submit Stage"}
               </button>
@@ -150,7 +150,7 @@ function DesignRoom() {
       />
 
       {showSummary ? (
-        <div className="flex-1 overflow-y-auto p-6 bg-background">
+        <div className="flex-1 overflow-y-auto p-6 bg-[#161412]">
           <div className="mx-auto max-w-4xl">
             <Summary
               grades={grades}
@@ -167,26 +167,26 @@ function DesignRoom() {
         /* ── Full-Viewport 2-Panel Workspace ── */
         <div className="flex flex-1 overflow-hidden">
           {/* ── Left Panel: Pipeline Stepper & Prompt (340px) ── */}
-          <aside className="w-85 shrink-0 flex flex-col border-r border-border bg-[#161616] overflow-hidden">
+          <aside className="w-85 shrink-0 flex flex-col border-r border-[#3A342C] bg-[#1D1A17] overflow-hidden">
             {/* Header info */}
-            <div className="p-4 border-b border-border space-y-2">
+            <div className="p-4 border-b border-[#3A342C] space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] bg-[#26221D] px-2 py-0.5 rounded border border-[#4E4638]">
                   {scenario.system}
                 </span>
-                <span className="font-mono text-[10px] text-muted-foreground">
-                  Step {index + 1} of {scenario.stages.length}
+                <span className="font-mono text-[10px] text-[#7C7364]">
+                  STAGE {index + 1} / {scenario.stages.length}
                 </span>
               </div>
-              <p className="font-mono text-xs text-muted-foreground">
+              <p className="font-mono text-xs text-[#7C7364]">
                 Stakeholder:{" "}
-                <span className="text-foreground font-semibold">{scenario.stakeholder}</span> (
+                <span className="text-[#F2ECE1] font-semibold">{scenario.stakeholder}</span> (
                 {scenario.stakeholderRole})
               </p>
             </div>
 
             {/* Vertical Stepper */}
-            <div className="border-b border-border bg-[#121212]">
+            <div className="border-b border-[#3A342C] bg-[#161412]">
               <VerticalStepper
                 stages={scenario.stages}
                 currentStageIndex={index}
@@ -201,32 +201,34 @@ function DesignRoom() {
             {/* Stage Prompt & Context */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-[#7C7364] mb-1">
                   Stage Goal
                 </p>
-                <h3 className="text-sm font-semibold text-foreground">{stage.title}</h3>
-                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                <h3 className="font-serif text-base font-semibold text-[#F2ECE1]">{stage.title}</h3>
+                <p className="mt-1.5 font-sans text-xs leading-relaxed text-[#B8AE9C]">
                   {stage.prompt}
                 </p>
               </div>
 
-              <div className="rounded border border-border bg-card p-3 space-y-1">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              <div className="rounded border border-[#3A342C] bg-[#161412] p-3 space-y-1">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-[#7C7364]">
                   System Context
                 </p>
-                <p className="text-xs leading-relaxed text-muted-foreground">{scenario.framing}</p>
+                <p className="font-sans text-xs leading-relaxed text-[#B8AE9C]">
+                  {scenario.framing}
+                </p>
               </div>
 
               {grade && (
                 <div
                   className={`rounded border p-3 font-mono text-xs space-y-1 ${
                     grade.passed
-                      ? "border-pass/40 bg-pass/10 text-pass"
-                      : "border-fail/40 bg-fail/10 text-fail"
+                      ? "border-[#7FB88A]/40 bg-[#7FB88A]/10 text-[#7FB88A]"
+                      : "border-[#C4593F]/40 bg-[#C4593F]/10 text-[#C4593F]"
                   }`}
                 >
                   <div className="flex items-center justify-between font-bold">
-                    <span>Stage Status</span>
+                    <span>STAGE STATUS</span>
                     <span>{Math.round(grade.score * 100)}%</span>
                   </div>
                   <p className="text-[11px] font-normal">
@@ -238,7 +240,7 @@ function DesignRoom() {
           </aside>
 
           {/* ── Right Panel: Stage Workspace Canvas / Interactive UI ── */}
-          <section className="flex flex-1 flex-col overflow-hidden bg-background">
+          <section className="flex flex-1 flex-col overflow-hidden bg-[#161412]">
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {stage.kind === "clarify" && (
                 <StakeholderChat
@@ -282,12 +284,12 @@ function DesignRoom() {
             </div>
 
             {/* Bottom navigation bar */}
-            <div className="flex shrink-0 items-center justify-between border-t border-border bg-[#161616] px-6 py-3">
+            <div className="flex shrink-0 items-center justify-between border-t border-[#3A342C] bg-[#1D1A17] px-6 py-3">
               <div className="flex items-center gap-2">
                 <button
                   disabled={index === 0}
                   onClick={() => setIndex((i) => i - 1)}
-                  className="font-mono text-xs text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="font-mono text-xs text-[#7C7364] hover:text-[#F2ECE1] disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   ← Previous Stage
                 </button>
@@ -297,14 +299,14 @@ function DesignRoom() {
                 {index < scenario.stages.length - 1 ? (
                   <button
                     onClick={() => setIndex((i) => i + 1)}
-                    className="font-mono text-xs text-foreground hover:text-primary transition-colors"
+                    className="font-mono text-xs text-[#F2ECE1] hover:text-[#C8912B] transition-colors"
                   >
                     Next Stage →
                   </button>
                 ) : (
                   <button
                     onClick={() => setShowSummary(true)}
-                    className="font-mono text-xs font-bold text-pass hover:underline"
+                    className="font-mono text-xs font-bold text-[#7FB88A] hover:underline"
                   >
                     See Final Scorecard 🏆
                   </button>
@@ -577,33 +579,35 @@ function Summary({
   const pct = Math.round((cleared / scenario.stages.length) * 100);
   const hiringSignal =
     pct >= 85
-      ? { label: "STRONG HIRE", color: "text-pass border-pass/40 bg-pass/10" }
+      ? { label: "STRONG HIRE", color: "text-[#7FB88A] border-[#7FB88A]/40 bg-[#7FB88A]/10" }
       : pct >= 70
-        ? { label: "HIRE", color: "text-primary border-primary/40 bg-primary/10" }
+        ? { label: "HIRE", color: "text-[#C8912B] border-[#C8912B]/40 bg-[#C8912B]/10" }
         : pct >= 50
-          ? { label: "BORDERLINE", color: "text-medium border-medium/40 bg-medium/10" }
-          : { label: "NO HIRE", color: "text-fail border-fail/40 bg-fail/10" };
+          ? { label: "BORDERLINE", color: "text-[#D99B26] border-[#D99B26]/40 bg-[#D99B26]/10" }
+          : { label: "NO HIRE", color: "text-[#C4593F] border-[#C4593F]/40 bg-[#C4593F]/10" };
 
   return (
-    <section className="rounded-lg border border-border bg-card p-6 space-y-6 slide-up">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
+    <section className="rounded border border-[#3A342C] bg-[#1D1A17] p-6 space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#3A342C] pb-5">
         <div>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground block">
-            Submission Summary
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#7C7364] block">
+            EVALUATION DOCKET // SUMMARY
           </span>
-          <h2 className="text-xl font-bold text-foreground mt-1">{scenario.title}</h2>
-          <p className="font-mono text-xs text-muted-foreground mt-0.5">
+          <h2 className="font-serif text-2xl font-semibold text-[#F2ECE1] mt-1">
+            {scenario.title}
+          </h2>
+          <p className="font-mono text-xs text-[#7C7364] mt-0.5">
             Stakeholder: {scenario.stakeholder} ({scenario.stakeholderRole})
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="text-right">
-            <span className="font-mono text-xs text-muted-foreground block">Overall Score</span>
-            <span className="font-mono text-2xl font-extrabold text-foreground">{pct}%</span>
+            <span className="font-mono text-xs text-[#7C7364] block">Overall Score</span>
+            <span className="font-mono text-2xl font-bold text-[#F2ECE1]">{pct}%</span>
           </div>
           <span
-            className={`rounded border px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-widest ${hiringSignal.color}`}
+            className={`rounded border px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-widest brass-emboss ${hiringSignal.color}`}
           >
             {hiringSignal.label}
           </span>
@@ -611,7 +615,7 @@ function Summary({
       </div>
 
       <div className="space-y-3">
-        <h3 className="font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        <h3 className="font-mono text-xs font-semibold uppercase tracking-widest text-[#7C7364]">
           Stage Performance Breakdown
         </h3>
 
@@ -622,36 +626,36 @@ function Summary({
             return (
               <li
                 key={stage.id}
-                className="rounded-lg border border-border bg-background p-4 space-y-2"
+                className="rounded border border-[#3A342C] bg-[#161412] p-4 space-y-2"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-sm font-semibold text-foreground">
+                  <span className="font-serif text-base font-medium text-[#F2ECE1]">
                     {i + 1}. {stage.title} ({STAGE_KIND_LABELS[stage.kind]})
                   </span>
                   <span
                     className={`rounded border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest ${
                       passed
-                        ? "border-pass/30 bg-pass/10 text-pass"
+                        ? "border-[#7FB88A]/30 bg-[#7FB88A]/10 text-[#7FB88A]"
                         : grade
-                          ? "border-fail/30 bg-fail/10 text-fail"
-                          : "border-border text-muted-foreground"
+                          ? "border-[#C4593F]/30 bg-[#C4593F]/10 text-[#C4593F]"
+                          : "border-[#3A342C] text-[#7C7364]"
                     }`}
                   >
-                    {passed ? "Cleared ✓" : grade ? "Needs Pass" : "Not Submitted"}
+                    {passed ? "CLEARED ✓" : grade ? "NEEDS PASS" : "NOT SUBMITTED"}
                   </span>
                 </div>
 
                 {stage.kind === "tradeoff" && grade && (
-                  <p className="text-xs leading-relaxed text-muted-foreground border-l-2 border-primary/40 pl-2 mt-2">
+                  <p className="font-sans text-xs leading-relaxed text-[#B8AE9C] border-l-2 border-[#C8912B]/40 pl-2 mt-2">
                     Ideal Answer Strategy: {stage.ideal}
                   </p>
                 )}
 
                 {stage.kind === "capacity" && grade && (
-                  <ul className="mt-2 space-y-1 font-mono text-[11px] text-muted-foreground bg-card p-2.5 rounded border border-border">
+                  <ul className="mt-2 space-y-1 font-mono text-[11px] text-[#B8AE9C] bg-[#1D1A17] p-2.5 rounded border border-[#3A342C]">
                     {stage.fields.map((field) => (
                       <li key={field.id}>
-                        <span className="font-semibold text-foreground">{field.label}:</span> Target
+                        <span className="font-semibold text-[#F2ECE1]">{field.label}:</span> Target
                         range {field.accept.min}–{field.accept.max} {field.unit} — {field.rationale}
                       </li>
                     ))}
@@ -661,7 +665,7 @@ function Summary({
                 <div className="pt-1">
                   <button
                     onClick={() => onJump(i)}
-                    className="font-mono text-[11px] uppercase tracking-widest text-primary hover:underline font-semibold"
+                    className="font-mono text-[11px] uppercase tracking-widest text-[#C8912B] hover:underline font-semibold"
                   >
                     ← Revisit Stage {i + 1}
                   </button>
@@ -673,25 +677,25 @@ function Summary({
       </div>
 
       {scenario.debrief && (
-        <div className="rounded-lg border border-primary/30 bg-primary/5 p-5 space-y-4">
-          <div className="flex items-center gap-2 border-b border-primary/20 pb-3">
-            <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+        <div className="rounded border border-[#C8912B]/30 bg-[#C8912B]/5 p-5 space-y-4">
+          <div className="flex items-center gap-2 border-b border-[#C8912B]/20 pb-3">
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B]">
               🧠 Staff Engineer Narrative Debrief
             </span>
           </div>
 
-          <div className="space-y-3 text-xs leading-relaxed text-foreground">
-            <p className="font-medium text-muted-foreground">{scenario.debrief.narrative}</p>
+          <div className="space-y-3 text-xs leading-relaxed text-[#F2ECE1]">
+            <p className="font-medium text-[#B8AE9C]">{scenario.debrief.narrative}</p>
 
             {scenario.debrief.seniorInsights.length > 0 && (
               <div className="space-y-1.5 pt-2">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-pass block">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#7FB88A] block">
                   💡 Senior Engineering Trade-offs Raised Unprompted:
                 </span>
-                <ul className="space-y-1 font-mono text-[11px] text-muted-foreground pl-2">
+                <ul className="space-y-1 font-mono text-[11px] text-[#B8AE9C] pl-2">
                   {scenario.debrief.seniorInsights.map((insight, idx) => (
                     <li key={idx} className="flex items-start gap-2">
-                      <span className="text-pass font-bold">•</span>
+                      <span className="text-[#7FB88A] font-bold">•</span>
                       <span>{insight}</span>
                     </li>
                   ))}
@@ -701,13 +705,13 @@ function Summary({
 
             {scenario.debrief.commonMistakes.length > 0 && (
               <div className="space-y-1.5 pt-2">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-fail block">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C4593F] block">
                   ⚠️ Common Candidate Pitfalls:
                 </span>
-                <ul className="space-y-1 font-mono text-[11px] text-muted-foreground pl-2">
+                <ul className="space-y-1 font-mono text-[11px] text-[#B8AE9C] pl-2">
                   {scenario.debrief.commonMistakes.map((mistake, idx) => (
                     <li key={idx} className="flex items-start gap-2">
-                      <span className="text-fail font-bold">•</span>
+                      <span className="text-[#C4593F] font-bold">•</span>
                       <span>{mistake}</span>
                     </li>
                   ))}

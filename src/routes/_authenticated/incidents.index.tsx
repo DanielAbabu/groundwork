@@ -125,18 +125,30 @@ function Board() {
   };
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-44px)]">
-      {/* ── Page header ── */}
-      <div className="border-b border-border bg-[#161616] px-6 py-5">
+    <div className="flex flex-col min-h-[calc(100vh-44px)] bg-[#161412] text-[#F2ECE1]">
+      {/* ── Page Header: Case Docket Title ── */}
+      <div className="border-b border-[#3A342C] bg-[#1D1A17] px-6 py-5">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h1 className="text-xl font-bold text-foreground">Debugging Rotation</h1>
-              <p className="mt-0.5 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B]">
+                  FILE // DOCKET-INDEX
+                </span>
+                <span className="text-[#3A342C]">/</span>
+                <span className="font-mono text-xs text-[#7C7364]">ACTIVE ROTATION BOARD</span>
+              </div>
+              <h1 className="font-serif text-2xl font-semibold text-[#F2ECE1]">
+                Debugging Rotation
+              </h1>
+              <p className="mt-0.5 font-sans text-xs text-[#B8AE9C]">
                 Read the signal · fix the root cause · verify against hidden tests
               </p>
             </div>
-            <button onClick={randomUnsolved} className="run-btn flex items-center gap-1.5">
+            <button
+              onClick={randomUnsolved}
+              className="flex items-center gap-1.5 rounded bg-[#C8912B] px-3.5 py-1.5 font-mono text-xs font-bold text-[#161412] hover:bg-[#E8B04A] transition-all brass-emboss"
+            >
               <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -145,21 +157,22 @@ function Board() {
                   d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                 />
               </svg>
-              Pick random
+              Pick Random Scenario
             </button>
           </div>
 
-          {/* Progress bar */}
-          <div className="mt-4">
+          {/* Logbook Progress Bar */}
+          <div className="mt-4 pt-3 border-t border-[#3A342C]">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="font-mono text-xs text-muted-foreground">
-                {resolved} / {scenarios.length} resolved
+              <span className="font-mono text-xs text-[#7C7364]">
+                Rotation Clearance: <span className="text-[#F2ECE1] font-semibold">{resolved}</span>{" "}
+                / {scenarios.length} resolved
               </span>
-              <span className="font-mono text-xs text-muted-foreground">{pct}%</span>
+              <span className="font-mono text-xs font-semibold text-[#C8912B]">{pct}%</span>
             </div>
-            <div className="h-1.5 w-full rounded-full bg-border overflow-hidden">
+            <div className="h-1.5 w-full rounded-[1px] bg-[#26221D] overflow-hidden border border-[#3A342C]">
               <div
-                className="h-full rounded-full bg-primary transition-all duration-500"
+                className="h-full bg-[#C8912B] transition-all duration-500"
                 style={{ width: `${pct}%` }}
               />
             </div>
@@ -167,13 +180,13 @@ function Board() {
         </div>
       </div>
 
-      {/* ── Filters ── */}
-      <div className="border-b border-border bg-background px-6 py-3">
-        <div className="mx-auto max-w-6xl flex flex-wrap items-center gap-3">
+      {/* ── Filter Bar ── */}
+      <div className="border-b border-[#3A342C] bg-[#161412] px-6 py-3">
+        <div className="mx-auto max-w-6xl flex flex-wrap items-center gap-4">
           {/* Search */}
-          <div className="flex min-w-[200px] flex-1 items-center gap-2 rounded border border-border bg-card px-3 py-1.5">
+          <div className="flex min-w-[240px] flex-1 items-center gap-2 rounded border border-[#3A342C] bg-[#1D1A17] px-3 py-1.5">
             <svg
-              className="size-3.5 shrink-0 text-muted-foreground"
+              className="size-3.5 shrink-0 text-[#7C7364]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -189,14 +202,11 @@ function Board() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search scenarios, concepts, services…"
-              className="flex-1 bg-transparent font-mono text-xs text-foreground placeholder:text-muted-foreground focus:outline-none"
+              placeholder="Search docket scenarios, services, concepts…"
+              className="flex-1 bg-transparent font-mono text-xs text-[#F2ECE1] placeholder:text-[#7C7364] focus:outline-none"
             />
             {search && (
-              <button
-                onClick={() => setSearch("")}
-                className="text-muted-foreground hover:text-foreground"
-              >
+              <button onClick={() => setSearch("")} className="text-[#7C7364] hover:text-[#F2ECE1]">
                 <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -211,17 +221,15 @@ function Board() {
 
           {/* Difficulty filter */}
           <div className="flex items-center gap-1.5 font-mono text-xs">
-            <span className="text-muted-foreground text-[10px] uppercase tracking-wider">
-              Diff:
-            </span>
+            <span className="text-[#7C7364] text-[10px] uppercase tracking-wider">Diff:</span>
             {(["ALL", "starter", "routine", "tricky"] as const).map((d) => (
               <button
                 key={d}
                 onClick={() => setDiffFilter(d)}
-                className={`rounded px-2 py-1 transition-colors ${
+                className={`rounded px-2 py-0.5 transition-colors ${
                   diffFilter === d
-                    ? "bg-primary text-white font-semibold"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-[#C8912B] text-[#161412] font-semibold"
+                    : "text-[#7C7364] hover:text-[#F2ECE1]"
                 }`}
               >
                 {d === "ALL" ? "All" : DIFFICULTY_LABELS[d]}
@@ -231,17 +239,15 @@ function Board() {
 
           {/* Status filter */}
           <div className="flex items-center gap-1.5 font-mono text-xs">
-            <span className="text-muted-foreground text-[10px] uppercase tracking-wider">
-              Status:
-            </span>
+            <span className="text-[#7C7364] text-[10px] uppercase tracking-wider">Status:</span>
             {(["ALL", "resolved", "attempted", "unattempted"] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`rounded px-2 py-1 capitalize transition-colors ${
+                className={`rounded px-2 py-0.5 capitalize transition-colors ${
                   statusFilter === s
-                    ? "bg-primary text-white font-semibold"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-[#C8912B] text-[#161412] font-semibold"
+                    : "text-[#7C7364] hover:text-[#F2ECE1]"
                 }`}
               >
                 {s === "ALL" ? "All" : s}
@@ -251,25 +257,25 @@ function Board() {
         </div>
       </div>
 
-      {/* ── Table ── */}
+      {/* ── Case Docket Index Table ── */}
       <div className="flex-1 overflow-auto">
-        <div className="mx-auto max-w-6xl px-6 py-4">
-          <table className="w-full border-collapse text-sm">
+        <div className="mx-auto max-w-6xl px-6 py-6">
+          <table className="w-full border-collapse text-xs">
             <thead>
-              <tr className="border-b border-border">
+              <tr className="border-b border-[#3A342C] bg-[#26221D]">
                 {(
                   [
-                    { key: "index", label: "#", cls: "w-12" },
-                    { key: "title", label: "Title", cls: "" },
-                    { key: "type", label: "Type", cls: "w-36 hidden sm:table-cell" },
-                    { key: "difficulty", label: "Difficulty", cls: "w-28" },
-                    { key: "status", label: "Status", cls: "w-32" },
+                    { key: "index", label: "NO.", cls: "w-12 pl-4" },
+                    { key: "title", label: "CASE TITLE / SERVICE", cls: "" },
+                    { key: "type", label: "CATEGORY", cls: "w-36 hidden sm:table-cell" },
+                    { key: "difficulty", label: "DIFFICULTY", cls: "w-28" },
+                    { key: "status", label: "STATUS", cls: "w-36 pr-4" },
                   ] as { key: SortKey; label: string; cls: string }[]
                 ).map(({ key, label, cls }) => (
                   <th
                     key={key}
                     onClick={() => toggleSort(key)}
-                    className={`py-2.5 pr-4 text-left font-mono text-[10px] uppercase tracking-wider text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors ${cls}`}
+                    className={`py-3 pr-4 text-left font-mono text-[10px] font-bold uppercase tracking-wider text-[#7C7364] cursor-pointer select-none hover:text-[#F2ECE1] transition-colors ${cls}`}
                   >
                     {label}
                     <SortIcon col={key} />
@@ -277,7 +283,7 @@ function Board() {
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-[#3A342C]/60">
               {filtered.map((scenario) => {
                 const row = byId.get(scenario.id);
                 const status = scenario._status;
@@ -287,72 +293,60 @@ function Board() {
                     onClick={() =>
                       navigate({ to: "/incidents/$slug", params: { slug: scenario.id } })
                     }
-                    className="group cursor-pointer border-b border-border/50 hover:bg-[#1c1c1c] transition-colors"
+                    className="group cursor-pointer hover:bg-[#1D1A17] transition-colors"
                   >
                     {/* # */}
-                    <td className="py-3 pr-4 font-mono text-xs text-muted-foreground">
-                      {scenario._index}
+                    <td className="py-3.5 pr-4 pl-4 font-mono text-xs text-[#7C7364]">
+                      {scenario._index < 10 ? `0${scenario._index}` : scenario._index}
                     </td>
 
                     {/* Title */}
-                    <td className="py-3 pr-4">
-                      <div className="flex items-center gap-2">
+                    <td className="py-3.5 pr-4">
+                      <div className="flex items-center gap-3">
                         <span
-                          className={`inline-block size-1.5 shrink-0 rounded-full ${SEV_DOT[scenario.severity] ?? "bg-border"}`}
+                          className={`inline-block size-2 shrink-0 rounded-full ${SEV_DOT[scenario.severity] ?? "bg-[#3A342C]"}`}
                           title={scenario.severity}
                         />
                         <div>
-                          <span className="font-medium text-foreground group-hover:text-primary transition-colors">
+                          <span className="font-sans text-sm font-semibold text-[#F2ECE1] group-hover:text-[#C8912B] transition-colors">
                             {scenario.title}
                           </span>
-                          <p className="mt-0.5 font-mono text-[10px] text-muted-foreground truncate max-w-xs">
-                            {scenario.service}
+                          <p className="mt-0.5 font-mono text-[10px] text-[#7C7364] truncate max-w-sm">
+                            {scenario.service} · {scenario.symptom}
                           </p>
                         </div>
                       </div>
                     </td>
 
                     {/* Type */}
-                    <td className="py-3 pr-4 hidden sm:table-cell">
-                      <span className="rounded border border-border bg-card px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
-                        {scenario.type}:{" "}
-                        {TYPE_LABELS[scenario.type as ScenarioType]?.split(":")[0] ?? scenario.type}
+                    <td className="py-3.5 pr-4 hidden sm:table-cell">
+                      <span className="rounded border border-[#3A342C] bg-[#1D1A17] px-2 py-0.5 font-mono text-[10px] text-[#B8AE9C]">
+                        {scenario.type}
                       </span>
                     </td>
 
                     {/* Difficulty */}
-                    <td className="py-3 pr-4">
+                    <td className="py-3.5 pr-4">
                       <DifficultyPill difficulty={scenario.difficulty} />
                     </td>
 
-                    {/* Status */}
-                    <td className="py-3">
+                    {/* Fieldnotes Signal Ink Status */}
+                    <td className="py-3.5 pr-4">
                       {status === "resolved" ? (
-                        <span className="flex items-center gap-1.5 font-mono text-xs font-semibold text-pass">
-                          <svg
-                            className="size-3.5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2.5"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                          Solved
+                        <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold text-[#7FB88A]">
+                          <span className="size-1.5 rounded-full bg-[#7FB88A]" />
+                          RESOLVED
                         </span>
                       ) : status === "attempted" ? (
-                        <span className="flex items-center gap-1.5 font-mono text-xs text-medium">
-                          <span className="inline-block size-3.5 rounded-full border-2 border-medium relative">
-                            <span className="absolute left-0 top-0 h-full w-1/2 bg-medium rounded-l-full" />
-                          </span>
-                          {row?.attempts ?? 1} attempt{(row?.attempts ?? 1) !== 1 ? "s" : ""}
+                        <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-medium text-[#D99B26]">
+                          <span className="size-1.5 rounded-full bg-[#D99B26]" />
+                          IN PROGRESS ({row?.attempts ?? 1})
                         </span>
                       ) : (
-                        <span className="font-mono text-xs text-muted-foreground">—</span>
+                        <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-[#7C7364]">
+                          <span className="size-1.5 rounded-full border border-[#4E4638]" />
+                          OPEN
+                        </span>
                       )}
                     </td>
                   </tr>
@@ -362,9 +356,9 @@ function Board() {
           </table>
 
           {filtered.length === 0 && (
-            <div className="py-16 text-center">
-              <p className="font-mono text-sm text-muted-foreground">
-                No scenarios match your filters.
+            <div className="py-16 text-center border-t border-[#3A342C]">
+              <p className="font-mono text-sm text-[#7C7364]">
+                No docket cases match your search filter.
               </p>
               <button
                 onClick={() => {
@@ -373,7 +367,7 @@ function Board() {
                   setDiffFilter("ALL");
                   setStatusFilter("ALL");
                 }}
-                className="mt-3 font-mono text-xs text-primary hover:underline"
+                className="mt-3 font-mono text-xs text-[#C8912B] hover:underline"
               >
                 Clear all filters
               </button>

@@ -86,17 +86,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Groundwork — debugging practice for real root causes" },
+      { title: "RAW // SKILL — Real-World Engineering & Distributed System Design" },
       {
         name: "description",
         content:
-          "Get paged into small broken codebases, read the real signal, fix the root cause, and run a hidden test harness.",
+          "No copilot. No shortcuts. Just you and the incident. Debug real production codebases and defend distributed system architectures.",
       },
-      { property: "og:title", content: "Groundwork — debugging practice for real root causes" },
+      {
+        property: "og:title",
+        content: "RAW // SKILL — Real-World Engineering & Distributed System Design",
+      },
       {
         property: "og:description",
         content:
-          "Get paged into small broken codebases, read the real signal, fix the root cause, and run a hidden test harness.",
+          "No copilot. No shortcuts. Just you and the incident. Debug real production codebases and defend distributed system architectures.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -109,10 +112,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap",
       },
     ],
   }),
+
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,

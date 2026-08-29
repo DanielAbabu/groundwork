@@ -12,14 +12,13 @@ interface ProblemBarProps {
   running?: boolean;
   onRun?: () => void;
   runDisabled?: boolean;
-  /** extra right-side slot — e.g. Submit Stage button for design track */
   rightSlot?: React.ReactNode;
 }
 
 const SEV_CLASSES: Record<string, string> = {
-  "SEV-1": "border-sev1/40 bg-sev1/10 text-sev1",
-  "SEV-2": "border-sev2/40 bg-sev2/10 text-sev2",
-  "SEV-3": "border-sev3/40 bg-sev3/10 text-sev3",
+  "SEV-1": "border-[#C4593F]/40 bg-[#C4593F]/10 text-[#C4593F]",
+  "SEV-2": "border-[#D99B26]/40 bg-[#D99B26]/10 text-[#D99B26]",
+  "SEV-3": "border-[#7A93A6]/40 bg-[#7A93A6]/10 text-[#7A93A6]",
 };
 
 export function ProblemBar({
@@ -35,21 +34,28 @@ export function ProblemBar({
   rightSlot,
 }: ProblemBarProps) {
   return (
-    <div className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-border bg-[#14141f] px-4">
-      {/* Left: breadcrumb + badges + title */}
-      <div className="flex min-w-0 items-center gap-2">
+    <div className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-[#3A342C] bg-[#1D1A17] px-4">
+      {/* Left: Window Dots + Breadcrumb + Badges + Title */}
+      <div className="flex min-w-0 items-center gap-2.5">
+        {/* Small Engraved Brass Dot Accents */}
+        <div className="flex items-center gap-1.5 mr-1 select-none">
+          <span className="size-2 rounded-full bg-[#3A342C] border border-[#4E4638]" />
+          <span className="size-2 rounded-full bg-[#3A342C] border border-[#4E4638]" />
+          <span className="size-2 rounded-full bg-[#C8912B] brass-emboss" />
+        </div>
+
         <Link
           to={backTo}
-          className="shrink-0 font-mono text-xs text-muted-foreground hover:text-foreground transition-colors"
+          className="shrink-0 font-mono text-xs text-[#7C7364] hover:text-[#F2ECE1] transition-colors"
         >
           ← {backLabel}
         </Link>
 
-        <span className="text-border shrink-0 select-none">/</span>
+        <span className="text-[#3A342C] shrink-0 select-none">/</span>
 
         {severity && (
           <span
-            className={`shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-widest ${SEV_CLASSES[severity] ?? "border-border text-muted-foreground"}`}
+            className={`shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-widest ${SEV_CLASSES[severity] ?? "border-[#3A342C] text-[#7C7364]"}`}
           >
             {severity}
           </span>
@@ -57,7 +63,7 @@ export function ProblemBar({
 
         {difficulty && <DifficultyPill difficulty={difficulty} showDot={false} />}
 
-        <span className="truncate font-sans text-sm font-medium text-foreground">{title}</span>
+        <span className="truncate font-serif text-sm font-semibold text-[#F2ECE1]">{title}</span>
       </div>
 
       {/* Right: actions */}
@@ -66,7 +72,7 @@ export function ProblemBar({
 
         {onRun &&
           (passed ? (
-            <span className="flex items-center gap-1.5 rounded border border-pass/40 bg-pass/10 px-3 py-1 font-mono text-xs font-semibold uppercase tracking-wider text-pass">
+            <span className="flex items-center gap-1.5 rounded border border-[#7FB88A]/40 bg-[#7FB88A]/10 px-3 py-1 font-mono text-xs font-semibold uppercase tracking-wider text-[#7FB88A]">
               <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -75,7 +81,7 @@ export function ProblemBar({
                   d="M5 13l4 4L19 7"
                 />
               </svg>
-              Resolved
+              VERDICT: PASSED
             </span>
           ) : (
             <button
@@ -83,7 +89,7 @@ export function ProblemBar({
               onClick={onRun}
               disabled={runDisabled || running}
               title="Run hidden tests (Ctrl+Enter)"
-              className="run-btn flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 rounded bg-[#C8912B] px-3.5 py-1.5 font-mono text-xs font-bold text-[#161412] hover:bg-[#E8B04A] transition-all brass-emboss disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {running ? (
                 <>
