@@ -38,8 +38,12 @@ export function StreakBadge({ streakDays, resolvedCount, totalScenarios }: Strea
             Debugging Rotation
           </span>
           <div className="flex items-baseline gap-1.5 mt-0.5">
-            <span className="font-mono text-2xl font-extrabold text-foreground">{resolvedCount}</span>
-            <span className="font-mono text-xs text-muted-foreground">/ {totalScenarios} cleared ({pct}%)</span>
+            <span className="font-mono text-2xl font-extrabold text-foreground">
+              {resolvedCount}
+            </span>
+            <span className="font-mono text-xs text-muted-foreground">
+              / {totalScenarios} cleared ({pct}%)
+            </span>
           </div>
           <div className="mt-1.5 h-1.5 w-32 rounded-full bg-border overflow-hidden">
             <div className="h-full bg-pass rounded-full" style={{ width: `${pct}%` }} />

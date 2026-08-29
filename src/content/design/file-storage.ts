@@ -17,8 +17,7 @@ export const fileStorage: DesignScenario = {
       id: "clarify",
       kind: "clarify",
       title: "Clarify the upload architecture",
-      prompt:
-        "Sam has 5 minutes. Clarify how file data flows from client to storage.",
+      prompt: "Sam has 5 minutes. Clarify how file data flows from client to storage.",
       questions: [
         {
           id: "direct-upload",
@@ -26,13 +25,16 @@ export const fileStorage: DesignScenario = {
           options: [
             {
               id: "presigned-urls",
-              label: "Presigned URLs — client uploads directly to Object Storage (S3), bypassing App Servers",
-              followUp: "Sam: “Exactly! App servers only sign a 1KB JWT upload token; zero file bytes touch our compute tier.”",
+              label:
+                "Presigned URLs — client uploads directly to Object Storage (S3), bypassing App Servers",
+              followUp:
+                "Sam: “Exactly! App servers only sign a 1KB JWT upload token; zero file bytes touch our compute tier.”",
             },
             {
               id: "proxy-app",
               label: "Proxy through App Server — stream file bytes through node app handlers",
-              followUp: "Sam: “Proxying 5GB video files through app server memory will exhaust bandwidth and crash container memory.”",
+              followUp:
+                "Sam: “Proxying 5GB video files through app server memory will exhaust bandwidth and crash container memory.”",
             },
           ],
           accept: ["presigned-urls"],
@@ -45,13 +47,16 @@ export const fileStorage: DesignScenario = {
           options: [
             {
               id: "multipart-chunking",
-              label: "Multipart chunked upload — split files into 5MB chunks and resume failed chunks",
-              followUp: "Sam: “Spot on! If chunk 390 fails, the client retries only chunk 390 instead of restarting all 2GB.”",
+              label:
+                "Multipart chunked upload — split files into 5MB chunks and resume failed chunks",
+              followUp:
+                "Sam: “Spot on! If chunk 390 fails, the client retries only chunk 390 instead of restarting all 2GB.”",
             },
             {
               id: "single-stream",
               label: "Single monolithic HTTP PUT request for the full file",
-              followUp: "Sam: “A single PUT request means a 99% complete upload drops entirely on any network hiccup.”",
+              followUp:
+                "Sam: “A single PUT request means a 99% complete upload drops entirely on any network hiccup.”",
             },
           ],
           accept: ["multipart-chunking"],
@@ -75,7 +80,8 @@ export const fileStorage: DesignScenario = {
           formula: "(1,000,000 * 365 * 5 * 2,000,000) / 1,000,000,000,000",
           accept: { min: 3000, max: 4000 },
           magnitude: { min: 500, max: 10000 },
-          rationale: "1M files x 365 x 5 = 1.825B files x 2MB ≈ 3,650 TB (3.65 Petabytes) in Object Storage.",
+          rationale:
+            "1M files x 365 x 5 = 1.825B files x 2MB ≈ 3,650 TB (3.65 Petabytes) in Object Storage.",
         },
         {
           id: "metadata-db-size",

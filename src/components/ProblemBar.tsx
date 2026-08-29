@@ -55,24 +55,25 @@ export function ProblemBar({
           </span>
         )}
 
-        {difficulty && (
-          <DifficultyPill difficulty={difficulty} showDot={false} />
-        )}
+        {difficulty && <DifficultyPill difficulty={difficulty} showDot={false} />}
 
-        <span className="truncate font-sans text-sm font-medium text-foreground">
-          {title}
-        </span>
+        <span className="truncate font-sans text-sm font-medium text-foreground">{title}</span>
       </div>
 
       {/* Right: actions */}
       <div className="flex shrink-0 items-center gap-2">
         {rightSlot}
 
-        {onRun && (
-          passed ? (
+        {onRun &&
+          (passed ? (
             <span className="flex items-center gap-1.5 rounded border border-pass/40 bg-pass/10 px-3 py-1 font-mono text-xs font-semibold uppercase tracking-wider text-pass">
               <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2.5"
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
               Resolved
             </span>
@@ -87,8 +88,19 @@ export function ProblemBar({
               {running ? (
                 <>
                   <svg className="size-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
                   </svg>
                   Running…
                 </>
@@ -101,8 +113,7 @@ export function ProblemBar({
                 </>
               )}
             </button>
-          )
-        )}
+          ))}
       </div>
     </div>
   );

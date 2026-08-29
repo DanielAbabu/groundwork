@@ -27,17 +27,20 @@ export const urlShortener: DesignScenario = {
             {
               id: "write-heavy",
               label: "It's write-heavy — optimise link creation",
-              followUp: "Priya: “Wait, we create maybe 5,000 links a day... but our list is 2 million subscribers. Surely that's mostly click reads?”",
+              followUp:
+                "Priya: “Wait, we create maybe 5,000 links a day... but our list is 2 million subscribers. Surely that's mostly click reads?”",
             },
             {
               id: "read-heavy",
               label: "It's read-heavy — optimise redirects",
-              followUp: "Priya: “Exactly! A single email campaign can send 500k clicks in an hour, while my team creates maybe 50 links a week.”",
+              followUp:
+                "Priya: “Exactly! A single email campaign can send 500k clicks in an hour, while my team creates maybe 50 links a week.”",
             },
             {
               id: "balanced",
               label: "Roughly balanced — treat both the same",
-              followUp: "Priya: “Hmm, creating a link happens once, but millions of users click it repeatedly. I don't think they're equal.”",
+              followUp:
+                "Priya: “Hmm, creating a link happens once, but millions of users click it repeatedly. I don't think they're equal.”",
             },
           ],
           accept: ["read-heavy"],
@@ -51,17 +54,20 @@ export const urlShortener: DesignScenario = {
             {
               id: "yes-custom",
               label: "Yes — support custom slugs with a uniqueness check",
-              followUp: "Priya: “Awesome! Marketing conversion rates jump 35% when the link text describes the campaign.”",
+              followUp:
+                "Priya: “Awesome! Marketing conversion rates jump 35% when the link text describes the campaign.”",
             },
             {
               id: "no-custom",
               label: "No — random codes only, simpler to shard",
-              followUp: "Priya: “Ah, that's a dealbreaker for Growth. Nobody wants to share /x7q9k2 on Twitter during Black Friday.”",
+              followUp:
+                "Priya: “Ah, that's a dealbreaker for Growth. Nobody wants to share /x7q9k2 on Twitter during Black Friday.”",
             },
             {
               id: "later",
               label: "Defer it, out of scope for v1",
-              followUp: "Priya: “If v1 doesn't support custom slugs, my team won't adopt it over Bitly.”",
+              followUp:
+                "Priya: “If v1 doesn't support custom slugs, my team won't adopt it over Bitly.”",
             },
           ],
           accept: ["yes-custom"],
@@ -75,17 +81,20 @@ export const urlShortener: DesignScenario = {
             {
               id: "ttl",
               label: "Yes — optional expiry per link, expired links 410",
-              followUp: "Priya: “Perfect. Once a seasonal sale ends, we want old links to return an explicit gone page rather than redirecting to dead inventory.”",
+              followUp:
+                "Priya: “Perfect. Once a seasonal sale ends, we want old links to return an explicit gone page rather than redirecting to dead inventory.”",
             },
             {
               id: "never",
               label: "No — links live forever, never delete",
-              followUp: "Priya: “Keeping expired campaign links active means customers might try to claim expired promo offers months later.”",
+              followUp:
+                "Priya: “Keeping expired campaign links active means customers might try to claim expired promo offers months later.”",
             },
             {
               id: "hard-delete",
               label: "Hard-delete rows on expiry to save space",
-              followUp: "Priya: “If we hard-delete the database rows, won't we lose all click metrics and postmortem analytics?”",
+              followUp:
+                "Priya: “If we hard-delete the database rows, won't we lose all click metrics and postmortem analytics?”",
             },
           ],
           accept: ["ttl"],
@@ -99,17 +108,20 @@ export const urlShortener: DesignScenario = {
             {
               id: "p99-100",
               label: "Redirect p99 under ~100ms — it's on the critical path",
-              followUp: "Priya: “Great. Every 100ms of redirect delay drops our campaign landing conversion by 1%.”",
+              followUp:
+                "Priya: “Great. Every 100ms of redirect delay drops our campaign landing conversion by 1%.”",
             },
             {
               id: "p99-2s",
               label: "Under 2s is fine, it's just a redirect",
-              followUp: "Priya: “2 seconds?! Users will think the link is broken and hit back before the store even loads.”",
+              followUp:
+                "Priya: “2 seconds?! Users will think the link is broken and hit back before the store even loads.”",
             },
             {
               id: "no-target",
               label: "No target — measure after launch",
-              followUp: "Priya: “We need an SLA up front so engineering can size the caching layer properly.”",
+              followUp:
+                "Priya: “We need an SLA up front so engineering can size the caching layer properly.”",
             },
           ],
           accept: ["p99-100"],

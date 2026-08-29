@@ -13,8 +13,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
       { title: "Engineer Command Center — Groundwork" },
       {
         name: "description",
-        content:
-          "Track your progress in the debugging rotation and system design reviews.",
+        content: "Track your progress in the debugging rotation and system design reviews.",
       },
       { property: "og:title", content: "Engineer Command Center — Groundwork" },
       { property: "og:type", content: "website" },
@@ -124,14 +123,17 @@ function Dashboard() {
             </div>
             <h2 className="text-xl font-bold text-foreground">Debugging Rotation</h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Get paged into broken codebases, read signals, fix root causes in Monaco, and verify with hidden test harnesses.
+              Get paged into broken codebases, read signals, fix root causes in Monaco, and verify
+              with hidden test harnesses.
             </p>
           </div>
 
           <div className="pt-4 border-t border-border space-y-3">
             <div className="flex items-center justify-between text-xs font-mono">
               <span className="text-muted-foreground">Next Up:</span>
-              <span className="text-foreground font-semibold truncate max-w-xs">{nextDebugScenario.title}</span>
+              <span className="text-foreground font-semibold truncate max-w-xs">
+                {nextDebugScenario.title}
+              </span>
             </div>
             <Link
               to="/incidents/$slug"
@@ -156,14 +158,17 @@ function Dashboard() {
             </div>
             <h2 className="text-xl font-bold text-foreground">Design Review Simulator</h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Present to senior engineering stakeholders across four stages: clarify, calculate capacity, sketch canvas, and defend trade-offs.
+              Present to senior engineering stakeholders across four stages: clarify, calculate
+              capacity, sketch canvas, and defend trade-offs.
             </p>
           </div>
 
           <div className="pt-4 border-t border-border space-y-3">
             <div className="flex items-center justify-between text-xs font-mono">
               <span className="text-muted-foreground">Next Up:</span>
-              <span className="text-foreground font-semibold truncate max-w-xs">{nextDesignScenario.title}</span>
+              <span className="text-foreground font-semibold truncate max-w-xs">
+                {nextDesignScenario.title}
+              </span>
             </div>
             <Link
               to="/design/$slug"

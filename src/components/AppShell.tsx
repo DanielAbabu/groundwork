@@ -34,8 +34,8 @@ export function AppShell({ children }: AppShellProps) {
     const dates = (progress ?? [])
       .filter((r) => r.first_passed_at)
       .map((r) => new Date(r.first_passed_at!).toDateString());
-    const unique = Array.from(new Set(dates)).sort((a, b) =>
-      new Date(b).getTime() - new Date(a).getTime(),
+    const unique = Array.from(new Set(dates)).sort(
+      (a, b) => new Date(b).getTime() - new Date(a).getTime(),
     );
     let count = 0;
     let cursor = new Date();
@@ -59,10 +59,11 @@ export function AppShell({ children }: AppShellProps) {
       {/* ── Slim 44px Global Top Header ── */}
       <header className="sticky top-0 z-40 w-full border-b border-border bg-[#161616]">
         <div className="flex h-11 items-center justify-between gap-4 px-4 sm:px-6">
-
           {/* Brand */}
           <Link to="/dashboard" className="flex items-center gap-2 group shrink-0">
-            <span className="font-mono text-base font-bold text-primary select-none">&lt;/&gt;</span>
+            <span className="font-mono text-base font-bold text-primary select-none">
+              &lt;/&gt;
+            </span>
             <span className="hidden sm:block font-mono text-xs font-bold uppercase tracking-[0.2em] text-foreground">
               Groundwork
             </span>
@@ -104,7 +105,8 @@ export function AppShell({ children }: AppShellProps) {
 
             {/* Solved count */}
             <span className="hidden sm:block font-mono text-xs text-muted-foreground">
-              <span className="text-foreground font-semibold">{resolved}</span>/{scenarios.length} solved
+              <span className="text-foreground font-semibold">{resolved}</span>/{scenarios.length}{" "}
+              solved
             </span>
 
             <NudgePopover />
@@ -137,7 +139,12 @@ export function AppShell({ children }: AppShellProps) {
               }}
             >
               <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             </button>
           </div>
@@ -152,25 +159,35 @@ export function AppShell({ children }: AppShellProps) {
         <div className="flex flex-col gap-1">
           <Link
             to="/incidents"
-            onClick={() => document.getElementById("mobile-nav-sheet")?.classList.add("translate-y-full")}
+            onClick={() =>
+              document.getElementById("mobile-nav-sheet")?.classList.add("translate-y-full")
+            }
             className={`rounded px-4 py-3 font-mono text-sm uppercase tracking-wider transition-colors ${
-              isIncidents ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"
+              isIncidents
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Debugging
           </Link>
           <Link
             to="/design"
-            onClick={() => document.getElementById("mobile-nav-sheet")?.classList.add("translate-y-full")}
+            onClick={() =>
+              document.getElementById("mobile-nav-sheet")?.classList.add("translate-y-full")
+            }
             className={`rounded px-4 py-3 font-mono text-sm uppercase tracking-wider transition-colors ${
-              isDesign ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"
+              isDesign
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Design Review
           </Link>
           <Link
             to="/dashboard"
-            onClick={() => document.getElementById("mobile-nav-sheet")?.classList.add("translate-y-full")}
+            onClick={() =>
+              document.getElementById("mobile-nav-sheet")?.classList.add("translate-y-full")
+            }
             className="rounded px-4 py-3 font-mono text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
           >
             Dashboard

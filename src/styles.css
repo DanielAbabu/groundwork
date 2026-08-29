@@ -70,73 +70,73 @@
   --radius: 0.375rem;
 
   /* Surfaces */
-  --background:             #0f0f0f;
-  --surface:                #161616;
-  --surface-strong:         #121212;
-  --card:                   #1c1c1c;
-  --card-foreground:        #e8e8e8;
-  --popover:                #1c1c1c;
-  --popover-foreground:     #e8e8e8;
+  --background: #0f0f0f;
+  --surface: #161616;
+  --surface-strong: #121212;
+  --card: #1c1c1c;
+  --card-foreground: #e8e8e8;
+  --popover: #1c1c1c;
+  --popover-foreground: #e8e8e8;
 
   /* Borders */
-  --border:                 #2a2a2a;
-  --input:                  #2a2a2a;
+  --border: #2a2a2a;
+  --input: #2a2a2a;
 
   /* Text */
-  --foreground:             #e8e8e8;
-  --muted:                  #1c1c1c;
-  --muted-foreground:       #8a8a8a;
+  --foreground: #e8e8e8;
+  --muted: #1c1c1c;
+  --muted-foreground: #8a8a8a;
 
   /* Primary — LeetCode Blue for interactive elements */
-  --primary:                #3b82f6;
-  --primary-foreground:     #ffffff;
-  --ring:                   #3b82f6;
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --ring: #3b82f6;
 
   /* Secondary / Accent */
-  --secondary:              #262626;
-  --secondary-foreground:   #e8e8e8;
-  --accent:                 #262626;
-  --accent-foreground:      #e8e8e8;
+  --secondary: #262626;
+  --secondary-foreground: #e8e8e8;
+  --accent: #262626;
+  --accent-foreground: #e8e8e8;
 
   /* Destructive */
-  --destructive:            #ef4444;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
 
   /* Submit — HackerRank Teal for design-track submit CTA */
-  --submit:                 #00b8a3;
+  --submit: #00b8a3;
 
   /* Verdicts */
-  --pass:                   #00c2a0;
-  --pass-foreground:        #0f2e28;
-  --fail:                   #ef4444;
-  --fail-foreground:        #ffffff;
+  --pass: #00c2a0;
+  --pass-foreground: #0f2e28;
+  --fail: #ef4444;
+  --fail-foreground: #ffffff;
 
   /* Difficulty pills */
-  --easy:                   #00c2a0;
-  --medium:                 #f59e0b;
-  --hard:                   #ef4444;
+  --easy: #00c2a0;
+  --medium: #f59e0b;
+  --hard: #ef4444;
 
   /* SEV severity — amber retained for incident context */
-  --sev1:                   #ef4444;
-  --sev2:                   #f59e0b;
-  --sev3:                   #3b82f6;
+  --sev1: #ef4444;
+  --sev2: #f59e0b;
+  --sev3: #3b82f6;
 
   /* Charts */
-  --chart-1:                #3b82f6;
-  --chart-2:                #00c2a0;
-  --chart-3:                #ef4444;
-  --chart-4:                #f59e0b;
-  --chart-5:                #a855f7;
+  --chart-1: #3b82f6;
+  --chart-2: #00c2a0;
+  --chart-3: #ef4444;
+  --chart-4: #f59e0b;
+  --chart-5: #a855f7;
 
   /* Sidebar */
-  --sidebar:                #141414;
-  --sidebar-foreground:     #e0e0e0;
-  --sidebar-primary:        #3b82f6;
+  --sidebar: #141414;
+  --sidebar-foreground: #e0e0e0;
+  --sidebar-primary: #3b82f6;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent:         #262626;
+  --sidebar-accent: #262626;
   --sidebar-accent-foreground: #e8e8e8;
-  --sidebar-border:         #2a2a2a;
-  --sidebar-ring:           #3b82f6;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #3b82f6;
 }
 
 .dark {
@@ -165,9 +165,21 @@
 }
 
 /* ─── Difficulty pills ────────────────────────────────────────────── */
-.difficulty-easy   { color: var(--easy);   background: rgb(0 194 160 / 10%);  border: 1px solid rgb(0 194 160 / 30%);  }
-.difficulty-medium { color: var(--medium); background: rgb(245 158 11 / 10%); border: 1px solid rgb(245 158 11 / 30%); }
-.difficulty-hard   { color: var(--hard);   background: rgb(239 68 68 / 10%);  border: 1px solid rgb(239 68 68 / 30%);  }
+.difficulty-easy {
+  color: var(--easy);
+  background: rgb(0 194 160 / 10%);
+  border: 1px solid rgb(0 194 160 / 30%);
+}
+.difficulty-medium {
+  color: var(--medium);
+  background: rgb(245 158 11 / 10%);
+  border: 1px solid rgb(245 158 11 / 30%);
+}
+.difficulty-hard {
+  color: var(--hard);
+  background: rgb(239 68 68 / 10%);
+  border: 1px solid rgb(239 68 68 / 30%);
+}
 
 /* ─── CTA Buttons ────────────────────────────────────────────────── */
 .run-btn {
@@ -180,8 +192,12 @@
   border-radius: var(--radius);
   transition: background 150ms;
 }
-.run-btn:hover  { background: #2563eb; }
-.run-btn:active { background: #1d4ed8; }
+.run-btn:hover {
+  background: #2563eb;
+}
+.run-btn:active {
+  background: #1d4ed8;
+}
 
 .submit-btn {
   background: var(--submit);
@@ -193,8 +209,12 @@
   border-radius: var(--radius);
   transition: background 150ms;
 }
-.submit-btn:hover  { background: #00a090; }
-.submit-btn:active { background: #008f80; }
+.submit-btn:hover {
+  background: #00a090;
+}
+.submit-btn:active {
+  background: #008f80;
+}
 
 /* ─── Panel surface ─────────────────────────────────────────────── */
 .panel-surface {
@@ -204,26 +224,47 @@
 
 /* ─── Accepted flash animation ─────────────────────────────────── */
 @keyframes accepted-flash {
-  0%   { background-color: rgb(0 194 160 / 0%);  }
-  30%  { background-color: rgb(0 194 160 / 12%); }
-  100% { background-color: rgb(0 194 160 / 0%);  }
+  0% {
+    background-color: rgb(0 194 160 / 0%);
+  }
+  30% {
+    background-color: rgb(0 194 160 / 12%);
+  }
+  100% {
+    background-color: rgb(0 194 160 / 0%);
+  }
 }
-.accepted-flash { animation: accepted-flash 1s ease-out forwards; }
+.accepted-flash {
+  animation: accepted-flash 1s ease-out forwards;
+}
 
 /* ─── Console drawer slide in ───────────────────────────────────── */
 @keyframes slide-up {
-  from { transform: translateY(8px); opacity: 0; }
-  to   { transform: translateY(0);   opacity: 1; }
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
-.slide-up { animation: slide-up 180ms ease-out forwards; }
+.slide-up {
+  animation: slide-up 180ms ease-out forwards;
+}
 
 /* ─── Pager pulse (kept for SEV badge) ─────────────────────────── */
 @utility pager-pulse {
   animation: pager-pulse 1.8s ease-in-out infinite;
 }
 @keyframes pager-pulse {
-  0%, 100% { opacity: 1;    }
-  50%       { opacity: 0.35; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 /* ─── Grid noise utility ────────────────────────────────────────── */
@@ -259,16 +300,24 @@
   border-bottom: 1px solid var(--border);
   color: var(--foreground);
 }
-.react-flow__controls-button:hover { background: var(--accent); }
-.react-flow__controls-button svg  { fill: currentColor; }
+.react-flow__controls-button:hover {
+  background: var(--accent);
+}
+.react-flow__controls-button svg {
+  fill: currentColor;
+}
 .react-flow__minimap {
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
-.react-flow__attribution { display: none; }
+.react-flow__attribution {
+  display: none;
+}
 .react-flow__handle {
   width: 9px;
   height: 9px;
   border: 1px solid var(--surface-strong);
 }
-.react-flow__edge-text { font-family: var(--font-mono); }
+.react-flow__edge-text {
+  font-family: var(--font-mono);
+}

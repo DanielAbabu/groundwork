@@ -76,7 +76,9 @@ function DesignBoard() {
             System Design Interview Simulator
           </h1>
           <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-            Step into staff-level design reviews: clarify requirements with interactive stakeholders, calculate capacity, sketch canvas resiliency, and defend architectural trade-offs.
+            Step into staff-level design reviews: clarify requirements with interactive
+            stakeholders, calculate capacity, sketch canvas resiliency, and defend architectural
+            trade-offs.
           </p>
         </div>
       </div>

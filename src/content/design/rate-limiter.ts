@@ -26,13 +26,16 @@ export const rateLimiter: DesignScenario = {
           options: [
             {
               id: "token-bucket",
-              label: "Token Bucket / Sliding Window Counter — allows bursts up to bucket capacity, low memory",
-              followUp: "Elena: “Spot on! Token Bucket handles legitimate traffic bursts (e.g. 50 requests in 1 second) while enforcing average rate limits.”",
+              label:
+                "Token Bucket / Sliding Window Counter — allows bursts up to bucket capacity, low memory",
+              followUp:
+                "Elena: “Spot on! Token Bucket handles legitimate traffic bursts (e.g. 50 requests in 1 second) while enforcing average rate limits.”",
             },
             {
               id: "fixed-window",
               label: "Fixed Window Counter — reset counter at every clock minute boundary",
-              followUp: "Elena: “Fixed window allows 2x burst traffic at window edges (e.g. 100 reqs at 11:59:59 and 100 at 12:00:01).”",
+              followUp:
+                "Elena: “Fixed window allows 2x burst traffic at window edges (e.g. 100 reqs at 11:59:59 and 100 at 12:00:01).”",
             },
           ],
           accept: ["token-bucket"],
@@ -46,12 +49,14 @@ export const rateLimiter: DesignScenario = {
             {
               id: "redis-distributed",
               label: "In-memory distributed Redis cluster using atomic INCR / Lua scripts",
-              followUp: "Elena: “Exactly! Redis Lua scripts execute atomically in sub-2ms, preventing race conditions between app nodes.”",
+              followUp:
+                "Elena: “Exactly! Redis Lua scripts execute atomically in sub-2ms, preventing race conditions between app nodes.”",
             },
             {
               id: "relational-db",
               label: "Primary Relational Database table (PostgreSQL)",
-              followUp: "Elena: “Hitting PostgreSQL write locks on every incoming API call at 100k req/s will instantly bring down the DB.”",
+              followUp:
+                "Elena: “Hitting PostgreSQL write locks on every incoming API call at 100k req/s will instantly bring down the DB.”",
             },
           ],
           accept: ["redis-distributed"],
@@ -75,7 +80,8 @@ export const rateLimiter: DesignScenario = {
           formula: "(1,000,000 * 64) / 1,000,000",
           accept: { min: 50, max: 80 },
           magnitude: { min: 10, max: 500 },
-          rationale: "1M keys x 64 bytes = 64 MB of RAM — tiny enough to fit easily in a single Redis node.",
+          rationale:
+            "1M keys x 64 bytes = 64 MB of RAM — tiny enough to fit easily in a single Redis node.",
         },
         {
           id: "peak-qps",
@@ -96,21 +102,8 @@ export const rateLimiter: DesignScenario = {
       prompt:
         "Place the rate limiter at the API gateway edge. Client -> Load Balancer -> App Server / Rate Limiter -> Redis Cache -> Primary DB.",
       spec: {
-        palette: [
-          "CLIENT",
-          "CDN",
-          "LOAD_BALANCER",
-          "APP_SERVER",
-          "CACHE",
-          "DATABASE_PRIMARY",
-        ],
-        requiredNodeTypes: [
-          "CLIENT",
-          "LOAD_BALANCER",
-          "APP_SERVER",
-          "CACHE",
-          "DATABASE_PRIMARY",
-        ],
+        palette: ["CLIENT", "CDN", "LOAD_BALANCER", "APP_SERVER", "CACHE", "DATABASE_PRIMARY"],
+        requiredNodeTypes: ["CLIENT", "LOAD_BALANCER", "APP_SERVER", "CACHE", "DATABASE_PRIMARY"],
         forbiddenNodeTypes: [],
         requiredEdges: [
           { from: "CLIENT", to: "LOAD_BALANCER" },

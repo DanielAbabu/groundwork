@@ -133,7 +133,13 @@ function nodeSize(node: CanvasNode) {
   return { w: def.defaultSize.w, h: def.defaultSize.h };
 }
 
-function CanvasInner({ palette = Object.keys(COMPONENT_TYPES) as ComponentType[], value, nodes: propNodes, edges: propEdges, onChange }: ComponentCanvasProps) {
+function CanvasInner({
+  palette = Object.keys(COMPONENT_TYPES) as ComponentType[],
+  value,
+  nodes: propNodes,
+  edges: propEdges,
+  onChange,
+}: ComponentCanvasProps) {
   const wrapper = useRef<HTMLDivElement>(null);
   const idRef = useRef(1);
   const { screenToFlowPosition, zoomIn, zoomOut, fitView } = useReactFlow();

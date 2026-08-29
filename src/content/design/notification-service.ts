@@ -27,17 +27,20 @@ export const notificationService: DesignScenario = {
             {
               id: "at-least-once",
               label: "At-least-once delivery — retry with exponential backoff via message queue",
-              followUp: "Marcus: “Exactly! A duplicate notification is annoying, but dropping a critical order update is disastrous.”",
+              followUp:
+                "Marcus: “Exactly! A duplicate notification is annoying, but dropping a critical order update is disastrous.”",
             },
             {
               id: "exactly-once",
               label: "Strict exactly-once delivery — drop retries to avoid duplicate pushes",
-              followUp: "Marcus: “Strict exactly-once across external third-party gateways like APNs is distributedly impossible.”",
+              followUp:
+                "Marcus: “Strict exactly-once across external third-party gateways like APNs is distributedly impossible.”",
             },
             {
               id: "at-most-once",
               label: "At-most-once delivery — fire and forget, never retry",
-              followUp: "Marcus: “Fire-and-forget will drop 5% of pushes when third-party gateways throttle us.”",
+              followUp:
+                "Marcus: “Fire-and-forget will drop 5% of pushes when third-party gateways throttle us.”",
             },
           ],
           accept: ["at-least-once"],
@@ -50,13 +53,16 @@ export const notificationService: DesignScenario = {
           options: [
             {
               id: "queue-fanout",
-              label: "Async fan-out via message queue workers — decouple request from APNs dispatch",
-              followUp: "Marcus: “Great! The API acknowledges the trigger in 10ms, while workers drain the queue at peak rate.”",
+              label:
+                "Async fan-out via message queue workers — decouple request from APNs dispatch",
+              followUp:
+                "Marcus: “Great! The API acknowledges the trigger in 10ms, while workers drain the queue at peak rate.”",
             },
             {
               id: "sync-loop",
               label: "Synchronous for-loop inside the API handler — send pushes directly",
-              followUp: "Marcus: “A synchronous loop will time out HTTP requests and crash the app server under peak load.”",
+              followUp:
+                "Marcus: “A synchronous loop will time out HTTP requests and crash the app server under peak load.”",
             },
           ],
           accept: ["queue-fanout"],
@@ -70,12 +76,14 @@ export const notificationService: DesignScenario = {
             {
               id: "priority-queues",
               label: "Separate high-priority and bulk queues to prevent head-of-line blocking",
-              followUp: "Marcus: “Spot on! 2FA login codes skip past 10M scheduled marketing pushes instantly.”",
+              followUp:
+                "Marcus: “Spot on! 2FA login codes skip past 10M scheduled marketing pushes instantly.”",
             },
             {
               id: "single-fifo",
               label: "Single shared FIFO queue for all notification types",
-              followUp: "Marcus: “Single FIFO means a security OTP code gets stuck behind 2 million promotional newsletter pushes.”",
+              followUp:
+                "Marcus: “Single FIFO means a security OTP code gets stuck behind 2 million promotional newsletter pushes.”",
             },
           ],
           accept: ["priority-queues"],

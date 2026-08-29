@@ -44,7 +44,6 @@ export function evaluateFormula(input: string | number | null | undefined): Form
 
   try {
     // Evaluate sanitized math expression safely
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval
     const result = new Function(`"use strict"; return (${sanitized})`)() as unknown;
     if (typeof result === "number" && !Number.isNaN(result) && Number.isFinite(result)) {
       return {

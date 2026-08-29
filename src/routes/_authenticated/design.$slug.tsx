@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
@@ -21,7 +21,6 @@ import { ComponentCanvas } from "@/components/design/ComponentCanvas";
 import { ProblemBar } from "@/components/ProblemBar";
 import { VerticalStepper } from "@/components/design/VerticalStepper";
 import { StakeholderChat } from "@/components/design/StakeholderChat";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -117,8 +116,6 @@ function DesignRoom() {
     }
   }
 
-  const stagePassed = grade?.passed ?? savedPassed.has(stage.id);
-
   return (
     <div className="flex h-[calc(100vh-44px)] flex-col bg-background overflow-hidden">
       {/* ── Problem Bar ── */}
@@ -169,7 +166,6 @@ function DesignRoom() {
       ) : (
         /* ── Full-Viewport 2-Panel Workspace ── */
         <div className="flex flex-1 overflow-hidden">
-
           {/* ── Left Panel: Pipeline Stepper & Prompt (340px) ── */}
           <aside className="w-85 shrink-0 flex flex-col border-r border-border bg-[#161616] overflow-hidden">
             {/* Header info */}
@@ -183,7 +179,9 @@ function DesignRoom() {
                 </span>
               </div>
               <p className="font-mono text-xs text-muted-foreground">
-                Stakeholder: <span className="text-foreground font-semibold">{scenario.stakeholder}</span> ({scenario.stakeholderRole})
+                Stakeholder:{" "}
+                <span className="text-foreground font-semibold">{scenario.stakeholder}</span> (
+                {scenario.stakeholderRole})
               </p>
             </div>
 
@@ -222,7 +220,9 @@ function DesignRoom() {
               {grade && (
                 <div
                   className={`rounded border p-3 font-mono text-xs space-y-1 ${
-                    grade.passed ? "border-pass/40 bg-pass/10 text-pass" : "border-fail/40 bg-fail/10 text-fail"
+                    grade.passed
+                      ? "border-pass/40 bg-pass/10 text-pass"
+                      : "border-fail/40 bg-fail/10 text-fail"
                   }`}
                 >
                   <div className="flex items-center justify-between font-bold">
@@ -451,9 +451,7 @@ function CapacityStage({
             />
 
             {invalid && rawText.trim() !== "" && (
-              <p className="font-mono text-[10px] text-fail">
-                Invalid formula expression
-              </p>
+              <p className="font-mono text-[10px] text-fail">Invalid formula expression</p>
             )}
 
             {hasValue && !invalid && (
@@ -472,7 +470,7 @@ function CapacityStage({
 }
 
 function ComponentsStage({
-  stage,
+  stage: _stage,
   answer,
   onChange,
 }: {
@@ -480,7 +478,10 @@ function ComponentsStage({
   answer: ComponentsAnswer;
   onChange: (next: ComponentsAnswer) => void;
 }) {
-  const spofs = useMemo(() => detectSpofs({ nodes: answer.nodes, edges: answer.edges }), [answer.nodes, answer.edges]);
+  const spofs = useMemo(
+    () => detectSpofs({ nodes: answer.nodes, edges: answer.edges }),
+    [answer.nodes, answer.edges],
+  );
   const latency = useMemo(
     () => estimateGraphLatency({ nodes: answer.nodes, edges: answer.edges }),
     [answer.nodes, answer.edges],
@@ -490,12 +491,16 @@ function ComponentsStage({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card p-4">
         <div>
-          <h4 className="font-semibold text-foreground text-sm">System Resilience & Latency Analysis</h4>
+          <h4 className="font-semibold text-foreground text-sm">
+            System Resilience & Latency Analysis
+          </h4>
           <p className="font-mono text-xs text-muted-foreground mt-0.5">
             {spofs.length === 0 ? (
               <span className="text-pass font-semibold">✓ No Single Points of Failure</span>
             ) : (
-              <span className="text-fail font-semibold">⚠️ {spofs.length} Single Point(s) of Failure detected</span>
+              <span className="text-fail font-semibold">
+                ⚠️ {spofs.length} Single Point(s) of Failure detected
+              </span>
             )}
           </p>
         </div>
@@ -586,9 +591,7 @@ function Summary({
           <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground block">
             Submission Summary
           </span>
-          <h2 className="text-xl font-bold text-foreground mt-1">
-            {scenario.title}
-          </h2>
+          <h2 className="text-xl font-bold text-foreground mt-1">{scenario.title}</h2>
           <p className="font-mono text-xs text-muted-foreground mt-0.5">
             Stakeholder: {scenario.stakeholder} ({scenario.stakeholderRole})
           </p>
@@ -617,7 +620,10 @@ function Summary({
             const grade = grades[stage.id];
             const passed = grade?.passed ?? savedPassed.has(stage.id);
             return (
-              <li key={stage.id} className="rounded-lg border border-border bg-background p-4 space-y-2">
+              <li
+                key={stage.id}
+                className="rounded-lg border border-border bg-background p-4 space-y-2"
+              >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-sm font-semibold text-foreground">
                     {i + 1}. {stage.title} ({STAGE_KIND_LABELS[stage.kind]})
@@ -645,7 +651,8 @@ function Summary({
                   <ul className="mt-2 space-y-1 font-mono text-[11px] text-muted-foreground bg-card p-2.5 rounded border border-border">
                     {stage.fields.map((field) => (
                       <li key={field.id}>
-                        <span className="font-semibold text-foreground">{field.label}:</span> Target range {field.accept.min}–{field.accept.max} {field.unit} — {field.rationale}
+                        <span className="font-semibold text-foreground">{field.label}:</span> Target
+                        range {field.accept.min}–{field.accept.max} {field.unit} — {field.rationale}
                       </li>
                     ))}
                   </ul>

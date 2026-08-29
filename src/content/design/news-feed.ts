@@ -26,13 +26,17 @@ export const newsFeed: DesignScenario = {
           options: [
             {
               id: "fanout-write",
-              label: "Fan-out on write (Push model) — inject post into all 100 follower feed caches immediately",
-              followUp: "Jasmine: “Great! Reading the feed is now O(1) cache lookup because pre-computed lists exist in Redis.”",
+              label:
+                "Fan-out on write (Push model) — inject post into all 100 follower feed caches immediately",
+              followUp:
+                "Jasmine: “Great! Reading the feed is now O(1) cache lookup because pre-computed lists exist in Redis.”",
             },
             {
               id: "fanout-read",
-              label: "Fan-out on read (Pull model) — fetch posts from all 100 followed users dynamically",
-              followUp: "Jasmine: “Pull model works for few follows, but doing SQL JOINs on 500 followees per feed view is expensive.”",
+              label:
+                "Fan-out on read (Pull model) — fetch posts from all 100 followed users dynamically",
+              followUp:
+                "Jasmine: “Pull model works for few follows, but doing SQL JOINs on 500 followees per feed view is expensive.”",
             },
           ],
           accept: ["fanout-write"],
@@ -45,13 +49,16 @@ export const newsFeed: DesignScenario = {
           options: [
             {
               id: "hybrid-fanout",
-              label: "Hybrid model — push for standard accounts, pull on-read for celebrity accounts",
-              followUp: "Jasmine: “Spot on! Writing 10 million Redis cache entries for one tweet would melt the write queue.”",
+              label:
+                "Hybrid model — push for standard accounts, pull on-read for celebrity accounts",
+              followUp:
+                "Jasmine: “Spot on! Writing 10 million Redis cache entries for one tweet would melt the write queue.”",
             },
             {
               id: "push-celebrity",
               label: "Push to all 10 million follower caches regardless",
-              followUp: "Jasmine: “10 million cache updates per post will create a massive queue backlog and delay feed updates.”",
+              followUp:
+                "Jasmine: “10 million cache updates per post will create a massive queue backlog and delay feed updates.”",
             },
           ],
           accept: ["hybrid-fanout"],
@@ -85,7 +92,8 @@ export const newsFeed: DesignScenario = {
           formula: "(10,000,000 * 800 * 500) / 1,000,000,000",
           accept: { min: 3500, max: 4500 },
           magnitude: { min: 500, max: 10000 },
-          rationale: "10M users x 800 items x 500 bytes ≈ 4,000 GB (4 TB) distributed Redis cluster memory.",
+          rationale:
+            "10M users x 800 items x 500 bytes ≈ 4,000 GB (4 TB) distributed Redis cluster memory.",
         },
       ],
     },

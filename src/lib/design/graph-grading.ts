@@ -249,7 +249,9 @@ export function estimateGraphLatency(graph: DesignGraph): LatencyEstimate {
     // Prefer CACHE over DATABASE_PRIMARY if both exist outgoing
     const nextEdges = edges.filter((e) => e.from === current);
     const cacheNext = nextEdges.find((e) => e.to === "CACHE");
-    const dbNext = nextEdges.find((e) => e.to === "DATABASE_PRIMARY" || e.to === "DATABASE_REPLICA");
+    const dbNext = nextEdges.find(
+      (e) => e.to === "DATABASE_PRIMARY" || e.to === "DATABASE_REPLICA",
+    );
     const appNext = nextEdges.find((e) => e.to === "APP_SERVER");
     const lbNext = nextEdges.find((e) => e.to === "LOAD_BALANCER");
 

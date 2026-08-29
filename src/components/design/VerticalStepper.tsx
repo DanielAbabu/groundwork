@@ -18,7 +18,8 @@ export function VerticalStepper({
       {stages.map((stage, idx) => {
         const isDone = completedStageIds.has(stage.id);
         const isActive = idx === currentStageIndex;
-        const isLocked = !isDone && !isActive && (idx > 0 && !completedStageIds.has(stages[idx - 1]!.id));
+        const isLocked =
+          !isDone && !isActive && idx > 0 && !completedStageIds.has(stages[idx - 1]!.id);
         const isLast = idx === stages.length - 1;
 
         return (
@@ -48,7 +49,12 @@ export function VerticalStepper({
             >
               {isDone ? (
                 <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               ) : (
                 idx + 1
