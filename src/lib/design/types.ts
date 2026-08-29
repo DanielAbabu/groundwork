@@ -6,11 +6,18 @@ export { COMPONENT_LABELS };
 
 export type DesignTier = "tier-1" | "tier-2" | "tier-3";
 
+export interface ClarifyOption {
+  id: string;
+  label: string;
+  /** Stakeholder's reaction to this choice when selected */
+  followUp?: string | undefined;
+}
+
 export interface ClarifyQuestion {
   id: string;
   /** What the stakeholder says / asks. */
   text: string;
-  options: { id: string; label: string }[];
+  options: ClarifyOption[];
   /** Option ids that count as acceptable answers. */
   accept: string[];
   rationale: string;
@@ -20,7 +27,9 @@ export interface CapacityField {
   id: string;
   label: string;
   unit: string;
-  hint?: string;
+  hint?: string | undefined;
+  /** Reference math expression hint, e.g. "50,000,000 / 86,400" */
+  formula?: string | undefined;
   /** Full credit range. */
   accept: { min: number; max: number };
   /** Partial credit range (right order of magnitude). */
@@ -50,7 +59,7 @@ export interface DesignGraph {
 export interface EdgePattern {
   from: ComponentType;
   to: ComponentType;
-  type?: ConnectionType;
+  type?: ConnectionType | undefined;
 }
 
 export interface ComponentsRubric {
@@ -60,15 +69,21 @@ export interface ComponentsRubric {
   forbiddenNodeTypes: ComponentType[];
   requiredEdges: EdgePattern[];
   forbiddenEdges: EdgePattern[];
-  minInstances?: Partial<Record<ComponentType, number>>;
+  minInstances?: Partial<Record<ComponentType, number>> | undefined;
   /** Explanations keyed by node type, "TYPE->TYPE", or "!TYPE" / "!TYPE->TYPE". */
   notes: Record<string, string>;
 }
+
+export type TradeoffAxis = "problem" | "mitigation" | "risk";
 
 export interface TradeoffConcept {
   id: string;
   label: string;
   keywords: string[];
+  /** Optional regex patterns for phrase matching */
+  patterns?: string[] | undefined;
+  /** Rubric category axis for structured feedback */
+  axis?: TradeoffAxis | undefined;
 }
 
 export type DesignStage =
@@ -103,6 +118,12 @@ export type DesignStage =
       ideal: string;
     };
 
+export interface DesignDebrief {
+  narrative: string;
+  seniorInsights: string[];
+  commonMistakes: string[];
+}
+
 export interface DesignScenario {
   id: string;
   title: string;
@@ -114,6 +135,7 @@ export interface DesignScenario {
   summary: string;
   framing: string;
   stages: DesignStage[];
+  debrief?: DesignDebrief | undefined;
 }
 
 export const STAGE_KIND_LABELS: Record<DesignStage["kind"], string> = {
@@ -151,7 +173,6 @@ export interface StageFeedbackItem {
   /** Concrete next action to satisfy the rule. */
   fix?: string | undefined;
 }
-
 
 export interface StageGrade {
   stageId: string;

@@ -5,8 +5,6 @@ import { designScenarios } from "@/content/design";
 import { STAGE_KIND_LABELS } from "@/lib/design/types";
 import { listDesignResults, type DesignStageRow } from "@/lib/design.functions";
 import { DIFFICULTY_CLASSES, DIFFICULTY_LABELS } from "@/lib/scenarios/types";
-import { TrackTabs } from "@/components/TrackTabs";
-import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/design/")({
   head: () => ({
@@ -44,80 +42,134 @@ function DesignBoard() {
     passedByScenario.set(row.scenario_id, set);
   }
 
+  const tiers = [
+    {
+      id: "tier-1",
+      title: "Tier 1 — Core Web Architecture",
+      subtitle: "Fundamental stateless scaling, caching, and database read/write separation.",
+    },
+    {
+      id: "tier-2",
+      title: "Tier 2 — High-Scale & Async Pipelines",
+      subtitle: "Fan-out push queues, high-throughput workers, and timeline Redis caching.",
+    },
+    {
+      id: "tier-3",
+      title: "Tier 3 — Advanced Distributed Infrastructure",
+      subtitle: "Sub-millisecond rate limiters, presigned S3 chunked uploads, and deduplication.",
+    },
+  ];
+
   return (
-    <main className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-5">
-          <div>
-            <Link to="/dashboard" className="font-mono text-xs uppercase tracking-[0.3em] text-primary">
-              incident
-            </Link>
-            <h1 className="mt-2 text-xl font-semibold text-foreground">Design Review</h1>
-            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Four graded stages per review: pin the requirements that change the design, size the
-              load with real arithmetic, sketch the path on a typed canvas, then defend one
-              trade-off out loud.
-            </p>
-
-          </div>
+    <div className="pb-16">
+      <div className="mx-auto max-w-6xl px-6 pt-8 pb-4">
+        <div className="border-b border-border pb-6">
           <div className="flex items-center gap-2">
-            <TrackTabs active="design" />
-            <Button asChild variant="outline" className="font-mono">
-              <Link to="/profile">Profile</Link>
-            </Button>
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
+              Interactive Design Room
+            </span>
           </div>
+          <h1 className="text-3xl font-extrabold text-foreground mt-2">
+            System Design Interview Simulator
+          </h1>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+            Step into 30-minute staff-level design interviews. Scrutinize requirements with interactive stakeholders, calculate capacity with real arithmetic, sketch resiliency on a typed canvas with single-point-of-failure detection, and defend trade-offs.
+          </p>
         </div>
-      </header>
+      </div>
 
-      <div className="mx-auto grid max-w-6xl gap-4 px-6 py-10 md:grid-cols-2">
-        {designScenarios.map((scenario) => {
-          const passed = passedByScenario.get(scenario.id) ?? new Set<string>();
-          const done = scenario.stages.filter((stage) => passed.has(stage.id)).length;
+      <div className="mx-auto max-w-6xl px-6 space-y-10 pt-6">
+        {tiers.map((tierGroup) => {
+          const matchingScenarios = designScenarios.filter(
+            (s) => (s.tier ?? "tier-1") === tierGroup.id,
+          );
+          if (matchingScenarios.length === 0) return null;
+
           return (
-            <Link
-              key={scenario.id}
-              to="/design/$slug"
-              params={{ slug: scenario.id }}
-              className="flex flex-col rounded-lg border border-border bg-card p-5 transition-colors hover:border-primary/50 hover:bg-accent/40"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span
-                  className={`rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest ${DIFFICULTY_CLASSES[scenario.difficulty]}`}
-                >
-                  {DIFFICULTY_LABELS[scenario.difficulty]}
-                </span>
-                <span
-                  className={`font-mono text-[10px] uppercase tracking-widest ${
-                    done === scenario.stages.length
-                      ? "text-pass"
-                      : done > 0
-                        ? "text-primary"
-                        : "text-muted-foreground"
-                  }`}
-                >
-                  {done}/{scenario.stages.length} stages
-                </span>
+            <div key={tierGroup.id} className="space-y-4">
+              <div>
+                <h2 className="text-lg font-bold text-foreground">{tierGroup.title}</h2>
+                <p className="font-mono text-xs text-muted-foreground mt-0.5">
+                  {tierGroup.subtitle}
+                </p>
               </div>
-              <h2 className="mt-4 text-base font-semibold text-foreground">{scenario.title}</h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{scenario.summary}</p>
-              <div className="mt-4 flex flex-wrap gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                <span className="rounded bg-secondary px-2 py-0.5">{scenario.system}</span>
-                {scenario.stages.map((stage) => (
-                  <span
-                    key={stage.id}
-                    className={`rounded px-2 py-0.5 ${passed.has(stage.id) ? "bg-pass/15 text-pass" : "bg-secondary"}`}
-                  >
-                    {STAGE_KIND_LABELS[stage.kind]}
-                  </span>
-                ))}
+
+              <div className="grid gap-4 md:grid-cols-2">
+                {matchingScenarios.map((scenario) => {
+                  const passed = passedByScenario.get(scenario.id) ?? new Set<string>();
+                  const done = scenario.stages.filter((stage) => passed.has(stage.id)).length;
+                  const isComplete = done === scenario.stages.length;
+
+                  return (
+                    <Link
+                      key={scenario.id}
+                      to="/design/$slug"
+                      params={{ slug: scenario.id }}
+                      className="group flex flex-col justify-between rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:bg-accent/30 shadow-sm hover:shadow"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <span
+                            className={`rounded border px-2 py-0.5 font-mono text-[10px] uppercase font-bold tracking-widest ${DIFFICULTY_CLASSES[scenario.difficulty]}`}
+                          >
+                            {DIFFICULTY_LABELS[scenario.difficulty]}
+                          </span>
+                          <span
+                            className={`font-mono text-[11px] font-bold uppercase tracking-widest ${
+                              isComplete
+                                ? "text-pass"
+                                : done > 0
+                                  ? "text-primary"
+                                  : "text-muted-foreground"
+                            }`}
+                          >
+                            {isComplete ? "Cleared ✓" : `${done}/${scenario.stages.length} stages`}
+                          </span>
+                        </div>
+
+                        <div>
+                          <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                            {scenario.title}
+                          </h3>
+                          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                            {scenario.summary}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-5 pt-3 border-t border-border/60 space-y-3">
+                        <div className="flex flex-wrap gap-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                          <span className="rounded bg-secondary px-2 py-0.5 font-semibold text-foreground">
+                            {scenario.system}
+                          </span>
+                          {scenario.stages.map((stage) => (
+                            <span
+                              key={stage.id}
+                              className={`rounded px-2 py-0.5 ${
+                                passed.has(stage.id)
+                                  ? "bg-pass/15 text-pass font-bold"
+                                  : "bg-secondary/60 text-muted-foreground"
+                              }`}
+                            >
+                              {STAGE_KIND_LABELS[stage.kind]}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground">
+                          <span>
+                            Stakeholder: <strong className="text-foreground">{scenario.stakeholder}</strong> ({scenario.stakeholderRole})
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
-              <p className="mt-3 font-mono text-[10px] text-muted-foreground">
-                Presenting to {scenario.stakeholder}, {scenario.stakeholderRole}
-              </p>
-            </Link>
+            </div>
           );
         })}
       </div>
-    </main>
+    </div>
   );
 }

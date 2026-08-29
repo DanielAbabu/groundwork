@@ -59,8 +59,7 @@ function edgeVisuals(type: ConnectionType, illegal: boolean) {
     style: {
       stroke: color,
       strokeWidth: 1.75,
-      strokeDasharray:
-        def.style === "dashed" ? "6 4" : def.style === "dotted" ? "2 4" : undefined,
+      strokeDasharray: def.style === "dashed" ? "6 4" : def.style === "dotted" ? "2 4" : undefined,
     },
     markerEnd: { type: MarkerType.ArrowClosed, color, width: 18, height: 18 },
     label: illegal ? `${def.label} · illegal` : def.label,
@@ -105,7 +104,10 @@ function ComponentNodeView({ data, selected }: NodeProps<CanvasNode>) {
       <span>
         {def.label}
         {data.instances > 1 && (
-          <span className="ml-1 rounded bg-black/40 px-1 py-0.5 text-[10px]" style={{ color: def.color }}>
+          <span
+            className="ml-1 rounded bg-black/40 px-1 py-0.5 text-[10px]"
+            style={{ color: def.color }}
+          >
             x{data.instances}
           </span>
         )}
@@ -185,11 +187,10 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
         {
           id,
           type: "component" as const,
-          position:
-            position ?? {
-              x: 60 + (prev.length % 3) * 240,
-              y: 50 + Math.floor(prev.length / 3) * 150,
-            },
+          position: position ?? {
+            x: 60 + (prev.length % 3) * 240,
+            y: 50 + Math.floor(prev.length / 3) * 150,
+          },
           data: { componentType: type, instances: 1 },
         },
       ]);
@@ -206,7 +207,13 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
       const illegal = !isSchemaValidEdge(from, to);
       setEdges((prev) =>
         addEdge(
-          makeEdge(`e${prev.length}-${Date.now()}`, connection.source!, connection.target!, type, illegal),
+          makeEdge(
+            `e${prev.length}-${Date.now()}`,
+            connection.source!,
+            connection.target!,
+            type,
+            illegal,
+          ),
           prev,
         ),
       );
@@ -231,8 +238,16 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
         return;
       }
 
-      const xCandidates = [dragged.position.x, dragged.position.x + size.w / 2, dragged.position.x + size.w];
-      const yCandidates = [dragged.position.y, dragged.position.y + size.h / 2, dragged.position.y + size.h];
+      const xCandidates = [
+        dragged.position.x,
+        dragged.position.x + size.w / 2,
+        dragged.position.x + size.w,
+      ];
+      const yCandidates = [
+        dragged.position.y,
+        dragged.position.y + size.h / 2,
+        dragged.position.y + size.h,
+      ];
 
       let bestX: { delta: number; at: number } | null = null;
       let bestY: { delta: number; at: number } | null = null;
@@ -244,7 +259,10 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
         for (const candidate of xCandidates) {
           for (const target of otherX) {
             const delta = target - candidate;
-            if (Math.abs(delta) <= SNAP_THRESHOLD && (!bestX || Math.abs(delta) < Math.abs(bestX.delta))) {
+            if (
+              Math.abs(delta) <= SNAP_THRESHOLD &&
+              (!bestX || Math.abs(delta) < Math.abs(bestX.delta))
+            ) {
               bestX = { delta, at: target };
             }
           }
@@ -252,7 +270,10 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
         for (const candidate of yCandidates) {
           for (const target of otherY) {
             const delta = target - candidate;
-            if (Math.abs(delta) <= SNAP_THRESHOLD && (!bestY || Math.abs(delta) < Math.abs(bestY.delta))) {
+            if (
+              Math.abs(delta) <= SNAP_THRESHOLD &&
+              (!bestY || Math.abs(delta) < Math.abs(bestY.delta))
+            ) {
               bestY = { delta, at: target };
             }
           }
@@ -260,10 +281,30 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
       }
 
       const nextGuides: Guide[] = [];
-      const ys = [dragged.position.y, dragged.position.y + size.h, ...others.flatMap((n) => [n.position.y, n.position.y + nodeSize(n).h])];
-      const xs = [dragged.position.x, dragged.position.x + size.w, ...others.flatMap((n) => [n.position.x, n.position.x + nodeSize(n).w])];
-      if (bestX) nextGuides.push({ axis: "x", at: bestX.at, from: Math.min(...ys) - 24, to: Math.max(...ys) + 24 });
-      if (bestY) nextGuides.push({ axis: "y", at: bestY.at, from: Math.min(...xs) - 24, to: Math.max(...xs) + 24 });
+      const ys = [
+        dragged.position.y,
+        dragged.position.y + size.h,
+        ...others.flatMap((n) => [n.position.y, n.position.y + nodeSize(n).h]),
+      ];
+      const xs = [
+        dragged.position.x,
+        dragged.position.x + size.w,
+        ...others.flatMap((n) => [n.position.x, n.position.x + nodeSize(n).w]),
+      ];
+      if (bestX)
+        nextGuides.push({
+          axis: "x",
+          at: bestX.at,
+          from: Math.min(...ys) - 24,
+          to: Math.max(...ys) + 24,
+        });
+      if (bestY)
+        nextGuides.push({
+          axis: "y",
+          at: bestY.at,
+          from: Math.min(...xs) - 24,
+          to: Math.max(...xs) + 24,
+        });
       setGuides(nextGuides);
 
       if (bestX || bestY) {
@@ -361,7 +402,10 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
       setNodes((prev) =>
         prev.map((node) =>
           node.id === selectedNodeId
-            ? { ...node, position: { x: node.position.x + nudge[0], y: node.position.y + nudge[1] } }
+            ? {
+                ...node,
+                position: { x: node.position.x + nudge[0], y: node.position.y + nudge[1] },
+              }
             : node,
         ),
       );
@@ -493,11 +537,26 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
                 COMPONENT_TYPES[(node as CanvasNode).data.componentType]?.color ?? "#64748B"
               }
             />
-            <Panel position="top-right" className="flex items-center gap-1 rounded-md border border-border bg-card/90 p-1 backdrop-blur">
-              <Button size="sm" variant="ghost" className="h-7 w-7 p-0 font-mono" onClick={() => zoomOut({ duration: 200 })} title="Zoom out">
+            <Panel
+              position="top-right"
+              className="flex items-center gap-1 rounded-md border border-border bg-card/90 p-1 backdrop-blur"
+            >
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 w-7 p-0 font-mono"
+                onClick={() => zoomOut({ duration: 200 })}
+                title="Zoom out"
+              >
                 −
               </Button>
-              <Button size="sm" variant="ghost" className="h-7 w-7 p-0 font-mono" onClick={() => zoomIn({ duration: 200 })} title="Zoom in">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 w-7 p-0 font-mono"
+                onClick={() => zoomIn({ duration: 200 })}
+                title="Zoom in"
+              >
                 +
               </Button>
               <Button
@@ -529,17 +588,32 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
               </span>
               <span className="font-mono text-[11px] text-muted-foreground">instances</span>
               <div className="flex items-center gap-1">
-                <Button size="sm" variant="outline" className="h-7 w-7 p-0 font-mono" onClick={() => setInstances(-1)}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 w-7 p-0 font-mono"
+                  onClick={() => setInstances(-1)}
+                >
                   −
                 </Button>
                 <span className="w-8 text-center font-mono text-xs text-foreground">
                   {selectedNode.data.instances}
                 </span>
-                <Button size="sm" variant="outline" className="h-7 w-7 p-0 font-mono" onClick={() => setInstances(1)}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 w-7 p-0 font-mono"
+                  onClick={() => setInstances(1)}
+                >
                   +
                 </Button>
               </div>
-              <Button size="sm" variant="ghost" className="ml-auto font-mono text-xs text-fail" onClick={removeSelection}>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="ml-auto font-mono text-xs text-fail"
+                onClick={removeSelection}
+              >
                 Delete
               </Button>
             </div>
@@ -572,15 +646,20 @@ function CanvasInner({ palette, value, onChange }: ComponentCanvasProps) {
                   not a valid connection for these component types
                 </span>
               )}
-              <Button size="sm" variant="ghost" className="ml-auto font-mono text-xs text-fail" onClick={removeSelection}>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="ml-auto font-mono text-xs text-fail"
+                onClick={removeSelection}
+              >
                 Delete
               </Button>
             </div>
           ) : (
             <p className="font-mono text-[11px] leading-relaxed text-muted-foreground">
-              Click a node or connection to edit it · drag handles to connect · scroll to zoom, drag the
-              canvas to pan · nodes snap to their neighbours&apos; edges and centers · delete/backspace
-              removes · ctrl+D adds an instance · arrows nudge
+              Click a node or connection to edit it · drag handles to connect · scroll to zoom, drag
+              the canvas to pan · nodes snap to their neighbours&apos; edges and centers ·
+              delete/backspace removes · ctrl+D adds an instance · arrows nudge
             </p>
           )}
         </div>

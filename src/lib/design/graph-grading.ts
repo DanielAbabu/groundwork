@@ -5,12 +5,7 @@ import {
   isSchemaValidEdge,
   type ComponentType,
 } from "./registry";
-import type {
-  ComponentsRubric,
-  DesignGraph,
-  EdgePattern,
-  StageFeedbackItem,
-} from "./types";
+import type { ComponentsRubric, DesignGraph, EdgePattern, StageFeedbackItem } from "./types";
 
 export function edgeKey(from: ComponentType, to: ComponentType) {
   return `${from}->${to}`;
@@ -144,7 +139,9 @@ export function gradeGraph(
         : wrongType
           ? `Select that connection and switch its type to ${CONNECTION_TYPES[pattern.type!].label}.`
           : `Drag from the ${COMPONENT_LABELS[pattern.from]} handle to ${COMPONENT_LABELS[pattern.to]}${
-              pattern.type ? `, then set the connection type to ${CONNECTION_TYPES[pattern.type].label}` : ""
+              pattern.type
+                ? `, then set the connection type to ${CONNECTION_TYPES[pattern.type].label}`
+                : ""
             }.`,
     });
   }
@@ -160,7 +157,9 @@ export function gradeGraph(
       detail: bad
         ? (rubric.notes[`!${type}`] ?? "This component is unnecessary here and adds cost.")
         : "Correctly left out.",
-      fix: bad ? `Delete the ${COMPONENT_LABELS[type]} node and any edges attached to it.` : undefined,
+      fix: bad
+        ? `Delete the ${COMPONENT_LABELS[type]} node and any edges attached to it.`
+        : undefined,
     });
   }
 
@@ -184,4 +183,88 @@ export function gradeGraph(
 
   const score = checks.length === 0 ? 0 : checks.filter(Boolean).length / checks.length;
   return { score, feedback };
+}
+
+export interface SpofAlert {
+  nodeId: string;
+  type: ComponentType;
+  label: string;
+  message: string;
+}
+
+export function detectSpofs(graph: DesignGraph): SpofAlert[] {
+  const alerts: SpofAlert[] = [];
+  const nodes = graph.nodes ?? [];
+
+  for (const node of nodes) {
+    // Stateless compute or queue or load balancer with 1 instance
+    if (
+      (node.type === "APP_SERVER" ||
+        node.type === "LOAD_BALANCER" ||
+        node.type === "WORKER" ||
+        node.type === "QUEUE") &&
+      node.instances < 2
+    ) {
+      alerts.push({
+        nodeId: node.id,
+        type: node.type,
+        label: COMPONENT_LABELS[node.type],
+        message: `${COMPONENT_LABELS[node.type]} has only 1 instance. If this instance dies, the service goes down. Scale to ≥2 instances.`,
+      });
+    }
+  }
+
+  return alerts;
+}
+
+export interface LatencyHop {
+  nodeType: ComponentType;
+  label: string;
+  ms: number;
+}
+
+export interface LatencyEstimate {
+  totalMs: number;
+  hops: LatencyHop[];
+  quality: "optimal" | "acceptable" | "slow";
+}
+
+export function estimateGraphLatency(graph: DesignGraph): LatencyEstimate {
+  const nodes = graph.nodes ?? [];
+  const edges = typedEdges(graph);
+
+  // Find a synchronous request path starting at CLIENT or LOAD_BALANCER
+  const pathTypes: ComponentType[] = [];
+  let current: ComponentType | undefined = "CLIENT";
+
+  if (!nodes.some((n) => n.type === "CLIENT")) {
+    current = nodes.find((n) => n.type === "LOAD_BALANCER")?.type;
+  }
+
+  const visited = new Set<ComponentType>();
+  while (current && !visited.has(current)) {
+    visited.add(current);
+    pathTypes.push(current);
+
+    // Prefer CACHE over DATABASE_PRIMARY if both exist outgoing
+    const nextEdges = edges.filter((e) => e.from === current);
+    const cacheNext = nextEdges.find((e) => e.to === "CACHE");
+    const dbNext = nextEdges.find((e) => e.to === "DATABASE_PRIMARY" || e.to === "DATABASE_REPLICA");
+    const appNext = nextEdges.find((e) => e.to === "APP_SERVER");
+    const lbNext = nextEdges.find((e) => e.to === "LOAD_BALANCER");
+
+    const pick = cacheNext ?? dbNext ?? appNext ?? lbNext ?? nextEdges[0];
+    current = pick?.to;
+  }
+
+  const hops: LatencyHop[] = pathTypes.map((type) => ({
+    nodeType: type,
+    label: COMPONENT_LABELS[type],
+    ms: COMPONENT_TYPES[type].estimatedLatencyMs,
+  }));
+
+  const totalMs = hops.reduce((acc, hop) => acc + hop.ms, 0);
+  const quality = totalMs <= 20 ? "optimal" : totalMs <= 50 ? "acceptable" : "slow";
+
+  return { totalMs, hops, quality };
 }

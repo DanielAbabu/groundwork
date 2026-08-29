@@ -74,26 +74,31 @@ export const submitDesignStage = createServerFn({ method: "POST" })
       .eq("scenario_id", scenario.id)
       .maybeSingle();
 
-    await context.supabase.from("scenario_progress").upsert(
+    const { error: progressErr } = await context.supabase.from("scenario_progress").upsert(
       {
         user_id: context.userId,
         scenario_id: scenario.id,
         track: "design",
         status: allPassed || existing?.status === "passed" ? "passed" : "attempted",
         attempts: (existing?.attempts ?? 0) + 1,
-        first_passed_at:
-          existing?.first_passed_at ?? (allPassed ? new Date().toISOString() : null),
+        first_passed_at: existing?.first_passed_at ?? (allPassed ? new Date().toISOString() : null),
         updated_at: new Date().toISOString(),
       },
       { onConflict: "user_id,scenario_id" },
     );
+    if (progressErr) {
+      console.warn("Failed to update design scenario progress:", progressErr.message);
+    }
 
-    await context.supabase.from("scenario_runs").insert({
+    const { error: runErr } = await context.supabase.from("scenario_runs").insert({
       user_id: context.userId,
       scenario_id: scenario.id,
       track: "design",
       passed: grade.passed,
     });
+    if (runErr) {
+      console.warn("Failed to record design scenario run log:", runErr.message);
+    }
 
     return grade;
   });

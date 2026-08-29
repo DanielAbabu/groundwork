@@ -64,24 +64,38 @@ function gradeCapacity(stage: Extract<DesignStage, { kind: "capacity" }>, answer
 function gradeTradeoff(stage: Extract<DesignStage, { kind: "tradeoff" }>, answer: TradeoffAnswer) {
   const text = (answer.text ?? "").toLowerCase();
   const feedback: StageFeedbackItem[] = stage.concepts.map((concept) => {
-    const ok = concept.keywords.some((keyword) => text.includes(keyword.toLowerCase()));
+    let ok = concept.keywords.some((keyword) => text.includes(keyword.toLowerCase()));
+
+    if (!ok && concept.patterns && concept.patterns.length > 0) {
+      ok = concept.patterns.some((pat) => {
+        try {
+          return new RegExp(pat, "i").test(text);
+        } catch {
+          return false;
+        }
+      });
+    }
+
     return {
       label: concept.label,
       ok,
+      rule: concept.axis ? `axis-${concept.axis}` as any : "answer",
       detail: ok
-        ? "Covered."
-        : "A strong answer usually touches this. Advisory only — it does not fail the stage.",
+        ? "Covered effectively."
+        : "A strong answer touches this concept. Advisory only — it does not fail the stage.",
     };
   });
+
   const hit = feedback.filter((item) => item.ok === true).length;
   const score = stage.concepts.length === 0 ? 0 : hit / stage.concepts.length;
   const enoughLength = text.trim().split(/\s+/).filter(Boolean).length >= 25;
   feedback.push({
-    label: "Enough reasoning to review",
+    label: "Sufficient depth & reasoning",
     ok: enoughLength,
+    rule: "answer",
     detail: enoughLength
-      ? "Long enough to judge the reasoning."
-      : "Aim for a few sentences so the reasoning is reviewable.",
+      ? "Long enough to judge the architectural reasoning."
+      : "Aim for a few sentences so your design logic is clear and reviewable.",
   });
   return { score, feedback, hit };
 }
@@ -90,11 +104,23 @@ export function gradeStage(stage: DesignStage, answer: StageAnswer): StageGrade 
   switch (stage.kind) {
     case "clarify": {
       const { score, feedback } = gradeClarify(stage, answer as ClarifyAnswer);
-      return { stageId: stage.id, score, passed: score >= PASS_THRESHOLD, advisory: false, feedback };
+      return {
+        stageId: stage.id,
+        score,
+        passed: score >= PASS_THRESHOLD,
+        advisory: false,
+        feedback,
+      };
     }
     case "capacity": {
       const { score, feedback } = gradeCapacity(stage, answer as CapacityAnswer);
-      return { stageId: stage.id, score, passed: score >= PASS_THRESHOLD, advisory: false, feedback };
+      return {
+        stageId: stage.id,
+        score,
+        passed: score >= PASS_THRESHOLD,
+        advisory: false,
+        feedback,
+      };
     }
     case "components": {
       const graph = (answer ?? {}) as ComponentsAnswer;
@@ -102,7 +128,13 @@ export function gradeStage(stage: DesignStage, answer: StageAnswer): StageGrade 
         nodes: graph.nodes ?? [],
         edges: graph.edges ?? [],
       });
-      return { stageId: stage.id, score, passed: score >= PASS_THRESHOLD, advisory: false, feedback };
+      return {
+        stageId: stage.id,
+        score,
+        passed: score >= PASS_THRESHOLD,
+        advisory: false,
+        feedback,
+      };
     }
     case "tradeoff": {
       const { score, feedback, hit } = gradeTradeoff(stage, answer as TradeoffAnswer);
@@ -122,5 +154,7 @@ export function gradeScenario(
   scenario: DesignScenario,
   answers: Record<string, StageAnswer>,
 ): StageGrade[] {
-  return scenario.stages.map((stage) => gradeStage(stage, answers[stage.id] ?? ({} as StageAnswer)));
+  return scenario.stages.map((stage) =>
+    gradeStage(stage, answers[stage.id] ?? ({} as StageAnswer)),
+  );
 }

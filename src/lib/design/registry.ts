@@ -30,6 +30,8 @@ export interface ComponentTypeDef {
   validOutgoing: ComponentType[];
   validIncoming: ComponentType[];
   blurb: string;
+  /** Typical internal latency cost in milliseconds for a hop through this tier */
+  estimatedLatencyMs: number;
 }
 
 export const COMPONENT_TYPES: Record<ComponentType, ComponentTypeDef> = {
@@ -43,6 +45,7 @@ export const COMPONENT_TYPES: Record<ComponentType, ComponentTypeDef> = {
     validOutgoing: ["CDN", "LOAD_BALANCER"],
     validIncoming: [],
     blurb: "Browsers and apps entering the system.",
+    estimatedLatencyMs: 0,
   },
   CDN: {
     label: "CDN",
@@ -54,6 +57,7 @@ export const COMPONENT_TYPES: Record<ComponentType, ComponentTypeDef> = {
     validOutgoing: ["LOAD_BALANCER", "OBJECT_STORE"],
     validIncoming: ["CLIENT"],
     blurb: "Edge cache for static or geo-distributed reads.",
+    estimatedLatencyMs: 2,
   },
   LOAD_BALANCER: {
     label: "Load Balancer",
@@ -65,6 +69,7 @@ export const COMPONENT_TYPES: Record<ComponentType, ComponentTypeDef> = {
     validOutgoing: ["APP_SERVER"],
     validIncoming: ["CLIENT", "CDN"],
     blurb: "Terminates public traffic and fans out across app servers.",
+    estimatedLatencyMs: 3,
   },
   APP_SERVER: {
     label: "App Server",
@@ -75,7 +80,8 @@ export const COMPONENT_TYPES: Record<ComponentType, ComponentTypeDef> = {
     maxInstances: null,
     validOutgoing: ["CACHE", "DATABASE_PRIMARY", "DATABASE_REPLICA", "QUEUE", "OBJECT_STORE"],
     validIncoming: ["LOAD_BALANCER", "WORKER"],
-    blurb: "Stateless request handlers — the tier you scale horizontally.",
+    blurb: "Stateless request handlers — the layer you scale horizontally.",
+    estimatedLatencyMs: 8,
   },
   CACHE: {
     label: "Cache",
@@ -87,6 +93,7 @@ export const COMPONENT_TYPES: Record<ComponentType, ComponentTypeDef> = {
     validOutgoing: ["DATABASE_PRIMARY", "DATABASE_REPLICA"],
     validIncoming: ["APP_SERVER", "WORKER"],
     blurb: "Absorbs the hot working set so reads never hit the primary.",
+    estimatedLatencyMs: 2,
   },
   DATABASE_PRIMARY: {
     label: "Primary DB",
@@ -98,6 +105,7 @@ export const COMPONENT_TYPES: Record<ComponentType, ComponentTypeDef> = {
     validOutgoing: ["DATABASE_REPLICA"],
     validIncoming: ["APP_SERVER", "CACHE", "WORKER"],
     blurb: "System of record for durable writes.",
+    estimatedLatencyMs: 25,
   },
   DATABASE_REPLICA: {
     label: "Replica DB",
@@ -109,6 +117,7 @@ export const COMPONENT_TYPES: Record<ComponentType, ComponentTypeDef> = {
     validOutgoing: [],
     validIncoming: ["DATABASE_PRIMARY", "APP_SERVER", "CACHE"],
     blurb: "Read scale-out fed by replication from the primary.",
+    estimatedLatencyMs: 15,
   },
   QUEUE: {
     label: "Message Queue",
@@ -120,6 +129,7 @@ export const COMPONENT_TYPES: Record<ComponentType, ComponentTypeDef> = {
     validOutgoing: ["WORKER"],
     validIncoming: ["APP_SERVER", "WORKER"],
     blurb: "Buffers work that does not belong on the request path.",
+    estimatedLatencyMs: 5,
   },
   WORKER: {
     label: "Worker",
@@ -131,6 +141,7 @@ export const COMPONENT_TYPES: Record<ComponentType, ComponentTypeDef> = {
     validOutgoing: ["DATABASE_PRIMARY", "CACHE", "OBJECT_STORE", "QUEUE"],
     validIncoming: ["QUEUE"],
     blurb: "Consumes queued jobs off the critical path.",
+    estimatedLatencyMs: 12,
   },
   OBJECT_STORE: {
     label: "Object Store",
@@ -142,6 +153,7 @@ export const COMPONENT_TYPES: Record<ComponentType, ComponentTypeDef> = {
     validOutgoing: [],
     validIncoming: ["APP_SERVER", "WORKER", "CDN"],
     blurb: "Blob storage for large immutable payloads.",
+    estimatedLatencyMs: 35,
   },
 };
 
@@ -161,14 +173,16 @@ export const CONNECTION_TYPES: Record<ConnectionType, ConnectionTypeDef> = {
   },
   ASYNC_MESSAGE: { label: "Async / queued", style: "dashed", arrowhead: "open", color: "#9B7BD8" },
   REPLICATION: { label: "Replication", style: "dotted", arrowhead: "filled", color: "#E5484D" },
-  CACHE_LOOKUP: { label: "Cache read/write", style: "solid", arrowhead: "filled", color: "#F5A623" },
+  CACHE_LOOKUP: {
+    label: "Cache read/write",
+    style: "solid",
+    arrowhead: "filled",
+    color: "#F5A623",
+  },
 };
 
 export const COMPONENT_LABELS: Record<ComponentType, string> = Object.fromEntries(
-  (Object.keys(COMPONENT_TYPES) as ComponentType[]).map((key) => [
-    key,
-    COMPONENT_TYPES[key].label,
-  ]),
+  (Object.keys(COMPONENT_TYPES) as ComponentType[]).map((key) => [key, COMPONENT_TYPES[key].label]),
 ) as Record<ComponentType, string>;
 
 export function isComponentType(value: string): value is ComponentType {
@@ -176,10 +190,7 @@ export function isComponentType(value: string): value is ComponentType {
 }
 
 /** Edge types that make sense for a given node-type pair. */
-export function allowedConnectionTypes(
-  from: ComponentType,
-  to: ComponentType,
-): ConnectionType[] {
+export function allowedConnectionTypes(from: ComponentType, to: ComponentType): ConnectionType[] {
   const types: ConnectionType[] = [];
   if (from === "DATABASE_PRIMARY" && to === "DATABASE_REPLICA") types.push("REPLICATION");
   if (to === "CACHE" || from === "CACHE") types.push("CACHE_LOOKUP");

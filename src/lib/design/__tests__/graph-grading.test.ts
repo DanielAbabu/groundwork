@@ -69,6 +69,5 @@ describe("component canvas grading", () => {
     expect(schema.ok).toBe(false);
     expect(schema.targets).toContain("Primary DB → Load Balancer");
     expect(schema.fix).toContain("Primary DB");
-
   });
 });

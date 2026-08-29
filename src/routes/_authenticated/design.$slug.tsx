@@ -14,11 +14,13 @@ import type {
   StageGrade,
 } from "@/lib/design/types";
 import { listDesignResults, submitDesignStage, type DesignStageRow } from "@/lib/design.functions";
+import { evaluateFormula } from "@/lib/design/formula-eval";
+import { detectSpofs, estimateGraphLatency } from "@/lib/design/graph-grading";
+import { LatencyBar } from "@/components/design/LatencyBar";
 import { ComponentCanvas } from "@/components/design/ComponentCanvas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
 
 export const Route = createFileRoute("/_authenticated/design/$slug")({
   loader: ({ params }) => {
@@ -89,8 +91,7 @@ function DesignRoom() {
     return set;
   }, [results, scenario.id]);
 
-  const setAnswer = (next: StageAnswer) =>
-    setAnswers((prev) => ({ ...prev, [stage.id]: next }));
+  const setAnswer = (next: StageAnswer) => setAnswers((prev) => ({ ...prev, [stage.id]: next }));
 
   async function onSubmit() {
     setSubmitting(true);
@@ -119,9 +120,14 @@ function DesignRoom() {
   return (
     <main className="min-h-screen bg-background">
       <header className="border-b border-border bg-surface/60">
-        <div className={`mx-auto flex ${shellWidth} flex-wrap items-center justify-between gap-4 px-6 py-5`}>
+        <div
+          className={`mx-auto flex ${shellWidth} flex-wrap items-center justify-between gap-4 px-6 py-5`}
+        >
           <div>
-            <Link to="/design" className="font-mono text-xs uppercase tracking-[0.3em] text-primary">
+            <Link
+              to="/design"
+              className="font-mono text-xs uppercase tracking-[0.3em] text-primary"
+            >
               ← design review
             </Link>
             <h1 className="mt-2 text-lg font-semibold text-foreground">
@@ -183,8 +189,9 @@ function DesignRoom() {
         ) : (
           <section className="mt-6 rounded-lg border border-border bg-card p-6">
             <h2 className="text-base font-semibold text-foreground">{stage.title}</h2>
-            <p className="mt-2 max-w-4xl text-sm leading-relaxed text-muted-foreground">{stage.prompt}</p>
-
+            <p className="mt-2 max-w-4xl text-sm leading-relaxed text-muted-foreground">
+              {stage.prompt}
+            </p>
 
             <div className="mt-6">
               {stage.kind === "clarify" && (
@@ -223,20 +230,12 @@ function DesignRoom() {
                 {submitting ? "Grading…" : "Submit stage"}
               </Button>
               {index > 0 && (
-                <Button
-                  variant="outline"
-                  className="font-mono"
-                  onClick={() => setIndex(index - 1)}
-                >
+                <Button variant="outline" className="font-mono" onClick={() => setIndex(index - 1)}>
                   Back
                 </Button>
               )}
               {index < scenario.stages.length - 1 ? (
-                <Button
-                  variant="outline"
-                  className="font-mono"
-                  onClick={() => setIndex(index + 1)}
-                >
+                <Button variant="outline" className="font-mono" onClick={() => setIndex(index + 1)}>
                   Next stage
                 </Button>
               ) : (
@@ -259,7 +258,6 @@ function DesignRoom() {
             </div>
 
             {grade && <FeedbackList grade={grade} />}
-
           </section>
         )}
       </div>
@@ -340,8 +338,6 @@ function FeedbackList({ grade }: { grade: StageGrade }) {
   );
 }
 
-
-
 function ClarifyStage({
   stage,
   answer,
@@ -352,33 +348,59 @@ function ClarifyStage({
   onChange: (next: ClarifyAnswer) => void;
 }) {
   return (
-    <div className="space-y-5">
-      {stage.questions.map((question) => (
-        <div key={question.id} className="rounded-lg border border-border bg-background p-4">
-          <p className="text-sm leading-relaxed text-foreground">{question.text}</p>
-          <div className="mt-3 space-y-2">
-            {question.options.map((option) => (
-              <label
-                key={option.id}
-                className={`flex cursor-pointer items-start gap-3 rounded border p-3 text-sm transition-colors ${
-                  answer[question.id] === option.id
-                    ? "border-primary bg-primary/10 text-foreground"
-                    : "border-border text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <input
-                  type="radio"
-                  className="mt-1"
-                  name={question.id}
-                  checked={answer[question.id] === option.id}
-                  onChange={() => onChange({ ...answer, [question.id]: option.id })}
-                />
-                {option.label}
-              </label>
-            ))}
+    <div className="space-y-6">
+      {stage.questions.map((question) => {
+        const selectedId = answer[question.id];
+        const selectedOption = question.options.find((opt) => opt.id === selectedId);
+
+        return (
+          <div key={question.id} className="rounded-lg border border-border bg-background p-4 space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-amber-500 font-mono text-xs font-bold">
+                💬
+              </div>
+              <p className="text-sm leading-relaxed text-foreground font-medium pt-0.5">
+                {question.text}
+              </p>
+            </div>
+
+            <div className="pl-10 space-y-2">
+              {question.options.map((option) => (
+                <label
+                  key={option.id}
+                  className={`flex cursor-pointer items-start gap-3 rounded border p-3 text-sm transition-all ${
+                    selectedId === option.id
+                      ? "border-primary bg-primary/10 text-foreground font-medium shadow-sm"
+                      : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    className="mt-1 accent-primary"
+                    name={question.id}
+                    checked={selectedId === option.id}
+                    onChange={() => onChange({ ...answer, [question.id]: option.id })}
+                  />
+                  <span>{option.label}</span>
+                </label>
+              ))}
+            </div>
+
+            {selectedOption?.followUp && (
+              <div className="ml-10 mt-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-mono text-[10px] uppercase font-bold tracking-widest text-amber-500">
+                    Stakeholder Reaction
+                  </span>
+                </div>
+                <p className="text-xs leading-relaxed text-foreground italic">
+                  "{selectedOption.followUp}"
+                </p>
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -392,36 +414,89 @@ function CapacityStage({
   answer: CapacityAnswer;
   onChange: (next: CapacityAnswer) => void;
 }) {
+  const [inputs, setInputs] = useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {};
+    for (const field of stage.fields) {
+      const val = answer[field.id];
+      initial[field.id] = val != null ? String(val) : "";
+    }
+    return initial;
+  });
+
+  const handleInputChange = (fieldId: string, rawText: string) => {
+    setInputs((prev) => ({ ...prev, [fieldId]: rawText }));
+    const evalResult = evaluateFormula(rawText);
+    onChange({
+      ...answer,
+      [fieldId]: evalResult.value,
+    });
+  };
+
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-5 sm:grid-cols-2">
       {stage.fields.map((field) => {
-        const raw = answer[field.id];
-        const invalid = raw != null && (Number.isNaN(raw) || raw < 0);
+        const rawText = inputs[field.id] ?? "";
+        const evalResult = evaluateFormula(rawText);
+        const hasValue = evalResult.value != null;
+        const invalid = evalResult.error != null || (hasValue && evalResult.value! < 0);
+
         return (
-          <div key={field.id} className="rounded-lg border border-border bg-background p-4">
-            <label className="text-sm font-medium text-foreground" htmlFor={field.id}>
+          <div key={field.id} className="rounded-lg border border-border bg-background p-4 space-y-2">
+            <label className="text-sm font-semibold text-foreground block" htmlFor={field.id}>
               {field.label}
             </label>
-            {field.hint && (
-              <p className="mt-1 font-mono text-[11px] text-muted-foreground">hint: {field.hint}</p>
-            )}
-            <div className="mt-3 flex items-center gap-2">
+            {field.formula ? (
+              <p className="font-mono text-[11px] text-primary/80 bg-primary/5 px-2 py-1 rounded border border-primary/20">
+                Formula: <span className="text-primary font-bold">{field.formula}</span>
+              </p>
+            ) : field.hint ? (
+              <p className="font-mono text-[11px] text-muted-foreground">hint: {field.hint}</p>
+            ) : null}
+
+            <div className="flex items-center gap-2 pt-1">
               <Input
                 id={field.id}
-                type="number"
-                inputMode="decimal"
-                className="font-mono"
-                value={raw ?? ""}
-                onChange={(event) =>
-                  onChange({
-                    ...answer,
-                    [field.id]: event.target.value === "" ? null : Number(event.target.value),
-                  })
-                }
+                type="text"
+                className="font-mono text-sm"
+                placeholder="e.g. 50,000,000 / 86,400"
+                value={rawText}
+                onChange={(event) => handleInputChange(field.id, event.target.value)}
               />
-              <span className="font-mono text-xs text-muted-foreground">{field.unit}</span>
+              <span className="font-mono text-xs text-muted-foreground shrink-0">{field.unit}</span>
             </div>
-            {invalid && <p className="mt-2 font-mono text-[11px] text-fail">Enter a positive number.</p>}
+
+            {rawText && evalResult.isFormula && evalResult.value != null && (
+              <div className="flex items-center justify-between font-mono text-xs px-2 py-1 rounded bg-secondary/40 text-foreground">
+                <span className="text-muted-foreground text-[11px]">Calculated:</span>
+                <span className="font-semibold text-primary">
+                  {evalResult.value.toLocaleString(undefined, { maximumFractionDigits: 2 })} {field.unit}
+                </span>
+              </div>
+            )}
+
+            {hasValue && !invalid && (
+              <div className="pt-1">
+                {evalResult.value! >= field.accept.min && evalResult.value! <= field.accept.max ? (
+                  <span className="font-mono text-[10px] font-bold text-pass border border-pass/30 bg-pass/10 px-2 py-0.5 rounded block">
+                    ✓ Within target range
+                  </span>
+                ) : evalResult.value! >= field.magnitude.min && evalResult.value! <= field.magnitude.max ? (
+                  <span className="font-mono text-[10px] font-bold text-amber-500 border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 rounded block">
+                    ⚠️ Acceptable order of magnitude (slightly off target)
+                  </span>
+                ) : (
+                  <span className="font-mono text-[10px] font-bold text-fail border border-fail/30 bg-fail/10 px-2 py-0.5 rounded block">
+                    ⚡ Order of magnitude error — check units or math
+                  </span>
+                )}
+              </div>
+            )}
+
+            {invalid && (
+              <p className="font-mono text-[11px] text-fail">
+                {evalResult.error ?? "Enter a valid positive calculation."}
+              </p>
+            )}
           </div>
         );
       })}
@@ -438,15 +513,39 @@ function ComponentsStage({
   answer: ComponentsAnswer;
   onChange: (next: ComponentsAnswer) => void;
 }) {
+  const spofs = useMemo(() => detectSpofs(answer), [answer]);
+  const latencyEstimate = useMemo(() => estimateGraphLatency(answer), [answer]);
+
   return (
-    <ComponentCanvas
-      palette={stage.spec.palette}
-      value={answer}
-      onChange={(graph) => onChange(graph)}
-    />
+    <div className="space-y-4">
+      <ComponentCanvas
+        palette={stage.spec.palette}
+        value={answer}
+        onChange={(graph) => onChange(graph)}
+      />
+
+      <LatencyBar estimate={latencyEstimate} />
+
+      {spofs.length > 0 && (
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3.5 space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-amber-500">
+              ⚠️ Architecture Resilience Warning — Single Point of Failure
+            </span>
+          </div>
+          <ul className="space-y-1 pl-2">
+            {spofs.map((spof, idx) => (
+              <li key={idx} className="font-mono text-xs text-foreground flex items-center gap-2">
+                <span className="text-amber-500 font-bold">•</span>
+                <span>{spof.message}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 }
-
 
 function TradeoffStage({
   stage,
@@ -499,50 +598,147 @@ function Summary({
     (stage) => grades[stage.id]?.passed ?? savedPassed.has(stage.id),
   ).length;
 
+  const pct = Math.round((cleared / scenario.stages.length) * 100);
+  const hiringSignal =
+    pct >= 85
+      ? { label: "STRONG HIRE", color: "text-pass border-pass/40 bg-pass/10" }
+      : pct >= 70
+        ? { label: "HIRE", color: "text-primary border-primary/40 bg-primary/10" }
+        : pct >= 50
+          ? { label: "BORDERLINE", color: "text-amber-500 border-amber-500/40 bg-amber-500/10" }
+          : { label: "NO HIRE", color: "text-fail border-fail/40 bg-fail/10" };
+
   return (
-    <section className="mt-6 rounded-lg border border-border bg-card p-6">
-      <h2 className="text-base font-semibold text-foreground">Review summary</h2>
-      <p className="mt-2 font-mono text-xs text-muted-foreground">
-        {cleared} of {scenario.stages.length} stages cleared
-      </p>
-      <ul className="mt-5 space-y-3">
-        {scenario.stages.map((stage, i) => {
-          const grade = grades[stage.id];
-          const passed = grade?.passed ?? savedPassed.has(stage.id);
-          return (
-            <li key={stage.id} className="rounded border border-border bg-background p-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-sm font-medium text-foreground">
-                  {i + 1}. {stage.title}
+    <section className="mt-6 rounded-lg border border-border bg-card p-6 space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
+        <div>
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground block">
+            System Design Review Scorecard
+          </span>
+          <h2 className="text-xl font-bold text-foreground mt-1">
+            {scenario.title}
+          </h2>
+          <p className="font-mono text-xs text-muted-foreground mt-0.5">
+            Stakeholder: {scenario.stakeholder} ({scenario.stakeholderRole})
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="text-right">
+            <span className="font-mono text-xs text-muted-foreground block">Overall Score</span>
+            <span className="font-mono text-lg font-bold text-foreground">{pct}%</span>
+          </div>
+          <span
+            className={`rounded border px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-widest ${hiringSignal.color}`}
+          >
+            {hiringSignal.label}
+          </span>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <h3 className="font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Stage Performance Breakdown
+        </h3>
+
+        <ul className="space-y-3">
+          {scenario.stages.map((stage, i) => {
+            const grade = grades[stage.id];
+            const passed = grade?.passed ?? savedPassed.has(stage.id);
+            return (
+              <li key={stage.id} className="rounded-lg border border-border bg-background p-4 space-y-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-sm font-semibold text-foreground">
+                    {i + 1}. {stage.title} ({STAGE_KIND_LABELS[stage.kind]})
+                  </span>
+                  <span
+                    className={`rounded border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest ${
+                      passed
+                        ? "border-pass/30 bg-pass/10 text-pass"
+                        : grade
+                          ? "border-fail/30 bg-fail/10 text-fail"
+                          : "border-border text-muted-foreground"
+                    }`}
+                  >
+                    {passed ? "Cleared ✓" : grade ? "Needs Pass" : "Not Submitted"}
+                  </span>
+                </div>
+
+                {stage.kind === "tradeoff" && grade && (
+                  <p className="text-xs leading-relaxed text-muted-foreground border-l-2 border-primary/40 pl-2 mt-2">
+                    Ideal Answer Strategy: {stage.ideal}
+                  </p>
+                )}
+
+                {stage.kind === "capacity" && grade && (
+                  <ul className="mt-2 space-y-1 font-mono text-[11px] text-muted-foreground bg-card p-2.5 rounded border border-border">
+                    {stage.fields.map((field) => (
+                      <li key={field.id}>
+                        <span className="font-semibold text-foreground">{field.label}:</span> Target range {field.accept.min}–{field.accept.max} {field.unit} — {field.rationale}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <div className="pt-1">
+                  <button
+                    onClick={() => onJump(i)}
+                    className="font-mono text-[11px] uppercase tracking-widest text-primary hover:underline font-semibold"
+                  >
+                    ← Revisit Stage {i + 1}
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {scenario.debrief && (
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-5 space-y-4">
+          <div className="flex items-center gap-2 border-b border-primary/20 pb-3">
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+              🧠 Staff Engineer Narrative Debrief
+            </span>
+          </div>
+
+          <div className="space-y-3 text-xs leading-relaxed text-foreground">
+            <p className="font-medium text-muted-foreground">{scenario.debrief.narrative}</p>
+
+            {scenario.debrief.seniorInsights.length > 0 && (
+              <div className="space-y-1.5 pt-2">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-pass block">
+                  💡 Things a Senior Engineer Raises Unprompted:
                 </span>
-                <span
-                  className={`font-mono text-[11px] uppercase tracking-widest ${passed ? "text-pass" : "text-fail"}`}
-                >
-                  {passed ? "cleared" : grade ? "not yet" : "not submitted"}
-                </span>
-              </div>
-              {stage.kind === "tradeoff" && grade && (
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{stage.ideal}</p>
-              )}
-              {stage.kind === "capacity" && grade && (
-                <ul className="mt-3 space-y-1 font-mono text-[11px] text-muted-foreground">
-                  {stage.fields.map((field) => (
-                    <li key={field.id}>
-                      {field.label}: {field.accept.min}–{field.accept.max} {field.unit} — {field.rationale}
+                <ul className="space-y-1 font-mono text-[11px] text-muted-foreground pl-2">
+                  {scenario.debrief.seniorInsights.map((insight, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-pass font-bold">•</span>
+                      <span>{insight}</span>
                     </li>
                   ))}
                 </ul>
-              )}
-              <button
-                onClick={() => onJump(i)}
-                className="mt-3 font-mono text-[11px] uppercase tracking-widest text-primary"
-              >
-                revisit stage
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+              </div>
+            )}
+
+            {scenario.debrief.commonMistakes.length > 0 && (
+              <div className="space-y-1.5 pt-2">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-fail block">
+                  ⚠️ Common Candidate Pitfalls:
+                </span>
+                <ul className="space-y-1 font-mono text-[11px] text-muted-foreground pl-2">
+                  {scenario.debrief.commonMistakes.map((mistake, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-fail font-bold">•</span>
+                      <span>{mistake}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
