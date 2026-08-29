@@ -23,7 +23,7 @@ export const listProgress = createServerFn({ method: "GET" })
 
 export const recordRun = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) =>
+  .validator((input: unknown) =>
     z.object({ scenarioId: z.string().min(1), passed: z.boolean() }).parse(input),
   )
   .handler(async ({ data, context }): Promise<ProgressRow> => {

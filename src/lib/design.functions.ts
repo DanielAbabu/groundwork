@@ -27,7 +27,7 @@ export const listDesignResults = createServerFn({ method: "GET" })
 
 export const submitDesignStage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) =>
+  .validator((input: unknown) =>
     z
       .object({
         scenarioId: z.string().min(1),

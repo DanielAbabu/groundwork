@@ -34,7 +34,7 @@ export const getMyProfile = createServerFn({ method: "GET" })
 
 export const updateProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) =>
+  .validator((input: unknown) =>
     z
       .object({
         username: z
@@ -68,7 +68,7 @@ export const updateProfile = createServerFn({ method: "POST" })
 
 export const searchUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) => z.object({ query: z.string() }).parse(input))
+  .validator((input: unknown) => z.object({ query: z.string() }).parse(input))
   .handler(async ({ data, context }): Promise<PublicProfile[]> => {
     const term = data.query.trim();
     if (term.length < 2) return [];
@@ -84,7 +84,7 @@ export const searchUsers = createServerFn({ method: "GET" })
 
 export const sendNudge = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) =>
+  .validator((input: unknown) =>
     z.object({ toUserId: z.string().uuid(), message: z.string().max(140).optional() }).parse(input),
   )
   .handler(async ({ data, context }) => {
@@ -136,7 +136,7 @@ export const listNudges = createServerFn({ method: "GET" })
 
 export const dismissNudge = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("nudges").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
