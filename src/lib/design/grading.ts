@@ -79,7 +79,7 @@ function gradeTradeoff(stage: Extract<DesignStage, { kind: "tradeoff" }>, answer
     return {
       label: concept.label,
       ok,
-      rule: concept.axis ? `axis-${concept.axis}` : "answer",
+      rule: "answer",
       detail: ok
         ? "Covered effectively."
         : "A strong answer touches this concept. Advisory only — it does not fail the stage.",
