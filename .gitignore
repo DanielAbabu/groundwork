@@ -23,6 +23,7 @@ dist-ssr
 .dev.vars
 
 # Editor directories and files
+.lovable/
 .vscode/*
 !.vscode/extensions.json
 .idea
