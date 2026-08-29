@@ -1,12 +1,11 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { supabase } from "@/integrations/supabase/client";
 import { scenarios } from "@/content/scenarios";
 import { designScenarios } from "@/content/design";
 import { listProgress, type ProgressRow } from "@/lib/progress.functions";
 import { listDesignResults, type DesignStageRow } from "@/lib/design.functions";
-import { Button } from "@/components/ui/button";
+import { ProgressSummary } from "@/components/ProgressSummary";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -30,7 +29,6 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
-  const router = useRouter();
   const fetchProgress = useServerFn(listProgress);
   const fetchDesign = useServerFn(listDesignResults);
 
@@ -58,59 +56,81 @@ function Dashboard() {
   }).length;
 
   return (
-    <main className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-5">
-          <div>
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-primary">incident</p>
-            <h1 className="mt-2 text-xl font-semibold text-foreground">Your rotation</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button asChild variant="outline" className="font-mono">
-              <Link to="/profile">Profile</Link>
-            </Button>
-            <Button
-              variant="outline"
-              className="font-mono"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                router.navigate({ to: "/" });
-              }}
-            >
-              Sign out
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="mx-auto max-w-5xl px-6 py-10">
+      <div className="mb-8">
+        <p className="font-mono text-xs uppercase tracking-[0.3em] text-amber-500 font-semibold">
+          on-call rotation
+        </p>
+        <h1 className="mt-1 text-2xl font-bold text-foreground">Engineer Command Center</h1>
+        <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
+          Select a track below to jump directly into interactive debugging or architectural design
+          reviews.
+        </p>
+      </div>
 
-      <div className="mx-auto grid max-w-5xl gap-4 px-6 py-10 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         <Link
           to="/incidents"
-          className="rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50 hover:bg-accent/40"
+          className="group rounded-xl border border-border bg-card p-6 transition-all hover:border-amber-500/50 hover:bg-accent/40 shadow-xs"
         >
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-primary">debugging</p>
-          <h2 className="mt-3 text-2xl font-semibold text-foreground">
-            {resolved}/{scenarios.length} resolved
+          <div className="flex items-center justify-between">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-amber-500 font-semibold">
+              debugging track
+            </p>
+            <span className="font-mono text-xs text-muted-foreground group-hover:text-foreground">
+              Explore →
+            </span>
+          </div>
+          <h2 className="mt-3 text-3xl font-bold text-foreground">
+            {resolved}/{scenarios.length}{" "}
+            <span className="text-sm font-normal text-muted-foreground">resolved</span>
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Get paged into a broken codebase, read the signal, fix the root cause, run the hidden
-            harness.
+          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+            Get paged into a broken codebase, read real-time signal, fix the root cause in Monaco
+            Editor, and verify against hidden test harnesses.
           </p>
         </Link>
 
         <Link
           to="/design"
-          className="rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50 hover:bg-accent/40"
+          className="group rounded-xl border border-border bg-card p-6 transition-all hover:border-amber-500/50 hover:bg-accent/40 shadow-xs"
         >
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-primary">design review</p>
-          <h2 className="mt-3 text-2xl font-semibold text-foreground">
-            {designDone}/{designScenarios.length} completed
+          <div className="flex items-center justify-between">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-amber-500 font-semibold">
+              design review track
+            </p>
+            <span className="font-mono text-xs text-muted-foreground group-hover:text-foreground">
+              Explore →
+            </span>
+          </div>
+          <h2 className="mt-3 text-3xl font-bold text-foreground">
+            {designDone}/{designScenarios.length}{" "}
+            <span className="text-sm font-normal text-muted-foreground">completed</span>
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Present to a stakeholder in four stages: clarify, size, sketch, and defend a trade-off.
+          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+            Present to senior engineering stakeholders across four interactive stages: clarify
+            requirements, calculate capacity, design components, and defend trade-offs.
           </p>
         </Link>
       </div>
-    </main>
+
+      <div className="mt-8 rounded-xl border border-border bg-card p-6 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
+          <div>
+            <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground font-bold">
+              Active Rotation Performance
+            </h3>
+            <p className="text-sm text-foreground mt-1 font-medium">
+              {resolved + designDone === 0
+                ? "Your rotation is ready — start your first incident scenario."
+                : `Overall progress across ${scenarios.length + designScenarios.length} system engineering challenges.`}
+            </p>
+          </div>
+        </div>
+        <div className="pt-4">
+          <ProgressSummary progress={progress ?? []} />
+        </div>
+      </div>
+    </div>
   );
 }

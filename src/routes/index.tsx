@@ -78,122 +78,173 @@ function Index() {
   const firstDesign = designScenarios[0]!;
 
   return (
-    <main className="min-h-screen bg-background">
-      <section className="grid-noise border-b border-border">
-        <div className="mx-auto max-w-6xl px-6 py-24">
-          <p className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-primary">
-            <span className="pager-pulse inline-block size-2 rounded-full bg-primary" />
-            on-call training
-          </p>
-          <h1 className="mt-6 max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl">
-            Practice the two things interviews and on-call actually test: someone else&apos;s broken
-            code, and a design you have to defend.
-          </h1>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            {scenarios.length} single-cause scenarios graded by a hidden test harness, and{" "}
-            {designScenarios.length} stakeholder design review
-            {designScenarios.length === 1 ? "" : "s"} graded stage by stage — clarify, size, sketch,
-            trade off. No multiple-choice quizzes, no toy puzzles.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center gap-3">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
+      {/* Sticky Landing Header */}
+      <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3.5">
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <div className="flex size-7 items-center justify-center rounded-lg bg-amber-500/10 border border-amber-500/30 group-hover:border-amber-500/60 transition-colors">
+                <svg
+                  className="size-4 text-amber-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+              </div>
+              <span className="font-mono text-sm font-bold uppercase tracking-[0.2em] text-foreground">
+                GROUNDWORK
+              </span>
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-4">
             <Link
-              to="/incidents/$slug"
-              params={{ slug: first.id }}
-              className="inline-flex items-center rounded-md bg-primary px-5 py-2.5 font-mono text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+              to="/incidents"
+              className="hidden sm:inline-block font-mono text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
             >
-              Start first scenario
+              Debugging
             </Link>
             <Link
-              to="/design/$slug"
-              params={{ slug: firstDesign.id }}
-              className="inline-flex items-center rounded-md border border-border bg-card px-5 py-2.5 font-mono text-sm font-medium text-foreground transition-colors hover:bg-accent"
+              to="/design"
+              className="hidden sm:inline-block font-mono text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
             >
-              Start a design review
+              Design Reviews
             </Link>
             <Link
               to="/dashboard"
-              className="inline-flex items-center rounded-md px-2 py-2.5 font-mono text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="rounded-lg bg-amber-500 px-3.5 py-1.5 font-mono text-xs font-bold uppercase tracking-wider text-slate-950 hover:bg-amber-400 transition-all shadow-xs"
             >
-              See my progress →
+              Enter App →
             </Link>
           </div>
-          <dl className="mt-12 grid max-w-3xl grid-cols-2 gap-6 border-t border-border pt-8 sm:grid-cols-4">
-            {[
-              { k: "scenarios", v: String(scenarios.length) },
-              { k: "design reviews", v: String(designScenarios.length) },
-              { k: "graded stages", v: "4 per review" },
-              { k: "hidden tests", v: "every scenario" },
-            ].map((stat) => (
-              <div key={stat.k}>
-                <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                  {stat.k}
-                </dt>
-                <dd className="mt-1 font-mono text-lg text-foreground">{stat.v}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
-      </section>
+      </header>
 
-      <section className="mx-auto max-w-6xl px-6 py-16">
-        <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          two tracks, one workspace
-        </h2>
-        <div className="mt-8 grid gap-4 lg:grid-cols-2">
-          {TRACKS.map((track) => (
-            <article
-              key={track.tag}
-              className="flex flex-col rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/40"
-            >
-              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary">
-                {track.tag}
-              </p>
-              <h3 className="mt-3 text-xl font-semibold leading-snug text-foreground">
-                {track.title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{track.body}</p>
-              <ul className="mt-4 space-y-2">
-                {track.bullets.map((bullet) => (
-                  <li
-                    key={bullet}
-                    className="flex gap-2 font-mono text-[11px] leading-relaxed text-muted-foreground"
-                  >
-                    <span className="text-primary">▸</span>
-                    {bullet}
-                  </li>
-                ))}
-              </ul>
+      <main className="flex-1">
+        <section className="grid-noise border-b border-border">
+          <div className="mx-auto max-w-6xl px-6 py-24">
+            <p className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-primary">
+              <span className="pager-pulse inline-block size-2 rounded-full bg-primary" />
+              on-call training
+            </p>
+            <h1 className="mt-6 max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl">
+              Practice the two things interviews and on-call actually test: someone else&apos;s
+              broken code, and a design you have to defend.
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
+              {scenarios.length} single-cause scenarios graded by a hidden test harness, and{" "}
+              {designScenarios.length} stakeholder design review
+              {designScenarios.length === 1 ? "" : "s"} graded stage by stage — clarify, size,
+              sketch, trade off. No multiple-choice quizzes, no toy puzzles.
+            </p>
+            <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link
-                to={track.to}
-                className="mt-6 inline-flex w-fit items-center rounded-md border border-border bg-background px-4 py-2 font-mono text-xs uppercase tracking-widest text-foreground transition-colors hover:bg-accent"
+                to="/incidents/$slug"
+                params={{ slug: first.id }}
+                className="inline-flex items-center rounded-md bg-primary px-5 py-2.5 font-mono text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                {track.cta}
+                Start first scenario
               </Link>
-            </article>
-          ))}
-        </div>
-      </section>
+              <Link
+                to="/design/$slug"
+                params={{ slug: firstDesign.id }}
+                className="inline-flex items-center rounded-md border border-border bg-card px-5 py-2.5 font-mono text-sm font-medium text-foreground transition-colors hover:bg-accent"
+              >
+                Start a design review
+              </Link>
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center rounded-md px-2 py-2.5 font-mono text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                See my progress →
+              </Link>
+            </div>
+            <dl className="mt-12 grid max-w-3xl grid-cols-2 gap-6 border-t border-border pt-8 sm:grid-cols-4">
+              {[
+                { k: "scenarios", v: String(scenarios.length) },
+                { k: "design reviews", v: String(designScenarios.length) },
+                { k: "graded stages", v: "4 per review" },
+                { k: "hidden tests", v: "every scenario" },
+              ].map((stat) => (
+                <div key={stat.k}>
+                  <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                    {stat.k}
+                  </dt>
+                  <dd className="mt-1 font-mono text-lg text-foreground">{stat.v}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
 
-      <section className="border-t border-border bg-surface/40">
-        <div className="mx-auto max-w-6xl px-6 py-16">
+        <section className="mx-auto max-w-6xl px-6 py-16">
           <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            how a session runs
+            two tracks, one workspace
           </h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {STEPS.map((step) => (
-              <article key={step.n} className="rounded-lg border border-border bg-card p-5">
-                <p className="font-mono text-xs text-primary">{step.n}</p>
-                <h3 className="mt-3 text-base font-semibold text-foreground">{step.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.body}</p>
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
+            {TRACKS.map((track) => (
+              <article
+                key={track.tag}
+                className="flex flex-col rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/40"
+              >
+                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary">
+                  {track.tag}
+                </p>
+                <h3 className="mt-3 text-xl font-semibold leading-snug text-foreground">
+                  {track.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{track.body}</p>
+                <ul className="mt-4 space-y-2">
+                  {track.bullets.map((bullet) => (
+                    <li
+                      key={bullet}
+                      className="flex gap-2 font-mono text-[11px] leading-relaxed text-muted-foreground"
+                    >
+                      <span className="text-primary">▸</span>
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to={track.to}
+                  className="mt-6 inline-flex w-fit items-center rounded-md border border-border bg-background px-4 py-2 font-mono text-xs uppercase tracking-widest text-foreground transition-colors hover:bg-accent"
+                >
+                  {track.cta}
+                </Link>
               </article>
             ))}
           </div>
-          <p className="mt-8 font-mono text-xs text-muted-foreground">
-            First up — {DIFFICULTY_LABELS[first.difficulty]} · {TYPE_LABELS[first.type]} ·{" "}
-            {first.title}
-          </p>
-        </div>
-      </section>
-    </main>
+        </section>
+
+        <section className="border-t border-border bg-surface/40">
+          <div className="mx-auto max-w-6xl px-6 py-16">
+            <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+              how a session runs
+            </h2>
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {STEPS.map((step) => (
+                <article key={step.n} className="rounded-lg border border-border bg-card p-5">
+                  <p className="font-mono text-xs text-primary">{step.n}</p>
+                  <h3 className="mt-3 text-base font-semibold text-foreground">{step.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.body}</p>
+                </article>
+              ))}
+            </div>
+            <p className="mt-8 font-mono text-xs text-muted-foreground">
+              First up — {DIFFICULTY_LABELS[first.difficulty]} · {TYPE_LABELS[first.type]} ·{" "}
+              {first.title}
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
   );
 }

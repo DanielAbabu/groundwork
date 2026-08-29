@@ -103,13 +103,16 @@ export const listNudges = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("nudges")
       .select("id, message, created_at, from_user_id, to_user_id")
+      .or(`from_user_id.eq.${context.userId},to_user_id.eq.${context.userId}`)
       .order("created_at", { ascending: false })
       .limit(30);
     if (error) throw new Error(error.message);
     const rows = data ?? [];
     const ids = Array.from(
       new Set(
-        rows.map((row) => (row.from_user_id === context.userId ? row.to_user_id : row.from_user_id)),
+        rows.map((row) =>
+          row.from_user_id === context.userId ? row.to_user_id : row.from_user_id,
+        ),
       ),
     );
     let profiles: PublicProfile[] = [];

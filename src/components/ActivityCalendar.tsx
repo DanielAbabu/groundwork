@@ -31,7 +31,7 @@ export function ActivityCalendar({ days }: { days: ActivityDay[] }) {
   start.setUTCDate(start.getUTCDate() - start.getUTCDay());
 
   const weeks: Date[][] = [];
-  let cursor = new Date(start);
+  const cursor = new Date(start);
   while (cursor <= end) {
     const week: Date[] = [];
     for (let i = 0; i < 7; i += 1) {

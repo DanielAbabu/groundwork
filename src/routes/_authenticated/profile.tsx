@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -122,26 +122,22 @@ function ProfilePage() {
   const sent = (nudges ?? []).filter((row) => row.direction === "sent");
 
   return (
-    <main className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-5">
-          <div>
-            <Link to="/incidents" className="font-mono text-xs text-primary hover:underline">
-              ← groundwork board
-            </Link>
-            <h1 className="mt-2 text-xl font-semibold text-foreground">
-              {profile?.display_name || profile?.username || "Your profile"}
-            </h1>
-            <p className="font-mono text-xs text-muted-foreground">
-              @{profile?.username ?? "unnamed"}
-            </p>
-          </div>
-        </div>
-      </header>
+    <div className="mx-auto max-w-5xl px-6 py-8">
+      <div className="border-b border-border pb-6 mb-8">
+        <h1 className="text-2xl font-bold text-foreground">
+          {profile?.display_name || profile?.username || "Your Profile"}
+        </h1>
+        <p className="font-mono text-xs text-amber-500 mt-1">@{profile?.username ?? "engineer"}</p>
+      </div>
 
       <div className="mx-auto grid max-w-5xl gap-6 px-6 py-10">
         <ProgressSummary progress={progress ?? []} />
-        <ActivityCalendar days={activity ?? []} />
+        <div className="overflow-x-auto rounded-lg border border-border bg-card p-5">
+          <h2 className="mb-4 font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            Activity History
+          </h2>
+          <ActivityCalendar days={activity ?? []} />
+        </div>
 
         <section className="rounded-lg border border-border bg-card p-5">
           <h2 className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
@@ -279,6 +275,6 @@ function ProfilePage() {
           </div>
         </section>
       </div>
-    </main>
+    </div>
   );
 }

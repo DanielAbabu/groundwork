@@ -31,7 +31,7 @@ export function NudgePopover() {
   });
 
   useEffect(() => {
-    const timer = setTimeout(() => setSearchTerm(searchTerm), 300);
+    const timer = setTimeout(() => setDebouncedTerm(searchTerm), 300);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
@@ -40,10 +40,6 @@ export function NudgePopover() {
     queryFn: () => findUsers({ data: { query: debouncedTerm } }),
     enabled: debouncedTerm.trim().length >= 2,
   });
-
-  useEffect(() => {
-    setDebouncedTerm(searchTerm);
-  }, [searchTerm]);
 
   const dismissMutation = useMutation({
     mutationFn: (id: string) => clearNudge({ data: { id } }),
@@ -65,9 +61,7 @@ export function NudgePopover() {
   const sentNudges = (nudges ?? []).filter((n) => n.direction === "sent");
   const previouslyNudged = Array.from(
     new Map(
-      sentNudges
-        .filter((n) => n.counterpart?.id)
-        .map((n) => [n.counterpart!.id, n.counterpart!]),
+      sentNudges.filter((n) => n.counterpart?.id).map((n) => [n.counterpart!.id, n.counterpart!]),
     ).values(),
   );
 
@@ -204,9 +198,13 @@ export function NudgePopover() {
                   className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-amber-500 focus:outline-none"
                 />
 
-                {debouncedTerm.trim().length >= 2 && !isFetching && (searchResults?.length ?? 0) === 0 && (
-                  <p className="py-2 text-center text-xs text-muted-foreground">No matching users.</p>
-                )}
+                {debouncedTerm.trim().length >= 2 &&
+                  !isFetching &&
+                  (searchResults?.length ?? 0) === 0 && (
+                    <p className="py-2 text-center text-xs text-muted-foreground">
+                      No matching users.
+                    </p>
+                  )}
 
                 {/* Search Results */}
                 {debouncedTerm.trim().length >= 2 && (searchResults?.length ?? 0) > 0 && (
@@ -249,7 +247,9 @@ export function NudgePopover() {
                           <div>
                             <p className="text-xs font-bold text-foreground">@{user.username}</p>
                             {user.display_name && (
-                              <p className="text-[10px] text-muted-foreground">{user.display_name}</p>
+                              <p className="text-[10px] text-muted-foreground">
+                                {user.display_name}
+                              </p>
                             )}
                           </div>
                           <button
