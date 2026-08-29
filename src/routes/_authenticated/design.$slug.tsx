@@ -432,7 +432,7 @@ function FeedbackList({ grade }: { grade: StageGrade }) {
 }
 
 /**
- * Stage 2: Size It (Ruled Ledger Sheet)
+ * Stage 2: Size It (Capacity Estimation Ledger Sheet)
  */
 function CapacityStage({
   stage,
@@ -461,20 +461,41 @@ function CapacityStage({
     });
   };
 
+  const computedFields = Object.values(answer).filter((v) => v != null).length;
+  const isAllComputed = computedFields === stage.fields.length;
+
   return (
-    <div className="rounded border border-[#3A342C] bg-[#1D1A17] p-6 space-y-6 shadow-sm">
-      <div className="border-b border-[#3A342C] pb-3">
-        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] block">
-          LEDGER SHEET // CAPACITY ESTIMATION
+    <div className="rounded-none border border-[#3A342C] bg-[#1D1A17] p-6 space-y-6 shadow-md select-none">
+      {/* Ledger Sheet Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#3A342C] pb-4">
+        <div>
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] block">
+            ACCOUNTING LEDGER // CAPACITY & BANDWIDTH ESTIMATION
+          </span>
+          <h3 className="font-serif text-lg font-semibold text-[#F2ECE1] mt-0.5">
+            System Traffic & Storage Ledger
+          </h3>
+        </div>
+        <div className="font-mono text-xs text-[#7C7364] text-left sm:text-right">
+          <span>LINE ITEMS: {stage.fields.length}</span>
+        </div>
+      </div>
+
+      {/* Assumption Text (Serif Italic Note Block) */}
+      <div className="rounded-none border-l-2 border-[#C8912B] bg-[#161412] p-3.5 space-y-1">
+        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B]">
+          ESTIMATION ASSUMPTIONS & FORMULA GUIDANCE
         </span>
-        <p className="font-serif italic text-xs text-[#B8AE9C] mt-1">
-          Assume standard traffic profiles and enter computed values or formulas directly.
+        <p className="font-serif italic text-xs leading-relaxed text-[#B8AE9C]">
+          "Assume 86,400 seconds per day. Write exact numeric inputs or mathematical expressions
+          (e.g. 500 * 86400 or 1000/2) directly into each ledger row to evaluate system
+          constraints."
         </p>
       </div>
 
-      {/* Ledger Paper Ruled Table */}
-      <div className="space-y-4">
-        {stage.fields.map((field) => {
+      {/* Ruled Ledger Table */}
+      <div className="space-y-0 divide-y divide-[#3A342C]/40 border-t border-b border-[#3A342C]">
+        {stage.fields.map((field, idx) => {
           const rawText = inputs[field.id] ?? "";
           const evalResult = evaluateFormula(rawText);
           const hasValue = evalResult.value != null;
@@ -483,36 +504,49 @@ function CapacityStage({
           return (
             <div
               key={field.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#3A342C]/50 pb-3"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3 px-2 transition-colors hover:bg-[#26221D]/40"
             >
-              <div className="space-y-0.5">
-                <label
-                  className="font-mono text-xs font-semibold text-[#F2ECE1] block"
-                  htmlFor={field.id}
-                >
-                  {field.label}
-                </label>
+              {/* Left Column: Label & Target Formula */}
+              <div className="space-y-0.5 max-w-md">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[10px] text-[#7C7364]">{idx + 1}.</span>
+                  <label
+                    className="font-mono text-xs font-semibold text-[#F2ECE1] cursor-pointer"
+                    htmlFor={field.id}
+                  >
+                    {field.label}
+                  </label>
+                </div>
                 {field.formula && (
-                  <p className="font-mono text-[10px] text-[#7C7364]">
+                  <p className="font-mono text-[10px] text-[#7C7364] pl-4">
                     Target Formula: <span className="text-[#C8912B]">{field.formula}</span>
                   </p>
                 )}
               </div>
 
-              <div className="flex items-center gap-3">
+              {/* Right Column: Expression Input & Evaluated Value */}
+              <div className="flex items-center gap-3 justify-end">
+                {hasValue && !invalid && (
+                  <div className="font-mono text-xs text-right mr-1">
+                    <span className="text-[10px] text-[#7C7364] uppercase block">EVALUATED</span>
+                    <span className="font-bold text-[#7FB88A]">
+                      {evalResult.value!.toLocaleString()}
+                    </span>
+                  </div>
+                )}
+
                 <Input
                   id={field.id}
                   type="text"
                   placeholder={field.formula ? "e.g. 500 * 86400" : "100"}
                   value={rawText}
                   onChange={(e) => handleInputChange(field.id, e.target.value)}
-                  className="w-48 text-right font-mono text-xs bg-[#161412] border-[#3A342C] text-[#F2ECE1]"
+                  className="w-48 text-right font-mono text-xs bg-[#161412] border-[#3A342C] text-[#F2ECE1] focus-visible:ring-1 focus-visible:ring-[#C8912B] rounded-none"
                 />
-                {field.unit && (
-                  <span className="font-mono text-xs text-[#7C7364] w-12 shrink-0">
-                    {field.unit}
-                  </span>
-                )}
+
+                <span className="font-mono text-xs text-[#7C7364] w-14 shrink-0 text-left">
+                  {field.unit ?? ""}
+                </span>
               </div>
             </div>
           );
@@ -520,13 +554,19 @@ function CapacityStage({
       </div>
 
       {/* Totals Footer Bar with Accounting Double-Rule */}
-      <div className="border-t-2 border-b-2 border-[#3A342C] py-3 px-4 bg-[#161412] flex items-center justify-between">
-        <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B]">
-          TOTAL ESTIMATION SUMMARY
-        </span>
-        <span className="font-mono text-xs font-bold text-[#F2ECE1]">
-          {Object.values(answer).filter((v) => v != null).length} / {stage.fields.length} COMPUTED
-        </span>
+      <div className="border-t-2 border-b-2 border-t-[#C8912B]/80 border-b-[#C8912B] py-3.5 px-4 bg-[#161412] flex items-center justify-between brass-emboss select-none">
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B]">
+            LEDGER STATUS // TOTALS
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3 font-mono text-xs">
+          <span className="text-[#7C7364]">COMPUTED ROWS:</span>
+          <span className={`font-bold ${isAllComputed ? "text-[#7FB88A]" : "text-[#C8912B]"}`}>
+            {computedFields} / {stage.fields.length} {isAllComputed ? "✓ COMPLETE" : "PENDING"}
+          </span>
+        </div>
       </div>
     </div>
   );
