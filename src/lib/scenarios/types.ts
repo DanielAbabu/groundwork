@@ -1,4 +1,4 @@
-export type ScenarioType = "A" | "B" | "C" | "D";
+export type ScenarioType = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
 
 export type Difficulty = "starter" | "routine" | "tricky";
 
@@ -8,6 +8,46 @@ export interface ScenarioFile {
   content: string;
   /** Context files are shown but not meant to be changed. */
   context?: boolean;
+}
+
+export interface LogLine {
+  ts: string;
+  level: "INFO" | "WARN" | "ERROR" | "DEBUG";
+  service: string;
+  msg: string;
+  fields?: Record<string, string | number | boolean | null>;
+}
+
+export interface TraceSpan {
+  name: string;
+  durationMs: number;
+  status: "ok" | "error" | "timeout";
+  children?: TraceSpan[];
+}
+
+export interface SignalPanel {
+  stackTrace: string;
+  logs?: LogLine[];
+  trace?: TraceSpan;
+}
+
+export interface ScenarioHint {
+  tier: 1 | 2 | 3;
+  text: string;
+}
+
+export interface PostmortemData {
+  rootCause: string;
+  impact: string;
+  prevention: string;
+  inspiration?: string;
+}
+
+export interface ConceptNote {
+  concept: string;
+  explanation: string;
+  realWorldAnalogy: string;
+  fixPattern: string;
 }
 
 export interface Scenario {
@@ -22,13 +62,21 @@ export interface Scenario {
   /** Longer incident framing shown in the room. */
   framing: string;
   files: ScenarioFile[];
-  /** Stack trace / failing test output, rendered verbatim. */
-  signal: string;
+  /** Stack trace or structured 3-tab signal panel. */
+  signal: string | SignalPanel;
+  /** Progressive hint drawer tiers. */
+  hints?: ScenarioHint[];
+  /** Concept explanation unlocked on failed runs. */
+  conceptNote?: ConceptNote;
+  /** Concept tags for filtering and recommendations. */
+  concepts?: string[];
+  /** IDs of related scenarios to attempt next. */
+  relatedScenarios?: string[];
   /** Hidden test file: never listed in the file tree. */
   testPath: string;
   testContent: string;
   /** Shown after a pass, or after 2 failed runs. */
-  postmortem: string;
+  postmortem: string | PostmortemData;
 }
 
 export const TYPE_LABELS: Record<ScenarioType, string> = {
@@ -36,6 +84,10 @@ export const TYPE_LABELS: Record<ScenarioType, string> = {
   B: "Bad query",
   C: "Async handling",
   D: "Off-by-one",
+  E: "Data transform",
+  F: "Race condition",
+  G: "Config error",
+  H: "Serialization",
 };
 
 export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
@@ -49,7 +101,6 @@ export const DIFFICULTY_CLASSES: Record<Difficulty, string> = {
   routine: "text-sev2 border-sev2/40",
   tricky: "text-sev1 border-sev1/40",
 };
-
 
 export function scenarioFileMap(scenario: Scenario, edits: Record<string, string>) {
   const files: Record<string, string> = {};

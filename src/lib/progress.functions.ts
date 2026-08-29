@@ -27,9 +27,15 @@ export const recordRun = createServerFn({ method: "POST" })
     z.object({ scenarioId: z.string().min(1), passed: z.boolean() }).parse(input),
   )
   .handler(async ({ data, context }): Promise<ProgressRow> => {
-    await context.supabase
-      .from("scenario_runs")
-      .insert({ user_id: context.userId, scenario_id: data.scenarioId, passed: data.passed, track: "debugging" });
+    const { error: runErr } = await context.supabase.from("scenario_runs").insert({
+      user_id: context.userId,
+      scenario_id: data.scenarioId,
+      passed: data.passed,
+      track: "debugging",
+    });
+    if (runErr) {
+      console.warn("Failed to record scenario run log:", runErr.message);
+    }
 
     const { data: existing } = await context.supabase
       .from("scenario_progress")
@@ -37,7 +43,6 @@ export const recordRun = createServerFn({ method: "POST" })
       .eq("user_id", context.userId)
       .eq("scenario_id", data.scenarioId)
       .maybeSingle();
-
 
     const attempts = (existing?.attempts ?? 0) + 1;
     const alreadyPassed = existing?.status === "passed";
@@ -47,8 +52,7 @@ export const recordRun = createServerFn({ method: "POST" })
       track: "debugging",
       status: data.passed || alreadyPassed ? "passed" : "attempted",
       attempts,
-      first_passed_at:
-        existing?.first_passed_at ?? (data.passed ? new Date().toISOString() : null),
+      first_passed_at: existing?.first_passed_at ?? (data.passed ? new Date().toISOString() : null),
       updated_at: new Date().toISOString(),
     };
 

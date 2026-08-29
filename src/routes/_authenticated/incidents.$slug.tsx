@@ -12,6 +12,9 @@ import {
 } from "@/lib/scenarios/types";
 import { runHiddenTests, type RunResult } from "@/lib/sandbox/runTests";
 import { recordRun } from "@/lib/progress.functions";
+import { SignalPanel } from "@/components/SignalPanel";
+import { DiffBlock } from "@/components/DiffBlock";
+import { HintDrawer } from "@/components/HintDrawer";
 import { Button } from "@/components/ui/button";
 
 const CodeEditor = lazy(() => import("@/components/CodeEditor"));
@@ -134,13 +137,24 @@ function IncidentRoom() {
         outcome.kind === "results" &&
         outcome.cases.length > 0 &&
         outcome.cases.every((c) => c.passed);
-      if (didPass) {
+      if (outcome.kind === "timeout") {
+        toast.error("Test execution timed out after 3 seconds.");
+        setFailedRuns((n) => n + 1);
+      } else if (outcome.kind === "crash") {
+        toast.error(`Sandbox crash: ${outcome.error}`);
+        setFailedRuns((n) => n + 1);
+      } else if (didPass) {
         setPassed(true);
         toast.success("Scenario resolved — all hidden tests pass.");
       } else {
         setFailedRuns((n) => n + 1);
       }
       mutation.mutate(didPass);
+    } catch (err) {
+      toast.error(
+        `Execution error: ${err instanceof Error ? err.message : "Sandbox worker crashed"}`,
+      );
+      console.error("Sandbox execution error:", err);
     } finally {
       setRunning(false);
     }
@@ -174,23 +188,31 @@ function IncidentRoom() {
 
       <div className="grid flex-1 gap-0 lg:grid-cols-[200px_minmax(0,1fr)_380px]">
         <aside className="border-b border-border bg-sidebar p-3 lg:border-b-0 lg:border-r">
-          <p className="px-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            files
-          </p>
-          <ul className="mt-2 space-y-1">
+          <div className="flex items-center justify-between">
+            <p className="px-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              files
+            </p>
+            <button
+              onClick={() => persist({})}
+              className="font-mono text-[10px] text-muted-foreground hover:text-foreground lg:hidden"
+            >
+              Reset
+            </button>
+          </div>
+          <ul className="mt-2 flex overflow-x-auto gap-1.5 lg:flex-col lg:space-y-1 lg:overflow-visible pb-1 lg:pb-0">
             {scenario.files.map((file) => (
-              <li key={file.path}>
+              <li key={file.path} className="shrink-0 lg:shrink">
                 <button
                   onClick={() => setActivePath(file.path)}
-                  className={`w-full truncate rounded px-2 py-1.5 text-left font-mono text-xs transition-colors ${
+                  className={`w-full whitespace-nowrap lg:truncate rounded px-2.5 py-1 text-left font-mono text-xs transition-colors ${
                     file.path === activePath
-                      ? "bg-secondary text-foreground"
+                      ? "bg-secondary text-foreground font-semibold"
                       : "text-muted-foreground hover:bg-secondary/60"
                   }`}
                   title={file.path}
                 >
                   {file.path.split("/").pop()}
-                  {dirty.has(file.path) && <span className="ml-1 text-primary">●</span>}
+                  {dirty.has(file.path) && <span className="ml-1 text-amber-500">●</span>}
                   {file.context && (
                     <span className="ml-1 text-[9px] uppercase text-muted-foreground">ro</span>
                   )}
@@ -200,7 +222,7 @@ function IncidentRoom() {
           </ul>
           <Button
             variant="outline"
-            className="mt-4 w-full font-mono text-xs"
+            className="mt-4 hidden w-full font-mono text-xs lg:flex"
             onClick={() => persist({})}
           >
             Reset files
@@ -260,12 +282,8 @@ function IncidentRoom() {
           <div className="flex-1 overflow-auto p-4">
             {tab === "signal" ? (
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                  failing signal
-                </p>
-                <pre className="mt-2 overflow-x-auto rounded bg-background p-3 font-mono text-xs text-muted-foreground">
-                  {scenario.signal}
-                </pre>
+                <SignalPanel signal={scenario.signal} />
+                <HintDrawer hints={scenario.hints} />
               </div>
             ) : (
               <div>
@@ -319,14 +337,47 @@ function IncidentRoom() {
                           <span>{c.name}</span>
                           <span>{c.passed ? "PASS" : "FAIL"}</span>
                         </div>
-                        {c.message && (
-                          <pre className="mt-2 text-[11px] text-muted-foreground whitespace-pre-wrap">
-                            {c.message}
-                          </pre>
-                        )}
+                        {!c.passed && <DiffBlock diff={c.diff} fallbackMessage={c.message} />}
                       </li>
                     ))}
                   </ul>
+                )}
+
+                {scenario.conceptNote && failedRuns > 0 && !passed && (
+                  <div className="mt-4 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3.5 space-y-2">
+                    <details className="group">
+                      <summary className="cursor-pointer font-mono text-xs font-bold uppercase tracking-widest text-amber-500 flex items-center justify-between">
+                        <span>💡 View Conceptual Breakdown</span>
+                        <span className="text-[10px] text-muted-foreground group-open:rotate-180 transition-transform">
+                          ▼
+                        </span>
+                      </summary>
+                      <div className="mt-3 space-y-2 text-xs">
+                        <div className="font-semibold text-foreground border-b border-amber-500/20 pb-1">
+                          {scenario.conceptNote.concept}
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed">
+                          {scenario.conceptNote.explanation}
+                        </p>
+                        <div className="rounded bg-background p-2 border border-border">
+                          <span className="font-mono text-[10px] uppercase font-bold text-amber-500 block">
+                            Real-World Analogy:
+                          </span>
+                          <span className="text-muted-foreground italic">
+                            "{scenario.conceptNote.realWorldAnalogy}"
+                          </span>
+                        </div>
+                        <div className="rounded bg-background p-2 border border-border">
+                          <span className="font-mono text-[10px] uppercase font-bold text-pass block">
+                            Canonical Fix Pattern:
+                          </span>
+                          <span className="font-mono text-foreground">
+                            {scenario.conceptNote.fixPattern}
+                          </span>
+                        </div>
+                      </div>
+                    </details>
+                  </div>
                 )}
               </div>
             )}
@@ -334,10 +385,35 @@ function IncidentRoom() {
 
           {showPostmortem && (
             <div className="border-t border-border bg-background p-4">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-primary font-bold">
-                postmortem
+              <p className="font-mono text-[10px] uppercase tracking-widest text-amber-500 font-bold">
+                incident postmortem
               </p>
-              <p className="mt-2 font-mono text-xs text-muted-foreground">{scenario.postmortem}</p>
+              {typeof scenario.postmortem === "string" ? (
+                <p className="mt-2 font-mono text-xs text-muted-foreground">
+                  {scenario.postmortem}
+                </p>
+              ) : (
+                <div className="mt-3 space-y-2 font-mono text-xs">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-sev1 mr-2">
+                      Root Cause:
+                    </span>
+                    <span className="text-foreground">{scenario.postmortem.rootCause}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-amber-500 mr-2">
+                      Impact:
+                    </span>
+                    <span className="text-muted-foreground">{scenario.postmortem.impact}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-pass mr-2">
+                      Prevention:
+                    </span>
+                    <span className="text-muted-foreground">{scenario.postmortem.prevention}</span>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

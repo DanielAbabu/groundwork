@@ -62,16 +62,70 @@ module.exports = { lineItems };
 `,
       },
     ],
-    signal: `TypeError: Cannot read properties of undefined (reading 'toFixed')
+    signal: {
+      stackTrace: `TypeError: Cannot read properties of undefined (reading 'toFixed')
     at handleCheckout (src/routes/checkout.js:12:19)
-    at POST /checkout (src/server.js:44:12)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-
-  10 |   return {
-  11 |     status: "ok",
-  12 |   amountDue: total.toFixed(2),
-     |                      ^
-  13 |   };`,
+    at POST /checkout (src/server.js:44:12)`,
+      logs: [
+        {
+          ts: "03:41:50Z",
+          level: "INFO",
+          service: "storefront-api",
+          msg: "Received POST /checkout",
+          fields: { cart_id: "cart_991" },
+        },
+        {
+          ts: "03:41:51Z",
+          level: "WARN",
+          service: "pricing",
+          msg: "calculateTotal returned undefined",
+          fields: { cart_id: "cart_991" },
+        },
+        {
+          ts: "03:41:51Z",
+          level: "ERROR",
+          service: "storefront-api",
+          msg: "Unhandled TypeError in route execution",
+          fields: {
+            path: "/checkout",
+            error: "Cannot read properties of undefined (reading 'toFixed')",
+          },
+        },
+      ],
+      trace: {
+        name: "POST /checkout",
+        durationMs: 6,
+        status: "error",
+        children: [
+          { name: "lineItems(cart)", durationMs: 1, status: "ok" },
+          { name: "calculateTotal(cart)", durationMs: 0, status: "error" },
+        ],
+      },
+    },
+    hints: [
+      {
+        tier: 1,
+        text: "total.toFixed() failed because total is undefined, not a number. The function that computes it returned nothing.",
+      },
+      {
+        tier: 2,
+        text: "Look at src/services/pricing.js. The calculateTotal function has a comment indicating it needs implementation.",
+      },
+      {
+        tier: 3,
+        text: "Implement calculateTotal using lineItems(cart): sum (price * quantity), add 4.99 shipping if subtotal < 50, and return the total number.",
+      },
+    ],
+    concepts: ["null-pointer", "missing-return", "pricing-rules"],
+    conceptNote: {
+      concept: "Missing Return Value & Stubbed Handlers",
+      explanation:
+        "When refactoring functions, incomplete stubbed handlers return 'undefined'. Calling methods like '.toFixed()' on an undefined return value causes fatal runtime TypeErrors.",
+      realWorldAnalogy:
+        "Like a waiter taking your order to the kitchen, but returning with empty hands and asking you to pay.",
+      fixPattern:
+        "Ensure all logic branches return an explicit calculated value or throw a typed DomainError.",
+    },
     testPath: "hidden.test.js",
     testContent: `const { calculateTotal } = require("./src/services/pricing");
 
@@ -96,8 +150,14 @@ test("an empty cart still returns a number", () => {
   expect(calculateTotal({ items: [] })).toBeCloseTo(4.99);
 });
 `,
-    postmortem:
-      "calculateTotal() was left as an empty stub during the refactor, so it returned undefined and the route crashed on total.toFixed(). The fix is to implement it: sum price × quantity, add 4.99 shipping unless the subtotal reaches 50, and round to 2 decimals.",
+    postmortem: {
+      rootCause:
+        "calculateTotal() was left as an empty stub during refactoring, returning undefined.",
+      impact: "Order volume dropped to zero due to 100% 500 error rate on POST /checkout.",
+      prevention:
+        "Empty function stubs must throw explicit NotImplemented errors or fail CI unit tests.",
+      inspiration: "Common refactor regression pattern in microservices.",
+    },
   },
   {
     id: "tax-helper-missing",

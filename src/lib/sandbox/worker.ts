@@ -13,10 +13,16 @@ type RunRequest = {
   testPath: string;
 };
 
+export type AssertionDiff =
+  | { kind: "value"; expected: string; received: string }
+  | { kind: "object"; expected: string; received: string; diff: string[] }
+  | { kind: "message"; text: string };
+
 export type TestCaseResult = {
   name: string;
   passed: boolean;
-  message?: string;
+  message?: string | undefined;
+  diff?: AssertionDiff | undefined;
 };
 
 export type RunOutcome =
@@ -91,7 +97,43 @@ function deepEqual(a: unknown, b: unknown): boolean {
   );
 }
 
-class AssertionError extends Error {}
+class AssertionError extends Error {
+  diff?: AssertionDiff | undefined;
+  constructor(message: string, diff?: AssertionDiff | undefined) {
+    super(message);
+    this.name = "AssertionError";
+    this.diff = diff;
+  }
+}
+
+function computeObjectDiff(actual: unknown, expected: unknown): string[] {
+  const lines: string[] = [];
+  if (
+    typeof actual !== "object" ||
+    typeof expected !== "object" ||
+    actual === null ||
+    expected === null
+  ) {
+    return [`- expected: ${serialize(expected)}`, `+ received: ${serialize(actual)}`];
+  }
+
+  const allKeys = Array.from(
+    new Set([...Object.keys(actual as object), ...Object.keys(expected as object)]),
+  );
+
+  for (const key of allKeys) {
+    const actVal = (actual as Record<string, unknown>)[key];
+    const expVal = (expected as Record<string, unknown>)[key];
+    if (deepEqual(actVal, expVal)) {
+      lines.push(`  ${key}: ${serialize(expVal)}`);
+    } else {
+      if (expVal !== undefined) lines.push(`- ${key}: ${serialize(expVal)}`);
+      if (actVal !== undefined) lines.push(`+ ${key}: ${serialize(actVal)}`);
+    }
+  }
+
+  return lines;
+}
 
 function createExpect() {
   return function expect(actual: unknown) {
@@ -100,13 +142,21 @@ function createExpect() {
         if (actual !== expected) {
           throw new AssertionError(
             `expected ${serialize(expected)} but received ${serialize(actual)}`,
+            { kind: "value", expected: serialize(expected), received: serialize(actual) },
           );
         }
       },
       toEqual(expected: unknown) {
         if (!deepEqual(actual, expected)) {
+          const diffLines = computeObjectDiff(actual, expected);
           throw new AssertionError(
             `expected ${serialize(expected)} but received ${serialize(actual)}`,
+            {
+              kind: "object",
+              expected: serialize(expected),
+              received: serialize(actual),
+              diff: diffLines,
+            },
           );
         }
       },
@@ -115,6 +165,7 @@ function createExpect() {
         if (!(diff < Math.pow(10, -digits) / 2)) {
           throw new AssertionError(
             `expected ${serialize(expected)} (±${digits} digits) but received ${serialize(actual)}`,
+            { kind: "value", expected: serialize(expected), received: serialize(actual) },
           );
         }
       },
@@ -123,19 +174,34 @@ function createExpect() {
         if (length !== expected) {
           throw new AssertionError(
             `expected length ${expected} but received ${serialize(length)}`,
+            { kind: "value", expected: String(expected), received: serialize(length) },
           );
         }
       },
       toBeUndefined() {
         if (actual !== undefined) {
-          throw new AssertionError(`expected undefined but received ${serialize(actual)}`);
+          throw new AssertionError(`expected undefined but received ${serialize(actual)}`, {
+            kind: "value",
+            expected: "undefined",
+            received: serialize(actual),
+          });
         }
       },
       toBeTruthy() {
-        if (!actual) throw new AssertionError(`expected a truthy value, received ${serialize(actual)}`);
+        if (!actual)
+          throw new AssertionError(`expected a truthy value, received ${serialize(actual)}`, {
+            kind: "value",
+            expected: "truthy",
+            received: serialize(actual),
+          });
       },
       toBeFalsy() {
-        if (actual) throw new AssertionError(`expected a falsy value, received ${serialize(actual)}`);
+        if (actual)
+          throw new AssertionError(`expected a falsy value, received ${serialize(actual)}`, {
+            kind: "value",
+            expected: "falsy",
+            received: serialize(actual),
+          });
       },
     };
   };
@@ -155,7 +221,9 @@ async function run({ files, testPath }: RunRequest): Promise<RunOutcome> {
   const beforeEachHooks: (() => unknown)[] = [];
 
   function resolve(from: string, request: string): string {
-    const base = request.startsWith(".") ? normalize(`${dirname(from)}/${request}`) : normalize(request);
+    const base = request.startsWith(".")
+      ? normalize(`${dirname(from)}/${request}`)
+      : normalize(request);
     for (const candidate of [base, `${base}.js`, `${base}/index.js`]) {
       if (candidate in files) return candidate;
     }
@@ -209,7 +277,8 @@ async function run({ files, testPath }: RunRequest): Promise<RunOutcome> {
       await testCase.fn();
       cases.push({ name: testCase.name, passed: true });
     } catch (error) {
-      cases.push({ name: testCase.name, passed: false, message: describeError(error) });
+      const diff = error instanceof AssertionError ? error.diff : undefined;
+      cases.push({ name: testCase.name, passed: false, message: describeError(error), diff });
     }
   }
 

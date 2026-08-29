@@ -29,9 +29,7 @@ export default function CodeEditor({
         automaticLayout: true,
         padding: { top: 12, bottom: 12 },
       }}
-      loading={
-        <span className="font-mono text-xs text-muted-foreground">loading editor…</span>
-      }
+      loading={<span className="font-mono text-xs text-muted-foreground">loading editor…</span>}
     />
   );
 }
