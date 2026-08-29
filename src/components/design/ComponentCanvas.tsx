@@ -34,6 +34,7 @@ import {
 } from "@/lib/design/registry";
 import type { DesignGraph } from "@/lib/design/types";
 import { Button } from "@/components/ui/button";
+import { CornerBrackets } from "@/components/design/PhaseGlyphs";
 
 type NodeData = { componentType: ComponentType; instances: number };
 type CanvasNode = Node<NodeData, "component">;
@@ -88,32 +89,29 @@ function ComponentNodeView({ data, selected }: NodeProps<CanvasNode>) {
   const def = COMPONENT_TYPES[data.componentType];
   return (
     <div
-      className="relative flex items-center justify-center border-2 px-4 py-3 text-center font-mono text-[11px] leading-tight shadow-lg transition-shadow"
+      className="relative flex items-center justify-center border px-4 py-3 text-center font-mono text-[11px] leading-tight transition-all"
       style={{
         width: def.defaultSize.w,
         minHeight: def.defaultSize.h,
-        borderColor: def.color,
-        background: `color-mix(in srgb, ${def.color} 14%, #0B1120)`,
-        color: "#E7EDF4",
-        borderRadius: def.shape === "pill" ? 999 : def.shape === "cylinder" ? 26 : 10,
-        boxShadow: selected ? `0 0 0 2px ${def.color}` : undefined,
+        borderColor: selected ? "#C8912B" : "#4E4638",
+        background: "#161412",
+        color: "#F2ECE1",
+        borderRadius: def.shape === "pill" ? 999 : def.shape === "cylinder" ? 20 : 2,
       }}
     >
-      <Handle type="target" position={Position.Top} style={{ background: def.color }} />
-      <Handle type="target" position={Position.Left} style={{ background: def.color }} />
+      {selected && <CornerBrackets />}
+      <Handle type="target" position={Position.Top} style={{ background: "#C8912B" }} />
+      <Handle type="target" position={Position.Left} style={{ background: "#C8912B" }} />
       <span>
         {def.label}
         {data.instances > 1 && (
-          <span
-            className="ml-1 rounded bg-black/40 px-1 py-0.5 text-[10px]"
-            style={{ color: def.color }}
-          >
+          <span className="ml-1 rounded-none border border-[#3A342C] bg-[#1D1A17] px-1 py-0.5 text-[10px] text-[#C8912B]">
             x{data.instances}
           </span>
         )}
       </span>
-      <Handle type="source" position={Position.Right} style={{ background: def.color }} />
-      <Handle type="source" position={Position.Bottom} style={{ background: def.color }} />
+      <Handle type="source" position={Position.Right} style={{ background: "#C8912B" }} />
+      <Handle type="source" position={Position.Bottom} style={{ background: "#C8912B" }} />
     </div>
   );
 }

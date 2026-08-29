@@ -19,7 +19,6 @@ import { detectSpofs, estimateGraphLatency } from "@/lib/design/graph-grading";
 import { LatencyBar } from "@/components/design/LatencyBar";
 import { ComponentCanvas } from "@/components/design/ComponentCanvas";
 import { ProblemBar } from "@/components/ProblemBar";
-import { VerticalStepper } from "@/components/design/VerticalStepper";
 import { StakeholderChat } from "@/components/design/StakeholderChat";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,7 +33,7 @@ export const Route = createFileRoute("/_authenticated/design/$slug")({
     if (!loaderData) {
       return { meta: [{ title: "Unavailable" }, { name: "robots", content: "noindex" }] };
     }
-    const title = `Design Review — ${loaderData.title} — RawSkill`;
+    const title = `Design Review — ${loaderData.title} — RAW // SKILL`;
     return {
       meta: [
         { title },
@@ -116,6 +115,16 @@ function DesignRoom() {
     }
   }
 
+  // Generate initials for stakeholder seal
+  const initials = scenario.stakeholder
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase();
+
+  const stageNames = ["01 CLARIFY", "02 SIZE", "03 SKETCH", "04 DEFEND"];
+
   return (
     <div className="flex h-[calc(100vh-44px)] flex-col bg-[#161412] text-[#F2ECE1] overflow-hidden">
       {/* ── Problem Bar ── */}
@@ -149,6 +158,38 @@ function DesignRoom() {
         }
       />
 
+      {/* ── 3.1 Top Horizontal Ruler Stage Stepper ── */}
+      {!showSummary && (
+        <div className="border-b border-[#3A342C] bg-[#1D1A17] px-6 py-2.5 flex items-center justify-between overflow-x-auto shrink-0 select-none">
+          <div className="flex items-center gap-1 min-w-max w-full justify-between max-w-5xl mx-auto">
+            {scenario.stages.map((st, idx) => {
+              const isCurrent = idx === index;
+              const isCleared = grades[st.id]?.passed || savedPassed.has(st.id);
+
+              return (
+                <button
+                  key={st.id}
+                  onClick={() => {
+                    setIndex(idx);
+                    setShowSummary(false);
+                  }}
+                  className={`group relative flex items-center gap-2 px-4 py-1.5 font-mono text-xs transition-all ${
+                    isCurrent
+                      ? "bg-[#C8912B] text-[#161412] font-bold brass-emboss"
+                      : isCleared
+                        ? "border border-[#7FB88A]/30 bg-[#7FB88A]/5 text-[#7FB88A] hover:bg-[#7FB88A]/10"
+                        : "border border-[#3A342C] bg-[#161412] text-[#7C7364] hover:text-[#F2ECE1] hover:border-[#4E4638]"
+                  }`}
+                >
+                  {isCleared && !isCurrent && <span className="text-xs">✓</span>}
+                  <span>{stageNames[idx] ?? `0${idx + 1} ${st.kind.toUpperCase()}`}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {showSummary ? (
         <div className="flex-1 overflow-y-auto p-6 bg-[#161412]">
           <div className="mx-auto max-w-4xl">
@@ -166,77 +207,63 @@ function DesignRoom() {
       ) : (
         /* ── Full-Viewport 2-Panel Workspace ── */
         <div className="flex flex-1 overflow-hidden">
-          {/* ── Left Panel: Pipeline Stepper & Prompt (340px) ── */}
-          <aside className="w-85 shrink-0 flex flex-col border-r border-[#3A342C] bg-[#1D1A17] overflow-hidden">
-            {/* Header info */}
-            <div className="p-4 border-b border-[#3A342C] space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] bg-[#26221D] px-2 py-0.5 rounded border border-[#4E4638]">
-                  {scenario.system}
-                </span>
-                <span className="font-mono text-[10px] text-[#7C7364]">
-                  STAGE {index + 1} / {scenario.stages.length}
-                </span>
+          {/* ── 3.2 Left Column: "Case File" Panel (320px) ── */}
+          <aside className="w-80 shrink-0 flex flex-col border-r border-[#3A342C] bg-[#1D1A17] overflow-y-auto p-5 space-y-6">
+            {/* STAKEHOLDER Section */}
+            <div className="space-y-2 border-b border-[#3A342C] pb-4">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#7C7364] block">
+                STAKEHOLDER
+              </span>
+              <div className="flex items-center gap-3 pt-1">
+                <div className="size-9 rounded-full border border-[#C8912B]/40 bg-[#C8912B]/10 font-serif text-sm font-bold text-[#C8912B] flex items-center justify-center brass-emboss shrink-0 select-none">
+                  {initials}
+                </div>
+                <div>
+                  <h4 className="font-serif text-sm font-semibold text-[#F2ECE1]">
+                    {scenario.stakeholder}
+                  </h4>
+                  <p className="font-mono text-[11px] text-[#7C7364]">{scenario.stakeholderRole}</p>
+                </div>
               </div>
-              <p className="font-mono text-xs text-[#7C7364]">
-                Stakeholder:{" "}
-                <span className="text-[#F2ECE1] font-semibold">{scenario.stakeholder}</span> (
-                {scenario.stakeholderRole})
+            </div>
+
+            {/* CONTEXT Section */}
+            <div className="space-y-2 border-b border-[#3A342C] pb-4">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#7C7364] block">
+                CONTEXT
+              </span>
+              <p className="font-serif text-xs leading-relaxed text-[#B8AE9C] italic">
+                "{scenario.framing}"
               </p>
             </div>
 
-            {/* Vertical Stepper */}
-            <div className="border-b border-[#3A342C] bg-[#161412]">
-              <VerticalStepper
-                stages={scenario.stages}
-                currentStageIndex={index}
-                completedStageIds={savedPassed}
-                onSelectStage={(idx) => {
-                  setIndex(idx);
-                  setShowSummary(false);
-                }}
-              />
+            {/* THIS STAGE Section */}
+            <div className="space-y-2 border-l-2 border-[#C8912B] pl-3 py-1">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] block">
+                THIS STAGE // FOCUS
+              </span>
+              <h3 className="font-serif text-sm font-semibold text-[#F2ECE1]">{stage.title}</h3>
+              <p className="font-sans text-xs leading-relaxed text-[#B8AE9C]">{stage.prompt}</p>
             </div>
 
-            {/* Stage Prompt & Context */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              <div>
-                <p className="font-mono text-[10px] uppercase tracking-widest text-[#7C7364] mb-1">
-                  Stage Goal
-                </p>
-                <h3 className="font-serif text-base font-semibold text-[#F2ECE1]">{stage.title}</h3>
-                <p className="mt-1.5 font-sans text-xs leading-relaxed text-[#B8AE9C]">
-                  {stage.prompt}
-                </p>
-              </div>
-
-              <div className="rounded border border-[#3A342C] bg-[#161412] p-3 space-y-1">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-[#7C7364]">
-                  System Context
-                </p>
-                <p className="font-sans text-xs leading-relaxed text-[#B8AE9C]">
-                  {scenario.framing}
-                </p>
-              </div>
-
-              {grade && (
-                <div
-                  className={`rounded border p-3 font-mono text-xs space-y-1 ${
-                    grade.passed
-                      ? "border-[#7FB88A]/40 bg-[#7FB88A]/10 text-[#7FB88A]"
-                      : "border-[#C4593F]/40 bg-[#C4593F]/10 text-[#C4593F]"
-                  }`}
-                >
-                  <div className="flex items-center justify-between font-bold">
-                    <span>STAGE STATUS</span>
-                    <span>{Math.round(grade.score * 100)}%</span>
-                  </div>
-                  <p className="text-[11px] font-normal">
-                    {grade.passed ? "✓ Stage cleared!" : "Needs adjustment before advancing."}
-                  </p>
+            {/* Stage Grade Status pill if graded */}
+            {grade && (
+              <div
+                className={`rounded border p-3 font-mono text-xs space-y-1 ${
+                  grade.passed
+                    ? "border-[#7FB88A]/40 bg-[#7FB88A]/10 text-[#7FB88A]"
+                    : "border-[#C4593F]/40 bg-[#C4593F]/10 text-[#C4593F]"
+                }`}
+              >
+                <div className="flex items-center justify-between font-bold">
+                  <span>STAGE VERDICT</span>
+                  <span>{Math.round(grade.score * 100)}%</span>
                 </div>
-              )}
-            </div>
+                <p className="text-[11px] font-normal">
+                  {grade.passed ? "✓ Stage cleared!" : "Needs adjustment before advancing."}
+                </p>
+              </div>
+            )}
           </aside>
 
           {/* ── Right Panel: Stage Workspace Canvas / Interactive UI ── */}
@@ -279,21 +306,19 @@ function DesignRoom() {
                 />
               )}
 
-              {/* Feedback rules list */}
+              {/* Feedback rules list with hand-stamped verdicts */}
               {grade && <FeedbackList grade={grade} />}
             </div>
 
-            {/* Bottom navigation bar */}
+            {/* Bottom Navigation Bar */}
             <div className="flex shrink-0 items-center justify-between border-t border-[#3A342C] bg-[#1D1A17] px-6 py-3">
-              <div className="flex items-center gap-2">
-                <button
-                  disabled={index === 0}
-                  onClick={() => setIndex((i) => i - 1)}
-                  className="font-mono text-xs text-[#7C7364] hover:text-[#F2ECE1] disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  ← Previous Stage
-                </button>
-              </div>
+              <button
+                disabled={index === 0}
+                onClick={() => setIndex((i) => i - 1)}
+                className="font-mono text-xs text-[#7C7364] hover:text-[#F2ECE1] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                ← Previous Stage
+              </button>
 
               <div className="flex items-center gap-3">
                 {index < scenario.stages.length - 1 ? (
@@ -330,71 +355,85 @@ const RULE_LABELS: Record<string, string> = {
   answer: "answer",
 };
 
+/**
+ * Hand-stamped Feedback Verdicts (-2deg rotation for tactile feel)
+ */
 function FeedbackList({ grade }: { grade: StageGrade }) {
   const failing = grade.feedback.filter((item) => item.ok !== true);
   const passing = grade.feedback.filter((item) => item.ok === true);
 
   return (
-    <div className="mt-6 space-y-3 border-t border-border pt-6">
-      <p className="font-mono text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        Grading Feedback ({passing.length}/{grade.feedback.length} rules passed)
+    <div className="mt-6 space-y-4 border-t border-[#3A342C] pt-6">
+      <p className="font-mono text-xs font-semibold uppercase tracking-widest text-[#7C7364]">
+        GRADING FEEDBACK ({passing.length}/{grade.feedback.length} RULES PASSED)
       </p>
-      <div className="space-y-2.5">
-        {[...failing, ...passing].map((item, i) => (
-          <div
-            key={i}
-            className={`rounded-lg border p-3.5 ${
-              item.ok === true
-                ? "border-pass/25 bg-pass/5"
-                : item.ok === "partial"
-                  ? "border-primary/30 bg-primary/5"
-                  : "border-fail/30 bg-fail/5"
-            }`}
-          >
-            <div className="flex flex-wrap items-center gap-2">
-              <span
-                className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider ${
-                  item.ok === true
-                    ? "bg-pass/15 text-pass"
-                    : item.ok === "partial"
-                      ? "bg-primary/15 text-primary"
-                      : "bg-fail/15 text-fail"
-                }`}
-              >
-                {item.ok === true ? "PASS" : item.ok === "partial" ? "PARTIAL" : "FAIL"}
-              </span>
-              {item.rule && (
-                <span className="rounded bg-secondary px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                  {RULE_LABELS[item.rule] ?? item.rule}
+      <div className="space-y-3">
+        {[...failing, ...passing].map((item, i) => {
+          const isPass = item.ok === true;
+          const isPartial = item.ok === "partial";
+
+          return (
+            <div
+              key={i}
+              className={`rounded border p-4 transition-all ${
+                isPass
+                  ? "border-[#7FB88A]/30 bg-[#7FB88A]/5"
+                  : isPartial
+                    ? "border-[#C8912B]/30 bg-[#C8912B]/5"
+                    : "border-[#C4593F]/30 bg-[#C4593F]/5"
+              }`}
+            >
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Scorecard Stamp Block (-2deg rotation) */}
+                <span
+                  className={`inline-block -rotate-2 rounded-none border px-2 py-0.5 font-mono text-[10px] font-extrabold uppercase tracking-widest shadow-sm select-none ${
+                    isPass
+                      ? "border-[#7FB88A] bg-[#7FB88A]/20 text-[#7FB88A]"
+                      : isPartial
+                        ? "border-[#C8912B] bg-[#C8912B]/20 text-[#C8912B]"
+                        : "border-[#C4593F] bg-[#C4593F]/20 text-[#C4593F]"
+                  }`}
+                >
+                  {isPass ? "PASS" : isPartial ? "PARTIAL" : "MISS"}
                 </span>
-              )}
-              <span className="text-xs font-medium text-foreground">{item.label}</span>
-            </div>
-            {item.targets && item.targets.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {item.targets.map((target) => (
-                  <span
-                    key={target}
-                    className="rounded border border-border bg-background px-2 py-0.5 font-mono text-[10px] text-foreground"
-                  >
-                    {target}
+
+                {item.rule && (
+                  <span className="rounded-none border border-[#3A342C] bg-[#161412] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[#7C7364]">
+                    {RULE_LABELS[item.rule] ?? item.rule}
                   </span>
-                ))}
+                )}
+                <span className="font-mono text-xs font-semibold text-[#F2ECE1]">{item.label}</span>
               </div>
-            )}
-            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{item.detail}</p>
-            {item.fix && (
-              <p className="mt-1.5 border-l-2 border-primary/50 pl-2.5 font-mono text-[11px] text-primary">
-                Fix: {item.fix}
-              </p>
-            )}
-          </div>
-        ))}
+
+              {item.targets && item.targets.length > 0 && (
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {item.targets.map((target) => (
+                    <span
+                      key={target}
+                      className="rounded-none border border-[#3A342C] bg-[#161412] px-2 py-0.5 font-mono text-[10px] text-[#B8AE9C]"
+                    >
+                      {target}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <p className="mt-2 font-mono text-xs leading-relaxed text-[#B8AE9C]">{item.detail}</p>
+              {item.fix && (
+                <p className="mt-2 border-l-2 border-[#C8912B] pl-3 font-mono text-[11px] text-[#C8912B]">
+                  Fix: {item.fix}
+                </p>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
+/**
+ * Stage 2: Size It (Ruled Ledger Sheet)
+ */
 function CapacityStage({
   stage,
   answer,
@@ -423,50 +462,72 @@ function CapacityStage({
   };
 
   return (
-    <div className="grid gap-5 sm:grid-cols-2">
-      {stage.fields.map((field) => {
-        const rawText = inputs[field.id] ?? "";
-        const evalResult = evaluateFormula(rawText);
-        const hasValue = evalResult.value != null;
-        const invalid = evalResult.error != null || (hasValue && evalResult.value! < 0);
+    <div className="rounded border border-[#3A342C] bg-[#1D1A17] p-6 space-y-6 shadow-sm">
+      <div className="border-b border-[#3A342C] pb-3">
+        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] block">
+          LEDGER SHEET // CAPACITY ESTIMATION
+        </span>
+        <p className="font-serif italic text-xs text-[#B8AE9C] mt-1">
+          Assume standard traffic profiles and enter computed values or formulas directly.
+        </p>
+      </div>
 
-        return (
-          <div key={field.id} className="rounded-lg border border-border bg-card p-4 space-y-3">
-            <label className="text-sm font-semibold text-foreground block" htmlFor={field.id}>
-              {field.label}
-            </label>
-            {field.formula ? (
-              <p className="font-mono text-[11px] text-primary/80 bg-primary/5 px-2.5 py-1 rounded border border-primary/20">
-                Formula: <span className="text-primary font-bold">{field.formula}</span>
-              </p>
-            ) : field.unit ? (
-              <p className="font-mono text-[11px] text-muted-foreground">Unit: {field.unit}</p>
-            ) : null}
+      {/* Ledger Paper Ruled Table */}
+      <div className="space-y-4">
+        {stage.fields.map((field) => {
+          const rawText = inputs[field.id] ?? "";
+          const evalResult = evaluateFormula(rawText);
+          const hasValue = evalResult.value != null;
+          const invalid = evalResult.error != null || (hasValue && evalResult.value! < 0);
 
-            <Input
-              id={field.id}
-              type="text"
-              placeholder={field.formula ? "e.g. 500 * 86400 or 1000/2" : `e.g. 100`}
-              value={rawText}
-              onChange={(e) => handleInputChange(field.id, e.target.value)}
-              className="font-mono text-xs"
-            />
-
-            {invalid && rawText.trim() !== "" && (
-              <p className="font-mono text-[10px] text-fail">Invalid formula expression</p>
-            )}
-
-            {hasValue && !invalid && (
-              <div className="flex items-center justify-between rounded bg-background px-3 py-1.5 border border-border">
-                <span className="font-mono text-[10px] text-muted-foreground">Computed:</span>
-                <span className="font-mono text-xs font-bold text-pass">
-                  {evalResult.value!.toLocaleString()} {field.unit ?? ""}
-                </span>
+          return (
+            <div
+              key={field.id}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#3A342C]/50 pb-3"
+            >
+              <div className="space-y-0.5">
+                <label
+                  className="font-mono text-xs font-semibold text-[#F2ECE1] block"
+                  htmlFor={field.id}
+                >
+                  {field.label}
+                </label>
+                {field.formula && (
+                  <p className="font-mono text-[10px] text-[#7C7364]">
+                    Target Formula: <span className="text-[#C8912B]">{field.formula}</span>
+                  </p>
+                )}
               </div>
-            )}
-          </div>
-        );
-      })}
+
+              <div className="flex items-center gap-3">
+                <Input
+                  id={field.id}
+                  type="text"
+                  placeholder={field.formula ? "e.g. 500 * 86400" : "100"}
+                  value={rawText}
+                  onChange={(e) => handleInputChange(field.id, e.target.value)}
+                  className="w-48 text-right font-mono text-xs bg-[#161412] border-[#3A342C] text-[#F2ECE1]"
+                />
+                {field.unit && (
+                  <span className="font-mono text-xs text-[#7C7364] w-12 shrink-0">
+                    {field.unit}
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Totals Footer Bar with Accounting Double-Rule */}
+      <div className="border-t-2 border-b-2 border-[#3A342C] py-3 px-4 bg-[#161412] flex items-center justify-between">
+        <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B]">
+          TOTAL ESTIMATION SUMMARY
+        </span>
+        <span className="font-mono text-xs font-bold text-[#F2ECE1]">
+          {Object.values(answer).filter((v) => v != null).length} / {stage.fields.length} COMPUTED
+        </span>
+      </div>
     </div>
   );
 }
@@ -491,16 +552,16 @@ function ComponentsStage({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card p-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded border border-[#3A342C] bg-[#1D1A17] p-4">
         <div>
-          <h4 className="font-semibold text-foreground text-sm">
+          <h4 className="font-serif font-semibold text-[#F2ECE1] text-sm">
             System Resilience & Latency Analysis
           </h4>
-          <p className="font-mono text-xs text-muted-foreground mt-0.5">
+          <p className="font-mono text-xs text-[#7C7364] mt-0.5">
             {spofs.length === 0 ? (
-              <span className="text-pass font-semibold">✓ No Single Points of Failure</span>
+              <span className="text-[#7FB88A] font-semibold">✓ No Single Points of Failure</span>
             ) : (
-              <span className="text-fail font-semibold">
+              <span className="text-[#C4593F] font-semibold">
                 ⚠️ {spofs.length} Single Point(s) of Failure detected
               </span>
             )}
@@ -514,7 +575,7 @@ function ComponentsStage({
         )}
       </div>
 
-      <div className="h-[520px] rounded-lg border border-border overflow-hidden">
+      <div className="h-[520px] rounded border border-[#3A342C] overflow-hidden">
         <ComponentCanvas
           nodes={answer.nodes}
           edges={answer.edges}
@@ -525,6 +586,9 @@ function ComponentsStage({
   );
 }
 
+/**
+ * Stage 4: Defend the Cache (Field Report)
+ */
 function TradeoffStage({
   stage,
   answer,
@@ -536,24 +600,39 @@ function TradeoffStage({
   onChange: (next: { text: string }) => void;
   grade: StageGrade | undefined;
 }) {
+  const charCount = answer.text.length;
+
   return (
-    <div className="space-y-4">
-      <p className="rounded border border-primary/30 bg-primary/5 p-3 font-mono text-xs text-primary">
-        Advisory Stage: Defend one architectural trade-off accepted in your canvas design.
-      </p>
-      <Textarea
-        rows={9}
-        value={answer.text}
-        onChange={(event) => onChange({ text: event.target.value })}
-        placeholder="Explain the trade-off you are accepting (e.g. eventual consistency over strong consistency) and how you mitigate the risks..."
-        className="font-mono text-xs"
-      />
+    <div className="rounded border border-[#3A342C] bg-[#1D1A17] p-6 space-y-5">
+      <div className="border-b border-[#3A342C] pb-3">
+        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] block">
+          FIELD REPORT // TRADE-OFF DEFENSE
+        </span>
+        <p className="font-serif italic text-xs text-[#B8AE9C] mt-1">
+          Defend one key architectural trade-off accepted in your design (e.g., eventual
+          consistency, cache warming overhead).
+        </p>
+      </div>
+
+      <div className="relative">
+        <Textarea
+          rows={9}
+          value={answer.text}
+          onChange={(event) => onChange({ text: event.target.value })}
+          placeholder="Explain the trade-off you accepted and how you mitigate operational risks..."
+          className="font-serif text-sm leading-relaxed text-[#F2ECE1] bg-[#161412] border-[#3A342C] p-4 focus-visible:ring-1 focus-visible:ring-[#C8912B]"
+        />
+        <span className="absolute bottom-3 right-3 font-mono text-[10px] text-[#7C7364]">
+          {charCount} CHARS
+        </span>
+      </div>
+
       {grade && (
-        <details className="rounded border border-border bg-card p-4">
-          <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-primary font-bold">
-            💡 What a Staff-Level Answer Covers
+        <details className="rounded border border-[#3A342C] bg-[#161412] p-4">
+          <summary className="cursor-pointer font-mono text-xs uppercase tracking-widest text-[#C8912B] font-bold">
+            💡 Staff Engineer Ideal Defense Strategy
           </summary>
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{stage.ideal}</p>
+          <p className="mt-3 font-sans text-xs leading-relaxed text-[#B8AE9C]">{stage.ideal}</p>
         </details>
       )}
     </div>
@@ -645,23 +724,6 @@ function Summary({
                   </span>
                 </div>
 
-                {stage.kind === "tradeoff" && grade && (
-                  <p className="font-sans text-xs leading-relaxed text-[#B8AE9C] border-l-2 border-[#C8912B]/40 pl-2 mt-2">
-                    Ideal Answer Strategy: {stage.ideal}
-                  </p>
-                )}
-
-                {stage.kind === "capacity" && grade && (
-                  <ul className="mt-2 space-y-1 font-mono text-[11px] text-[#B8AE9C] bg-[#1D1A17] p-2.5 rounded border border-[#3A342C]">
-                    {stage.fields.map((field) => (
-                      <li key={field.id}>
-                        <span className="font-semibold text-[#F2ECE1]">{field.label}:</span> Target
-                        range {field.accept.min}–{field.accept.max} {field.unit} — {field.rationale}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-
                 <div className="pt-1">
                   <button
                     onClick={() => onJump(i)}
@@ -675,52 +737,6 @@ function Summary({
           })}
         </ul>
       </div>
-
-      {scenario.debrief && (
-        <div className="rounded border border-[#C8912B]/30 bg-[#C8912B]/5 p-5 space-y-4">
-          <div className="flex items-center gap-2 border-b border-[#C8912B]/20 pb-3">
-            <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B]">
-              🧠 Staff Engineer Narrative Debrief
-            </span>
-          </div>
-
-          <div className="space-y-3 text-xs leading-relaxed text-[#F2ECE1]">
-            <p className="font-medium text-[#B8AE9C]">{scenario.debrief.narrative}</p>
-
-            {scenario.debrief.seniorInsights.length > 0 && (
-              <div className="space-y-1.5 pt-2">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#7FB88A] block">
-                  💡 Senior Engineering Trade-offs Raised Unprompted:
-                </span>
-                <ul className="space-y-1 font-mono text-[11px] text-[#B8AE9C] pl-2">
-                  {scenario.debrief.seniorInsights.map((insight, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <span className="text-[#7FB88A] font-bold">•</span>
-                      <span>{insight}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {scenario.debrief.commonMistakes.length > 0 && (
-              <div className="space-y-1.5 pt-2">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C4593F] block">
-                  ⚠️ Common Candidate Pitfalls:
-                </span>
-                <ul className="space-y-1 font-mono text-[11px] text-[#B8AE9C] pl-2">
-                  {scenario.debrief.commonMistakes.map((mistake, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <span className="text-[#C4593F] font-bold">•</span>
-                      <span>{mistake}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </section>
   );
 }
