@@ -1,8 +1,12 @@
 import { type ReactNode } from "react";
 import { Link, useLocation, useRouter } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { NudgePopover } from "@/components/NudgePopover";
 import { handleSignOut } from "@/lib/auth";
+import { listProgress, type ProgressRow } from "@/lib/progress.functions";
+import { scenarios } from "@/content/scenarios";
 
 interface AppShellProps {
   children: ReactNode;
@@ -13,76 +17,104 @@ export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
   const queryClient = useQueryClient();
 
+  const fetchProgress = useServerFn(listProgress);
+  const { data: progress } = useQuery<ProgressRow[]>({
+    queryKey: ["progress"],
+    queryFn: () => fetchProgress(),
+  });
+
   const isIncidents = location.pathname.startsWith("/incidents");
   const isDesign = location.pathname.startsWith("/design");
 
+  const resolved = (progress ?? []).filter((r) => r.status === "passed").length;
+
+  // Compute streak: count consecutive calendar days (desc) with at least one run
+  // We only have progress rows with first_passed_at, so use those dates
+  const streak = (() => {
+    const dates = (progress ?? [])
+      .filter((r) => r.first_passed_at)
+      .map((r) => new Date(r.first_passed_at!).toDateString());
+    const unique = Array.from(new Set(dates)).sort((a, b) =>
+      new Date(b).getTime() - new Date(a).getTime(),
+    );
+    let count = 0;
+    let cursor = new Date();
+    cursor.setHours(0, 0, 0, 0);
+    for (const d of unique) {
+      const day = new Date(d);
+      day.setHours(0, 0, 0, 0);
+      const diff = Math.round((cursor.getTime() - day.getTime()) / 86400000);
+      if (diff <= 1) {
+        count++;
+        cursor = day;
+      } else {
+        break;
+      }
+    }
+    return count;
+  })();
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      {/* Sticky Global Top Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          {/* Brand Logo & On-Call Pulse */}
-          <div className="flex items-center gap-3">
-            <Link to="/dashboard" className="flex items-center gap-2.5 group">
-              <div className="flex size-7 items-center justify-center rounded-lg bg-amber-500/10 border border-amber-500/30 group-hover:border-amber-500/60 transition-colors">
-                <svg
-                  className="size-4 text-amber-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-              </div>
-              <span className="font-mono text-sm font-bold uppercase tracking-[0.2em] text-foreground">
-                GROUNDWORK
-              </span>
-            </Link>
-            <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-0.5 font-mono text-[10px] text-muted-foreground">
-              <span className="pager-pulse inline-block size-1.5 rounded-full bg-amber-500" />
-              <span>ON-CALL</span>
-            </div>
-          </div>
+      {/* ── Slim 44px Global Top Header ── */}
+      <header className="sticky top-0 z-40 w-full border-b border-border bg-[#161616]">
+        <div className="flex h-11 items-center justify-between gap-4 px-4 sm:px-6">
 
-          {/* Track Switcher Navigation */}
-          <nav className="hidden md:flex items-center gap-1 rounded-lg border border-border bg-card/60 p-1">
+          {/* Brand */}
+          <Link to="/dashboard" className="flex items-center gap-2 group shrink-0">
+            <span className="font-mono text-base font-bold text-primary select-none">&lt;/&gt;</span>
+            <span className="hidden sm:block font-mono text-xs font-bold uppercase tracking-[0.2em] text-foreground">
+              Groundwork
+            </span>
+          </Link>
+
+          {/* Track Navigation */}
+          <nav className="hidden md:flex items-center gap-0 border-b border-border h-full">
             <Link
               to="/incidents"
-              className={`rounded-md px-3 py-1 font-mono text-xs uppercase tracking-wider transition-colors ${
+              className={`flex h-full items-center px-4 font-mono text-xs uppercase tracking-wider transition-colors border-b-2 ${
                 isIncidents
-                  ? "bg-amber-500 text-slate-950 font-bold shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "border-primary text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
               }`}
             >
               Debugging
             </Link>
             <Link
               to="/design"
-              className={`rounded-md px-3 py-1 font-mono text-xs uppercase tracking-wider transition-colors ${
+              className={`flex h-full items-center px-4 font-mono text-xs uppercase tracking-wider transition-colors border-b-2 ${
                 isDesign
-                  ? "bg-amber-500 text-slate-950 font-bold shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "border-primary text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
               }`}
             >
               Design Review
             </Link>
           </nav>
 
-          {/* Actions & Profile */}
-          <div className="flex items-center gap-3">
+          {/* Right zone */}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Streak */}
+            {streak > 0 && (
+              <span className="hidden sm:flex items-center gap-1 font-mono text-xs text-muted-foreground">
+                <span className={streak >= 7 ? "animate-pulse" : ""}>🔥</span>
+                <span className="text-foreground font-semibold">{streak}</span>
+              </span>
+            )}
+
+            {/* Solved count */}
+            <span className="hidden sm:block font-mono text-xs text-muted-foreground">
+              <span className="text-foreground font-semibold">{resolved}</span>/{scenarios.length} solved
+            </span>
+
             <NudgePopover />
 
             <Link
               to="/profile"
-              className={`rounded-md border border-border px-3 py-1.5 font-mono text-xs uppercase tracking-wider transition-colors ${
+              className={`rounded border px-2.5 py-1 font-mono text-xs uppercase tracking-wider transition-colors ${
                 location.pathname === "/profile"
-                  ? "border-amber-500/50 bg-amber-500/10 text-amber-500"
-                  : "bg-card text-muted-foreground hover:border-border/80 hover:text-foreground"
+                  ? "border-primary/50 bg-primary/10 text-primary"
+                  : "border-border bg-card text-muted-foreground hover:text-foreground"
               }`}
             >
               Profile
@@ -90,15 +122,63 @@ export function AppShell({ children }: AppShellProps) {
 
             <button
               onClick={() => handleSignOut(router, queryClient)}
-              className="rounded-md border border-border bg-card px-3 py-1.5 font-mono text-xs uppercase tracking-wider text-muted-foreground transition-colors hover:border-fail/40 hover:bg-fail/10 hover:text-fail"
+              className="rounded border border-border bg-card px-2.5 py-1 font-mono text-xs uppercase tracking-wider text-muted-foreground transition-colors hover:border-fail/40 hover:bg-fail/10 hover:text-fail"
             >
               Sign out
+            </button>
+
+            {/* Mobile hamburger — track nav */}
+            <button
+              id="mobile-nav-btn"
+              className="md:hidden rounded border border-border bg-card p-1.5 text-muted-foreground"
+              onClick={() => {
+                const sheet = document.getElementById("mobile-nav-sheet");
+                sheet?.classList.toggle("translate-y-full");
+              }}
+            >
+              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             </button>
           </div>
         </div>
       </header>
 
-      {/* Main Content Area */}
+      {/* Mobile bottom sheet nav */}
+      <div
+        id="mobile-nav-sheet"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 translate-y-full transition-transform duration-300 border-t border-border bg-[#161616] p-4"
+      >
+        <div className="flex flex-col gap-1">
+          <Link
+            to="/incidents"
+            onClick={() => document.getElementById("mobile-nav-sheet")?.classList.add("translate-y-full")}
+            className={`rounded px-4 py-3 font-mono text-sm uppercase tracking-wider transition-colors ${
+              isIncidents ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Debugging
+          </Link>
+          <Link
+            to="/design"
+            onClick={() => document.getElementById("mobile-nav-sheet")?.classList.add("translate-y-full")}
+            className={`rounded px-4 py-3 font-mono text-sm uppercase tracking-wider transition-colors ${
+              isDesign ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Design Review
+          </Link>
+          <Link
+            to="/dashboard"
+            onClick={() => document.getElementById("mobile-nav-sheet")?.classList.add("translate-y-full")}
+            className="rounded px-4 py-3 font-mono text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Dashboard
+          </Link>
+        </div>
+      </div>
+
+      {/* Main Content */}
       <main className="flex-1">{children}</main>
     </div>
   );
