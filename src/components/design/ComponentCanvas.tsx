@@ -55,17 +55,23 @@ interface Guide {
 
 function edgeVisuals(type: ConnectionType, illegal: boolean) {
   const def = CONNECTION_TYPES[type];
-  const color = illegal ? "#E5484D" : def.color;
+  const color = illegal ? "#C4593F" : "#C8912B";
   return {
     style: {
       stroke: color,
       strokeWidth: 1.75,
       strokeDasharray: def.style === "dashed" ? "6 4" : def.style === "dotted" ? "2 4" : undefined,
     },
-    markerEnd: { type: MarkerType.ArrowClosed, color, width: 18, height: 18 },
-    label: illegal ? `${def.label} · illegal` : def.label,
-    labelStyle: { fill: color, fontSize: 10, fontFamily: "var(--font-mono, monospace)" },
-    labelBgStyle: { fill: "#0B1120", fillOpacity: 0.85 },
+    markerEnd: { type: MarkerType.ArrowClosed, color, width: 16, height: 16 },
+    label: illegal ? `${def.label} (ILLEGAL)` : def.label,
+    labelStyle: {
+      fill: color,
+      fontSize: 10,
+      fontFamily: "var(--font-mono, monospace)",
+      fontWeight: 600,
+    },
+    labelBgStyle: { fill: "#1D1A17", fillOpacity: 0.95 },
+    labelBgPadding: [6, 4] as [number, number],
   };
 }
 
@@ -434,14 +440,17 @@ function CanvasInner({
 
   return (
     <div className="flex flex-col gap-3 lg:h-[calc(100vh-19rem)] lg:max-h-[820px] lg:min-h-[520px] lg:flex-row">
-      <aside className="shrink-0 space-y-4 overflow-y-auto rounded-lg border border-border bg-surface p-3 lg:w-[208px]">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-          palette — drag or click
-        </p>
+      <aside className="shrink-0 space-y-4 overflow-y-auto rounded-none border border-[#3A342C] bg-[#1D1A17] p-4 lg:w-[220px]">
+        <div className="border-b border-[#3A342C] pb-2">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] block">
+            SYSTEM COMPONENTS // PALETTE
+          </span>
+          <p className="font-mono text-[10px] text-[#7C7364] mt-0.5">Drag or click to insert</p>
+        </div>
         <div className="grid grid-cols-2 gap-2 lg:block lg:space-y-4">
           {grouped.map(([category, types]) => (
             <div key={category} className="space-y-2">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/70">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#7C7364]">
                 {category}
               </p>
               {types.map((type) => {
@@ -456,11 +465,7 @@ function CanvasInner({
                     }}
                     onClick={() => addNode(type)}
                     title={def.blurb}
-                    className="mb-2 w-full cursor-grab rounded-md border-2 px-2 py-2 text-left font-mono text-[11px] text-foreground transition-transform hover:scale-[1.02] hover:brightness-125"
-                    style={{
-                      borderColor: def.color,
-                      background: `color-mix(in srgb, ${def.color} 12%, transparent)`,
-                    }}
+                    className="mb-2 w-full cursor-grab rounded-none border border-[#3A342C] bg-[#161412] px-2.5 py-2 text-left font-mono text-[11px] text-[#F2ECE1] transition-all hover:border-[#C8912B] hover:text-[#C8912B]"
                   >
                     {def.label}
                   </button>
@@ -474,7 +479,7 @@ function CanvasInner({
       <div className="flex min-w-0 flex-1 flex-col gap-3">
         <div
           ref={wrapper}
-          className="relative min-h-[440px] flex-1 overflow-hidden rounded-lg border border-border bg-background"
+          className="relative min-h-[440px] flex-1 overflow-hidden rounded-none border border-[#3A342C] bg-[#161412]"
           onDragOver={(event) => {
             event.preventDefault();
             event.dataTransfer.dropEffect = "move";
@@ -511,7 +516,7 @@ function CanvasInner({
             preventScrolling
             proOptions={{ hideAttribution: true }}
           >
-            <Background variant={BackgroundVariant.Dots} gap={18} size={1} color="#1E293B" />
+            <Background variant={BackgroundVariant.Lines} gap={30} size={1} color="#26221D" />
             <ViewportPortal>
               {guides.map((guide, i) => (
                 <div
@@ -523,13 +528,13 @@ function CanvasInner({
                           left: guide.at,
                           top: guide.from,
                           height: guide.to - guide.from,
-                          borderLeft: "1px dashed var(--primary)",
+                          borderLeft: "1px dashed #C8912B",
                         }
                       : {
                           top: guide.at,
                           left: guide.from,
                           width: guide.to - guide.from,
-                          borderTop: "1px dashed var(--primary)",
+                          borderTop: "1px dashed #C8912B",
                         }
                   }
                 />
@@ -539,20 +544,18 @@ function CanvasInner({
             <MiniMap
               pannable
               zoomable
-              className="!bg-surface-strong"
-              maskColor="rgba(11,17,32,0.72)"
-              nodeColor={(node) =>
-                COMPONENT_TYPES[(node as CanvasNode).data.componentType]?.color ?? "#64748B"
-              }
+              className="!bg-[#1D1A17] !border !border-[#3A342C]"
+              maskColor="rgba(22,20,18,0.75)"
+              nodeColor={() => "#C8912B"}
             />
             <Panel
               position="top-right"
-              className="flex items-center gap-1 rounded-md border border-border bg-card/90 p-1 backdrop-blur"
+              className="flex items-center gap-1 rounded-none border border-[#3A342C] bg-[#1D1A17] p-1 backdrop-blur"
             >
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-7 w-7 p-0 font-mono"
+                className="h-7 w-7 p-0 font-mono text-[#F2ECE1] hover:text-[#C8912B]"
                 onClick={() => zoomOut({ duration: 200 })}
                 title="Zoom out"
               >
@@ -561,7 +564,7 @@ function CanvasInner({
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-7 w-7 p-0 font-mono"
+                className="h-7 w-7 p-0 font-mono text-[#F2ECE1] hover:text-[#C8912B]"
                 onClick={() => zoomIn({ duration: 200 })}
                 title="Zoom in"
               >
@@ -570,7 +573,7 @@ function CanvasInner({
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-7 px-2 font-mono text-[10px] uppercase"
+                className="h-7 px-2 font-mono text-[10px] uppercase text-[#F2ECE1] hover:text-[#C8912B]"
                 onClick={() => fitView({ duration: 300, padding: 0.25, maxZoom: 1 })}
               >
                 fit
@@ -578,7 +581,7 @@ function CanvasInner({
               <Button
                 size="sm"
                 variant="ghost"
-                className={`h-7 px-2 font-mono text-[10px] uppercase ${snapping ? "text-primary" : "text-muted-foreground"}`}
+                className={`h-7 px-2 font-mono text-[10px] uppercase ${snapping ? "text-[#C8912B]" : "text-[#7C7364]"}`}
                 onClick={() => setSnapping((prev) => !prev)}
                 title="Toggle alignment snapping"
               >
@@ -588,29 +591,29 @@ function CanvasInner({
           </ReactFlow>
         </div>
 
-        <div className="rounded-lg border border-border bg-card p-3">
+        <div className="rounded-none border border-[#3A342C] bg-[#1D1A17] p-3">
           {selectedNode ? (
             <div className="flex flex-wrap items-center gap-3">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-primary">
-                {COMPONENT_TYPES[selectedNode.data.componentType].label}
+              <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-[#C8912B]">
+                NODE // {COMPONENT_TYPES[selectedNode.data.componentType].label}
               </span>
-              <span className="font-mono text-[11px] text-muted-foreground">instances</span>
+              <span className="font-mono text-[11px] text-[#7C7364]">INSTANCES:</span>
               <div className="flex items-center gap-1">
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-7 w-7 p-0 font-mono"
+                  className="h-7 w-7 p-0 font-mono border-[#3A342C] bg-[#161412] text-[#F2ECE1]"
                   onClick={() => setInstances(-1)}
                 >
                   −
                 </Button>
-                <span className="w-8 text-center font-mono text-xs text-foreground">
+                <span className="w-8 text-center font-mono text-xs font-bold text-[#F2ECE1]">
                   {selectedNode.data.instances}
                 </span>
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-7 w-7 p-0 font-mono"
+                  className="h-7 w-7 p-0 font-mono border-[#3A342C] bg-[#161412] text-[#F2ECE1]"
                   onClick={() => setInstances(1)}
                 >
                   +
@@ -619,21 +622,21 @@ function CanvasInner({
               <Button
                 size="sm"
                 variant="ghost"
-                className="ml-auto font-mono text-xs text-fail"
+                className="ml-auto font-mono text-xs text-[#C4593F] hover:bg-[#C4593F]/10"
                 onClick={removeSelection}
               >
-                Delete
+                Delete Node
               </Button>
             </div>
           ) : selectedEdge ? (
             <div className="flex flex-wrap items-center gap-3">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-primary">
-                Connection
+              <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-[#C8912B]">
+                CONNECTION //
               </span>
               <select
                 value={selectedEdge.data?.connectionType ?? "SYNC_REQUEST"}
                 onChange={(event) => setEdgeType(event.target.value as ConnectionType)}
-                className="rounded border border-border bg-background px-2 py-1 font-mono text-xs text-foreground"
+                className="rounded-none border border-[#3A342C] bg-[#161412] px-2 py-1 font-mono text-xs text-[#F2ECE1] focus-visible:ring-1 focus-visible:ring-[#C8912B]"
               >
                 {(() => {
                   const from = nodes.find((n) => n.id === selectedEdge.source)?.data.componentType;
@@ -650,24 +653,23 @@ function CanvasInner({
                 })()}
               </select>
               {selectedEdge.data?.illegal && (
-                <span className="font-mono text-[11px] text-fail">
-                  not a valid connection for these component types
+                <span className="font-mono text-[11px] text-[#C4593F]">
+                  ⚠️ Invalid connection for these component types
                 </span>
               )}
               <Button
                 size="sm"
                 variant="ghost"
-                className="ml-auto font-mono text-xs text-fail"
+                className="ml-auto font-mono text-xs text-[#C4593F] hover:bg-[#C4593F]/10"
                 onClick={removeSelection}
               >
-                Delete
+                Delete Edge
               </Button>
             </div>
           ) : (
-            <p className="font-mono text-[11px] leading-relaxed text-muted-foreground">
-              Click a node or connection to edit it · drag handles to connect · scroll to zoom, drag
-              the canvas to pan · nodes snap to their neighbours&apos; edges and centers ·
-              delete/backspace removes · ctrl+D adds an instance · arrows nudge
+            <p className="font-mono text-[11px] leading-relaxed text-[#7C7364]">
+              Click a node or connection to inspect · drag handles to connect · scroll to zoom, drag
+              to pan · nodes snap to alignment axes · Backspace/Delete removes selected item
             </p>
           )}
         </div>
