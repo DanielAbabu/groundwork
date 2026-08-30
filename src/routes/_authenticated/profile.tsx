@@ -122,60 +122,60 @@ function ProfilePage() {
   const sent = (nudges ?? []).filter((row) => row.direction === "sent");
 
   return (
-    <div className="min-h-[calc(100vh-44px)] bg-[#0B0F19] text-[#F8FAFC] pb-16">
+    <div className="min-h-[calc(100vh-56px)] bg-[#0B0F19] text-[#F8FAFC] pb-20">
       {/* Header */}
-      <div className="border-b border-[#1E293B] bg-[#0F172A] px-4 sm:px-6 py-6">
-        <div className="mx-auto max-w-5xl">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#38BDF8]">
+      <div className="border-b border-[#1E293B] bg-[#0F172A] px-6 sm:px-10 py-8 sm:py-10">
+        <div className="mx-auto max-w-5xl space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="font-display text-xs font-bold uppercase tracking-wider text-[#38BDF8]">
               DOSSIER // ENGINEER CREDENTIAL
             </span>
             <span className="text-[#1E293B]">/</span>
-            <span className="font-mono text-xs text-[#64748B]">WORKSHOP PROFILE</span>
+            <span className="font-display text-xs text-[#64748B]">WORKSHOP PROFILE</span>
           </div>
-          <h1 className="font-display text-3xl font-bold text-[#F8FAFC]">
+          <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-[#F8FAFC]">
             {profile?.display_name || profile?.username || "Your Profile"}
           </h1>
-          <p className="font-mono text-xs text-[#38BDF8] mt-1 font-bold">
+          <p className="font-display text-sm text-[#38BDF8] font-bold">
             @{profile?.username ?? "engineer"}
           </p>
         </div>
       </div>
 
-      <div className="mx-auto grid max-w-5xl gap-6 sm:gap-8 px-4 sm:px-6 py-6 sm:py-8">
+      <div className="mx-auto grid max-w-5xl gap-8 sm:gap-10 px-6 sm:px-10 py-8 sm:py-12">
         <ProgressSummary progress={progress ?? []} />
 
-        <div className="overflow-x-auto rounded-sm border border-[#1E293B] bg-[#0F172A] p-5 shadow-sm">
-          <h2 className="mb-4 font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#64748B]">
+        <div className="overflow-x-auto rounded-sm border border-[#1E293B] bg-[#0F172A] p-7 shadow-sm space-y-4">
+          <h2 className="font-display text-xs font-bold uppercase tracking-wider text-[#64748B]">
             LOGBOOK // ACTIVITY HISTORY
           </h2>
           <ActivityCalendar days={activity ?? []} />
         </div>
 
         {/* Identity Credentials */}
-        <section className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-6 space-y-4 shadow-sm">
-          <div className="flex items-center justify-between border-b border-[#1E293B] pb-3">
-            <h2 className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#38BDF8]">
+        <section className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-7 space-y-6 shadow-sm">
+          <div className="flex items-center justify-between border-b border-[#1E293B] pb-4">
+            <h2 className="font-display text-xs font-bold uppercase tracking-wider text-[#38BDF8]">
               FILE // IDENTITY CREDENTIALS
             </h2>
-            <span className="font-mono text-[10px] text-[#64748B]">STAMPED RECORD</span>
+            <span className="font-display text-xs text-[#64748B]">STAMPED RECORD</span>
           </div>
           <form
-            className="mt-4 grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
+            className="mt-4 grid gap-6 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
             onSubmit={(event) => {
               event.preventDefault();
               saveMutation.mutate();
             }}
           >
-            <div className="space-y-2">
-              <Label htmlFor="username" className="font-mono text-xs text-[#94A3B8]">
+            <div className="space-y-2.5">
+              <Label htmlFor="username" className="font-display text-xs font-semibold text-[#94A3B8]">
                 Username Handle
               </Label>
               <Input
                 id="username"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
-                className="font-mono text-xs bg-[#0B0F19] border-[#1E293B] text-[#F8FAFC]"
+                className="font-display text-sm bg-[#0B0F19] border-[#1E293B] text-[#F8FAFC] py-2.5 px-4"
                 placeholder="oncall_hero"
               />
             </div>

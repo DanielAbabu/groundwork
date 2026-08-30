@@ -450,7 +450,7 @@ export function Board() {
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4 sm:space-y-5">
             {filtered.map((scenario) => {
               const row = byId.get(scenario.id);
               const status = scenario._status;
@@ -460,38 +460,38 @@ export function Board() {
                   onClick={() =>
                     navigate({ to: "/incidents/$slug", params: { slug: scenario.id } })
                   }
-                  className="group rounded-sm border border-[#1E293B] bg-[#0F172A] p-5 hover:border-[#38BDF8] hover:bg-[#0F172A]/90 transition-all cursor-pointer shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                  className="group rounded-sm border border-[#1E293B] bg-[#0F172A] p-6 sm:p-7 hover:border-[#38BDF8] hover:bg-[#0F172A]/90 transition-all cursor-pointer shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
                 >
                   {/* Left Metadata & Title Block */}
-                  <div className="space-y-2 flex-1">
+                  <div className="space-y-3 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <span className="font-mono text-xs font-bold text-[#38BDF8]">
+                      <span className="font-display text-xs font-bold text-[#38BDF8]">
                         INC-{scenario._index < 10 ? `0${scenario._index}` : scenario._index}
                       </span>
-                      <span className="font-mono text-xs text-[#64748B]">/</span>
-                      <span className="font-mono text-xs font-semibold text-[#F8FAFC]">
+                      <span className="font-display text-xs text-[#64748B]">/</span>
+                      <span className="font-display text-xs font-semibold text-[#F8FAFC]">
                         {scenario.service}
                       </span>
-                      <span className="font-mono text-xs text-[#64748B]">·</span>
-                      <span className="font-mono text-xs text-[#94A3B8]">
+                      <span className="font-display text-xs text-[#64748B]">·</span>
+                      <span className="font-display text-xs text-[#94A3B8]">
                         {TYPE_LABELS[scenario.type]}
                       </span>
                     </div>
 
-                    <h3 className="font-display text-lg font-bold text-[#F8FAFC] group-hover:text-[#38BDF8] transition-colors">
+                    <h3 className="font-display text-xl font-bold text-[#F8FAFC] group-hover:text-[#38BDF8] transition-colors leading-snug">
                       {scenario.title}
                     </h3>
 
-                    <p className="font-sans text-xs text-[#94A3B8] leading-relaxed line-clamp-2">
+                    <p className="font-display text-sm text-[#CBD5E1] leading-relaxed line-clamp-2">
                       {scenario.symptom}
                     </p>
 
                     {/* Concept tags */}
-                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
                       {(scenario.concepts ?? []).map((concept) => (
                         <span
                           key={concept}
-                          className="font-mono text-[10px] text-[#64748B] bg-[#0B0F19] px-2 py-0.5 rounded-sm border border-[#1E293B]"
+                          className="font-display text-xs text-[#94A3B8] bg-[#0B0F19] px-2.5 py-1 rounded-sm border border-[#1E293B]"
                         >
                           #{concept}
                         </span>
@@ -500,29 +500,29 @@ export function Board() {
                   </div>
 
                   {/* Right Status & Action Block */}
-                  <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto shrink-0 gap-3 border-t sm:border-t-0 border-[#1E293B] pt-3 sm:pt-0">
-                    <div className="flex items-center gap-2">
+                  <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto shrink-0 gap-4 border-t sm:border-t-0 border-[#1E293B] pt-4 sm:pt-0">
+                    <div className="flex items-center gap-2.5">
                       <DifficultyPill difficulty={scenario.difficulty} />
 
                       {status === "resolved" ? (
-                        <span className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-[#10B981] bg-[#10B981]/10 px-2.5 py-1 rounded-sm border border-[#10B981]/30">
-                          <CheckCircle2 className="size-3.5 text-[#10B981]" />
+                        <span className="inline-flex items-center gap-1.5 font-display text-xs font-bold text-[#10B981] bg-[#10B981]/10 px-3 py-1 rounded-sm border border-[#10B981]/30">
+                          <CheckCircle2 className="size-4 text-[#10B981]" />
                           RESOLVED
                         </span>
                       ) : status === "attempted" ? (
-                        <span className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-2.5 py-1 rounded-sm border border-[#F59E0B]/30">
-                          <AlertTriangle className="size-3.5 text-[#F59E0B]" />
+                        <span className="inline-flex items-center gap-1.5 font-display text-xs font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-3 py-1 rounded-sm border border-[#F59E0B]/30">
+                          <AlertTriangle className="size-4 text-[#F59E0B]" />
                           IN PROGRESS ({row?.attempts ?? 1})
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 font-mono text-xs text-[#64748B] bg-[#0B0F19] px-2.5 py-1 rounded-sm border border-[#1E293B]">
+                        <span className="inline-flex items-center gap-1.5 font-display text-xs text-[#64748B] bg-[#0B0F19] px-3 py-1 rounded-sm border border-[#1E293B]">
                           OPEN DOCKET
                         </span>
                       )}
                     </div>
 
-                    <span className="inline-flex items-center gap-1 font-mono text-xs font-bold text-[#38BDF8] group-hover:translate-x-0.5 transition-transform">
-                      Launch Scenario <ArrowRight className="size-3.5" />
+                    <span className="inline-flex items-center gap-1.5 font-display text-xs font-bold text-[#38BDF8] group-hover:translate-x-1 transition-transform">
+                      Launch Scenario <ArrowRight className="size-4" />
                     </span>
                   </div>
                 </article>

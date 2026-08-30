@@ -92,20 +92,20 @@ function Dashboard() {
     }) ?? designScenarios[0]!;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8 min-h-[calc(100vh-44px)] bg-[#0B0F19] text-[#F8FAFC]">
+    <div className="mx-auto max-w-6xl px-6 sm:px-10 py-10 sm:py-14 space-y-10 sm:space-y-12 min-h-[calc(100vh-56px)] bg-[#0B0F19] text-[#F8FAFC]">
       {/* ── Welcome Header ── */}
-      <div>
+      <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#38BDF8]">
+          <span className="font-display text-xs font-bold uppercase tracking-wider text-[#38BDF8]">
             RAW // SKILL
           </span>
           <span className="text-[#1E293B]">/</span>
-          <span className="font-mono text-xs text-[#64748B]">ENGINEER COMMAND CENTER</span>
+          <span className="font-display text-xs text-[#64748B]">ENGINEER COMMAND CENTER</span>
         </div>
-        <h1 className="mt-2 font-display text-3xl font-bold text-[#F8FAFC]">
+        <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-[#F8FAFC]">
           Engineer Command Center
         </h1>
-        <p className="mt-1 font-sans text-sm text-[#94A3B8] leading-relaxed">
+        <p className="font-display text-base text-[#CBD5E1] leading-relaxed max-w-3xl">
           Track your progress in the debugging rotation and system design reviews under real-world
           pressure.
         </p>
@@ -119,36 +119,36 @@ function Dashboard() {
       />
 
       {/* ── Track Cards ── */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-8 md:grid-cols-2">
         {/* Debugging Track (Ice Blue Accent) */}
-        <div className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-6 flex flex-col justify-between space-y-5 hover:border-[#38BDF8] transition-all shadow-sm">
-          <div className="space-y-3">
+        <div className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-8 sm:p-9 flex flex-col justify-between space-y-6 hover:border-[#38BDF8] transition-all shadow-sm">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#38BDF8] bg-[#0B0F19] px-2.5 py-1 rounded-sm border border-[#334155]">
+              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#38BDF8] bg-[#0B0F19] px-3 py-1 rounded-sm border border-[#334155]">
                 FILE // DEBUG-ROTATION
               </span>
-              <span className="font-mono text-xs text-[#64748B]">
+              <span className="font-display text-xs text-[#64748B] font-semibold">
                 {resolvedCount}/{scenarios.length} solved
               </span>
             </div>
-            <h2 className="font-display text-xl font-bold text-[#F8FAFC]">Debugging Rotation</h2>
-            <p className="font-sans text-xs text-[#94A3B8] leading-relaxed">
+            <h2 className="font-display text-2xl font-bold text-[#F8FAFC]">Debugging Rotation</h2>
+            <p className="font-display text-sm text-[#CBD5E1] leading-relaxed">
               Get paged into broken codebases, read signals, fix root causes in Monaco, and verify
               with hidden Pyodide test harnesses.
             </p>
           </div>
 
-          <div className="pt-4 border-t border-[#1E293B] space-y-3">
-            <div className="flex items-center justify-between text-xs font-mono">
+          <div className="pt-5 border-t border-[#1E293B] space-y-4">
+            <div className="flex items-center justify-between text-xs font-display">
               <span className="text-[#64748B]">NEXT IN DOCKET:</span>
-              <span className="text-[#F8FAFC] font-medium truncate max-w-xs">
+              <span className="text-[#F8FAFC] font-semibold truncate max-w-xs">
                 {nextDebugScenario.title}
               </span>
             </div>
             <Link
               to="/incidents/$slug"
               params={{ slug: nextDebugScenario.id }}
-              className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-sm bg-[#38BDF8] font-mono text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all shadow-sm"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-sm bg-[#38BDF8] font-display text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all shadow-sm"
             >
               Continue Debugging →
             </Link>
@@ -156,38 +156,38 @@ function Dashboard() {
         </div>
 
         {/* System Design Track (Emerald Signal Accent) */}
-        <div className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-6 flex flex-col justify-between space-y-5 hover:border-[#10B981] transition-all shadow-sm">
-          <div className="space-y-3">
+        <div className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-8 sm:p-9 flex flex-col justify-between space-y-6 hover:border-[#10B981] transition-all shadow-sm">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#10B981] bg-[#10B981]/10 px-2.5 py-1 rounded-sm border border-[#10B981]/30">
+              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#10B981] bg-[#10B981]/10 px-3 py-1 rounded-sm border border-[#10B981]/30">
                 FILE // SYSTEM-DESIGN
               </span>
-              <span className="font-mono text-xs text-[#64748B]">
+              <span className="font-display text-xs text-[#64748B] font-semibold">
                 {designDoneCount}/{designScenarios.length} cleared
               </span>
             </div>
-            <h2 className="font-display text-xl font-bold text-[#F8FAFC]">
+            <h2 className="font-display text-2xl font-bold text-[#F8FAFC]">
               Design Review Simulator
             </h2>
-            <p className="font-sans text-xs text-[#94A3B8] leading-relaxed">
+            <p className="font-display text-sm text-[#CBD5E1] leading-relaxed">
               Present to senior engineering stakeholders across four stages: clarify, calculate
               capacity, sketch canvas, and defend trade-offs.
             </p>
           </div>
 
-          <div className="pt-4 border-t border-[#1E293B] space-y-3">
-            <div className="flex items-center justify-between text-xs font-mono">
+          <div className="pt-5 border-t border-[#1E293B] space-y-4">
+            <div className="flex items-center justify-between text-xs font-display">
               <span className="text-[#64748B]">NEXT IN DOCKET:</span>
-              <span className="text-[#F8FAFC] font-medium truncate max-w-xs">
+              <span className="text-[#F8FAFC] font-semibold truncate max-w-xs">
                 {nextDesignScenario.title}
               </span>
             </div>
             <Link
               to="/design/$slug"
               params={{ slug: nextDesignScenario.id }}
-              className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-sm border border-[#10B981]/40 bg-[#10B981]/10 font-mono text-xs font-bold text-[#10B981] hover:bg-[#10B981]/20 transition-all"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-sm border border-[#10B981] bg-[#10B981]/10 font-display text-xs font-bold text-[#10B981] hover:bg-[#10B981] hover:text-[#0B0F19] transition-all shadow-sm"
             >
-              Continue Design Review →
+              Enter System Design Review →
             </Link>
           </div>
         </div>

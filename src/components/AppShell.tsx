@@ -56,17 +56,17 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-[#0B0F19] text-[#F8FAFC] flex flex-col font-sans">
-      {/* ── Slim 44px Global Top Header (Nordic Precision Studio) ── */}
+      {/* ── 56px Global Top Header (Nordic Precision Studio) ── */}
       <header className="sticky top-0 z-40 w-full border-b border-[#1E293B] bg-[#0F172A]/90 backdrop-blur">
-        <div className="flex h-11 items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex h-14 items-center justify-between gap-6 px-6 sm:px-8">
           {/* Gauge Notch Brand Logo */}
           <BrandLogo href="/dashboard" />
 
           {/* Track Navigation */}
-          <nav className="hidden md:flex items-center gap-1 h-full">
+          <nav className="hidden md:flex items-center gap-2 h-full">
             <Link
               to="/incidents"
-              className={`flex h-full items-center px-4 font-sans text-xs font-medium tracking-wide transition-colors border-b-2 ${
+              className={`flex h-full items-center px-5 font-display text-sm font-medium tracking-wide transition-colors border-b-2 ${
                 isIncidents
                   ? "border-[#38BDF8] text-[#F8FAFC] font-semibold"
                   : "border-transparent text-[#94A3B8] hover:text-[#F8FAFC]"
@@ -76,7 +76,7 @@ export function AppShell({ children }: AppShellProps) {
             </Link>
             <Link
               to="/design"
-              className={`flex h-full items-center px-4 font-sans text-xs font-medium tracking-wide transition-colors border-b-2 ${
+              className={`flex h-full items-center px-5 font-display text-sm font-medium tracking-wide transition-colors border-b-2 ${
                 isDesign
                   ? "border-[#38BDF8] text-[#F8FAFC] font-semibold"
                   : "border-transparent text-[#94A3B8] hover:text-[#F8FAFC]"
@@ -87,17 +87,17 @@ export function AppShell({ children }: AppShellProps) {
           </nav>
 
           {/* Right Zone */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-4 shrink-0">
             {/* Streak */}
             {streak > 0 && (
-              <span className="hidden sm:flex items-center gap-1.5 rounded-sm border border-[#334155] bg-[#1E293B] px-2.5 py-0.5 font-mono text-[11px] text-[#38BDF8]">
+              <span className="hidden sm:flex items-center gap-2 rounded-sm border border-[#334155] bg-[#1E293B] px-3 py-1 font-display text-xs text-[#38BDF8]">
                 <span>⚡</span>
                 <span className="font-bold">{streak}d Streak</span>
               </span>
             )}
 
             {/* Solved Count */}
-            <span className="hidden sm:block font-mono text-xs text-[#64748B]">
+            <span className="hidden sm:block font-display text-xs text-[#64748B]">
               <span className="text-[#F8FAFC] font-bold">{resolved}</span>/{scenarios.length}{" "}
               solved
             </span>
@@ -106,9 +106,9 @@ export function AppShell({ children }: AppShellProps) {
 
             <Link
               to="/profile"
-              className={`rounded-sm border px-2.5 py-1 font-mono text-xs uppercase tracking-wider transition-colors ${
+              className={`rounded-sm border px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wider transition-colors ${
                 location.pathname === "/profile"
-                  ? "border-[#38BDF8] bg-[#1E293B] text-[#38BDF8] font-bold"
+                  ? "border-[#38BDF8] bg-[#1E293B] text-[#38BDF8]"
                   : "border-[#1E293B] bg-[#0F172A] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#334155]"
               }`}
             >
@@ -117,7 +117,7 @@ export function AppShell({ children }: AppShellProps) {
 
             <button
               onClick={() => handleSignOut(router, queryClient)}
-              className="rounded-sm border border-[#1E293B] bg-[#0F172A] px-2.5 py-1 font-mono text-xs uppercase tracking-wider text-[#64748B] transition-colors hover:border-[#F43F5E]/40 hover:bg-[#F43F5E]/10 hover:text-[#F43F5E]"
+              className="rounded-sm border border-[#1E293B] bg-[#0F172A] px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wider text-[#64748B] transition-colors hover:border-[#F43F5E]/40 hover:bg-[#F43F5E]/10 hover:text-[#F43F5E]"
             >
               Sign out
             </button>
@@ -125,11 +125,11 @@ export function AppShell({ children }: AppShellProps) {
             {/* Mobile Nav Toggle */}
             <button
               id="mobile-nav-btn"
-              className="md:hidden rounded-sm border border-[#1E293B] bg-[#0F172A] p-1.5 text-[#94A3B8] hover:text-[#F8FAFC]"
+              className="md:hidden rounded-sm border border-[#1E293B] bg-[#0F172A] p-2 text-[#94A3B8] hover:text-[#F8FAFC]"
               onClick={() => setMobileMenuOpen((open) => !open)}
               aria-label="Toggle Navigation Menu"
             >
-              {mobileMenuOpen ? <X className="size-4" /> : <Menu className="size-4" />}
+              {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
             </button>
           </div>
         </div>

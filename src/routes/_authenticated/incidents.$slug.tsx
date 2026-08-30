@@ -181,7 +181,7 @@ function IncidentRoom() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-44px)] flex-col bg-[#0B0F19] text-[#F8FAFC] overflow-hidden selection:bg-[#38BDF8] selection:text-[#0B0F19]">
+    <div className="flex h-[calc(100vh-56px)] flex-col bg-[#0B0F19] text-[#F8FAFC] overflow-hidden selection:bg-[#38BDF8] selection:text-[#0B0F19]">
       {/* ── Problem Command Bar ── */}
       <ProblemBar
         title={scenario.title}
@@ -211,55 +211,55 @@ function IncidentRoom() {
                 <button
                   onClick={() => setDescCollapsed((v) => !v)}
                   title={descCollapsed ? "Expand Incident Brief" : "Collapse Incident Brief"}
-                  className="absolute right-2 top-2 z-20 flex size-6 items-center justify-center rounded-sm border border-[#1E293B] bg-[#0B0F19] text-[#64748B] hover:text-[#F8FAFC] transition-colors"
+                  className="absolute right-3 top-3 z-20 flex size-7 items-center justify-center rounded-sm border border-[#1E293B] bg-[#0B0F19] text-[#64748B] hover:text-[#F8FAFC] transition-colors"
                 >
-                  {descCollapsed ? <ChevronRight className="size-3.5" /> : <ChevronLeft className="size-3.5" />}
+                  {descCollapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
                 </button>
 
                 {!descCollapsed && (
-                  <div className="flex-1 overflow-y-auto p-5 space-y-6">
+                  <div className="flex-1 overflow-y-auto p-6 sm:p-7 space-y-7">
                     {/* Severity + Service Metadata Header */}
-                    <div className="flex flex-wrap items-center gap-2 border-b border-[#1E293B] pb-4 pr-6">
+                    <div className="flex flex-wrap items-center gap-2.5 border-b border-[#1E293B] pb-5 pr-8">
                       <span
-                        className={`rounded-sm border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest ${scenario.severity === "SEV-1" ? "border-[#EF4444]/40 bg-[#EF4444]/10 text-[#EF4444]" : scenario.severity === "SEV-2" ? "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#F59E0B]" : "border-[#10B981]/40 bg-[#10B981]/10 text-[#10B981]"}`}
+                        className={`rounded-sm border px-2.5 py-1 font-display text-xs font-bold uppercase tracking-wider ${scenario.severity === "SEV-1" ? "border-[#EF4444]/40 bg-[#EF4444]/10 text-[#EF4444]" : scenario.severity === "SEV-2" ? "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#F59E0B]" : "border-[#10B981]/40 bg-[#10B981]/10 text-[#10B981]"}`}
                       >
                         {scenario.severity}
                       </span>
-                      <span className="rounded-sm border border-[#1E293B] bg-[#0B0F19] px-2 py-0.5 font-mono text-[10px] text-[#94A3B8]">
+                      <span className="rounded-sm border border-[#1E293B] bg-[#0B0F19] px-2.5 py-1 font-display text-xs font-semibold text-[#94A3B8]">
                         {scenario.service}
                       </span>
-                      <span className="rounded-sm border border-[#1E293B] bg-[#0B0F19] px-2 py-0.5 font-mono text-[10px] text-[#94A3B8]">
+                      <span className="rounded-sm border border-[#1E293B] bg-[#0B0F19] px-2.5 py-1 font-display text-xs font-semibold text-[#94A3B8]">
                         {TYPE_LABELS[scenario.type]}
                       </span>
                     </div>
 
                     {/* Incident Framing Context */}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-[#64748B] font-bold">
-                        <Terminal className="size-3 text-[#38BDF8]" />
+                    <div className="space-y-2.5">
+                      <div className="flex items-center gap-2 font-display text-xs uppercase tracking-wider text-[#64748B] font-bold">
+                        <Terminal className="size-3.5 text-[#38BDF8]" />
                         Incident Context
                       </div>
-                      <p className="font-sans text-xs leading-relaxed text-[#F8FAFC]">
+                      <p className="font-display text-sm leading-relaxed text-[#F8FAFC]">
                         {scenario.framing}
                       </p>
                     </div>
 
                     {/* Alert Symptom Terminal Block */}
-                    <div className="rounded-sm border border-[#EF4444]/30 bg-[#0B0F19] p-3.5 space-y-1.5">
-                      <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-[#EF4444] font-bold">
-                        <ShieldAlert className="size-3.5 text-[#EF4444]" />
+                    <div className="rounded-sm border border-[#EF4444]/30 bg-[#0B0F19] p-4 sm:p-5 space-y-2">
+                      <div className="flex items-center gap-2 font-display text-xs uppercase tracking-wider text-[#EF4444] font-bold">
+                        <ShieldAlert className="size-4 text-[#EF4444]" />
                         Alert Symptom
                       </div>
-                      <p className="font-mono text-xs text-[#F8FAFC] leading-relaxed">
+                      <p className="font-display text-sm text-[#F8FAFC] leading-relaxed">
                         {scenario.symptom}
                       </p>
                     </div>
 
                     {/* Hints Drawer */}
                     {scenario.hints && scenario.hints.length > 0 && (
-                      <div className="space-y-2 pt-2 border-t border-[#1E293B]">
-                        <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-[#64748B] font-bold">
-                          <HelpCircle className="size-3 text-[#38BDF8]" />
+                      <div className="space-y-3 pt-3 border-t border-[#1E293B]">
+                        <div className="flex items-center gap-2 font-display text-xs uppercase tracking-wider text-[#64748B] font-bold">
+                          <HelpCircle className="size-3.5 text-[#38BDF8]" />
                           Investigation Hints
                         </div>
                         <HintDrawer hints={scenario.hints} />
@@ -268,16 +268,16 @@ function IncidentRoom() {
 
                     {/* Concept Tags */}
                     {scenario.concepts && scenario.concepts.length > 0 && (
-                      <div className="space-y-2 pt-2 border-t border-[#1E293B]">
-                        <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-[#64748B] font-bold">
-                          <Tag className="size-3 text-[#38BDF8]" />
+                      <div className="space-y-3 pt-3 border-t border-[#1E293B]">
+                        <div className="flex items-center gap-2 font-display text-xs uppercase tracking-wider text-[#64748B] font-bold">
+                          <Tag className="size-3.5 text-[#38BDF8]" />
                           Target Concepts
                         </div>
-                        <div className="flex flex-wrap gap-1.5">
+                        <div className="flex flex-wrap gap-2">
                           {scenario.concepts.map((c) => (
                             <span
                               key={c}
-                              className="rounded-sm border border-[#38BDF8]/30 bg-[#38BDF8]/10 px-2 py-0.5 font-mono text-[10px] text-[#38BDF8] font-semibold"
+                              className="rounded-sm border border-[#38BDF8]/30 bg-[#38BDF8]/10 px-2.5 py-1 font-display text-xs text-[#38BDF8] font-semibold"
                             >
                               #{c}
                             </span>

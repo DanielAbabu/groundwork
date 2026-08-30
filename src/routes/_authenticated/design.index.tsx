@@ -469,7 +469,7 @@ export function DesignBoard() {
                   </div>
 
                   {/* 3-Column Blueprint Cards Grid */}
-                  <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {matchingScenarios.map((scenario) => {
                       const passed = passedByScenario.get(scenario.id) ?? new Set<string>();
                       const done = scenario.stages.filter((stage) => passed.has(stage.id)).length;
@@ -480,46 +480,46 @@ export function DesignBoard() {
                           key={scenario.id}
                           to="/design/$slug"
                           params={{ slug: scenario.id }}
-                          className="group relative flex flex-col justify-between rounded-sm border border-[#1E293B] bg-[#0F172A] p-5 transition-all hover:border-[#38BDF8]/50 hover:bg-[#1E293B]/60 min-h-[220px] shadow-sm"
+                          className="group relative flex flex-col justify-between rounded-sm border border-[#1E293B] bg-[#0F172A] p-7 transition-all hover:border-[#38BDF8]/50 hover:bg-[#1E293B]/60 min-h-[250px] shadow-sm"
                         >
                           <CornerBrackets className="opacity-40 group-hover:opacity-100 transition-opacity text-[#38BDF8]" />
 
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between gap-2 border-b border-[#1E293B]/80 pb-3">
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between gap-3 border-b border-[#1E293B]/80 pb-4">
                               <StampedTag
                                 label={scenario.difficulty.toUpperCase()}
                                 tone={difficultyToneMap[scenario.difficulty] ?? "slate"}
                               />
 
                               <div className="flex items-center gap-2">
-                                <span className="font-mono text-[10px] text-[#64748B]">
+                                <span className="font-display text-xs font-semibold text-[#64748B]">
                                   {done}/{scenario.stages.length}
                                 </span>
                                 <DialGlyph
                                   completedCount={done}
                                   totalStages={scenario.stages.length}
-                                  size={22}
+                                  size={24}
                                 />
                               </div>
                             </div>
 
                             <div className="relative pt-1 pr-8">
                               <TopologyIcon className="absolute top-0 right-0" />
-                              <h3 className="font-display text-lg font-bold text-[#F8FAFC] group-hover:text-[#38BDF8] transition-colors leading-tight">
+                              <h3 className="font-display text-xl font-bold text-[#F8FAFC] group-hover:text-[#38BDF8] transition-colors leading-snug">
                                 {scenario.title}
                               </h3>
-                              <p className="mt-2 font-sans text-xs leading-relaxed text-[#94A3B8] line-clamp-2">
+                              <p className="mt-2.5 font-display text-sm leading-relaxed text-[#CBD5E1] line-clamp-2">
                                 {scenario.summary}
                               </p>
                             </div>
                           </div>
 
-                          <div className="mt-5 pt-3 border-t border-[#1E293B] flex items-center justify-between">
-                            <span className="font-mono text-[10px] uppercase tracking-wider text-[#64748B] bg-[#0B0F19] px-2.5 py-1 rounded-sm border border-[#1E293B]">
+                          <div className="mt-6 pt-4 border-t border-[#1E293B] flex items-center justify-between">
+                            <span className="font-display text-xs uppercase tracking-wider text-[#64748B] bg-[#0B0F19] px-3 py-1 rounded-sm border border-[#1E293B]">
                               {scenario.system}
                             </span>
 
-                            <span className="font-mono text-xs font-bold text-[#38BDF8] group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                            <span className="font-display text-xs font-bold text-[#38BDF8] group-hover:translate-x-1 transition-transform flex items-center gap-1.5">
                               {isComplete ? (
                                 <span className="text-[#10B981]">REVIEW ✓</span>
                               ) : (

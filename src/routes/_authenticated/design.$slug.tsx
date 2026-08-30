@@ -208,58 +208,58 @@ function DesignRoom() {
         /* ── Full-Viewport 2-Panel Workspace (Responsive) ── */
         <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
           {/* ── 3.2 Left Column: "Case File" Panel (Responsive Stack) ── */}
-          <aside className="w-full lg:w-80 shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r border-[#1E293B] bg-[#0F172A] overflow-y-auto p-4 lg:p-5 space-y-4 lg:space-y-6 max-h-48 lg:max-h-none">
+          <aside className="w-full lg:w-88 shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r border-[#1E293B] bg-[#0F172A] overflow-y-auto p-6 lg:p-8 space-y-6 lg:space-y-8 max-h-60 lg:max-h-none">
             {/* STAKEHOLDER Section */}
-            <div className="space-y-2 border-b border-[#1E293B] pb-3 lg:pb-4">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#64748B] block">
+            <div className="space-y-3 border-b border-[#1E293B] pb-5">
+              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#38BDF8] block">
                 STAKEHOLDER
               </span>
-              <div className="flex items-center gap-3 pt-0.5">
-                <div className="size-8 lg:size-9 rounded-full border border-[#38BDF8]/40 bg-[#38BDF8]/10 font-display text-xs lg:text-sm font-bold text-[#38BDF8] flex items-center justify-center shrink-0 select-none">
+              <div className="flex items-center gap-3.5 pt-0.5">
+                <div className="size-9 lg:size-10 rounded-full border border-[#38BDF8]/40 bg-[#38BDF8]/10 font-display text-sm font-bold text-[#38BDF8] flex items-center justify-center shrink-0 select-none">
                   {initials}
                 </div>
                 <div>
-                  <h4 className="font-display text-xs lg:text-sm font-bold text-[#F8FAFC]">
+                  <h4 className="font-display text-sm font-bold text-[#F8FAFC]">
                     {scenario.stakeholder}
                   </h4>
-                  <p className="font-mono text-[10px] lg:text-[11px] text-[#64748B]">{scenario.stakeholderRole}</p>
+                  <p className="font-display text-xs text-[#64748B] mt-0.5">{scenario.stakeholderRole}</p>
                 </div>
               </div>
             </div>
 
             {/* CONTEXT Section */}
-            <div className="hidden sm:block space-y-2 border-b border-[#1E293B] pb-3 lg:pb-4">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#64748B] block font-bold">
+            <div className="hidden sm:block space-y-2 border-b border-[#1E293B] pb-5">
+              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#64748B] block font-bold">
                 CONTEXT
               </span>
-              <p className="font-sans text-xs leading-relaxed text-[#94A3B8] italic">
+              <p className="font-display text-sm leading-relaxed text-[#94A3B8] italic">
                 "{scenario.framing}"
               </p>
             </div>
 
             {/* THIS STAGE Section */}
-            <div className="space-y-1.5 border-l-2 border-[#38BDF8] pl-3 py-0.5">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#38BDF8] block">
+            <div className="space-y-2 border-l-2 border-[#38BDF8] pl-4 py-1">
+              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#38BDF8] block">
                 THIS STAGE // FOCUS
               </span>
-              <h3 className="font-display text-xs lg:text-sm font-bold text-[#F8FAFC]">{stage.title}</h3>
-              <p className="font-sans text-xs leading-relaxed text-[#94A3B8]">{stage.prompt}</p>
+              <h3 className="font-display text-sm lg:text-base font-bold text-[#F8FAFC]">{stage.title}</h3>
+              <p className="font-display text-sm leading-relaxed text-[#94A3B8]">{stage.prompt}</p>
             </div>
 
             {/* Stage Grade Status pill if graded */}
             {grade && (
               <div
-                className={`rounded-sm border p-3 font-mono text-xs space-y-1 ${
+                className={`rounded-sm border p-4 font-display text-xs space-y-1.5 ${
                   grade.passed
                     ? "border-[#10B981]/40 bg-[#10B981]/10 text-[#10B981]"
                     : "border-[#F43F5E]/40 bg-[#F43F5E]/10 text-[#F43F5E]"
                 }`}
               >
-                <div className="flex items-center justify-between font-bold">
+                <div className="flex items-center justify-between font-bold text-sm">
                   <span>STAGE VERDICT</span>
                   <span>{Math.round(grade.score * 100)}%</span>
                 </div>
-                <p className="text-[11px] font-normal">
+                <p className="text-xs font-normal">
                   {grade.passed ? "✓ Stage cleared!" : "Needs adjustment before advancing."}
                 </p>
               </div>

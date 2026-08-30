@@ -34,19 +34,19 @@ export function ProblemBar({
   rightSlot,
 }: ProblemBarProps) {
   return (
-    <div className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-[#1E293B] bg-[#0F172A] px-4">
+    <div className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-[#1E293B] bg-[#0F172A] px-6">
       {/* Left: Window Dots + Breadcrumb + Badges + Title */}
-      <div className="flex min-w-0 items-center gap-2.5">
+      <div className="flex min-w-0 items-center gap-3">
         {/* Small Nordic Blue Dot Accent */}
         <div className="flex items-center gap-1.5 mr-1 select-none">
-          <span className="size-2 rounded-full bg-[#1E293B] border border-[#334155]" />
-          <span className="size-2 rounded-full bg-[#1E293B] border border-[#334155]" />
-          <span className="size-2 rounded-full bg-[#38BDF8]" />
+          <span className="size-2.5 rounded-full bg-[#1E293B] border border-[#334155]" />
+          <span className="size-2.5 rounded-full bg-[#1E293B] border border-[#334155]" />
+          <span className="size-2.5 rounded-full bg-[#38BDF8]" />
         </div>
 
         <Link
           to={backTo}
-          className="shrink-0 font-mono text-xs text-[#64748B] hover:text-[#F8FAFC] transition-colors"
+          className="shrink-0 font-display text-xs font-semibold text-[#64748B] hover:text-[#F8FAFC] transition-colors"
         >
           ← {backLabel}
         </Link>
@@ -55,7 +55,7 @@ export function ProblemBar({
 
         {severity && (
           <span
-            className={`shrink-0 rounded-sm border px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest ${SEV_CLASSES[severity] ?? "border-[#1E293B] text-[#64748B]"}`}
+            className={`shrink-0 rounded-sm border px-2 py-0.5 font-display text-xs font-bold uppercase tracking-wider ${SEV_CLASSES[severity] ?? "border-[#1E293B] text-[#64748B]"}`}
           >
             {severity}
           </span>
@@ -63,17 +63,17 @@ export function ProblemBar({
 
         {difficulty && <DifficultyPill difficulty={difficulty} showDot={false} />}
 
-        <span className="truncate font-display text-sm font-bold text-[#F8FAFC]">{title}</span>
+        <span className="truncate font-display text-base font-bold text-[#F8FAFC]">{title}</span>
       </div>
 
       {/* Right: actions */}
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-3">
         {rightSlot}
 
         {onRun &&
           (passed ? (
-            <span className="flex items-center gap-1.5 rounded-sm border border-[#10B981]/40 bg-[#10B981]/10 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-[#10B981]">
-              <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span className="flex items-center gap-2 rounded-sm border border-[#10B981]/40 bg-[#10B981]/10 px-4 py-1.5 font-display text-xs font-bold uppercase tracking-wider text-[#10B981]">
+              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -84,8 +84,8 @@ export function ProblemBar({
               VERDICT: PASSED
             </span>
           ) : (
-            <div className="flex items-center gap-2">
-              <span className="hidden md:inline font-mono text-[10px] text-[#64748B] bg-[#0B0F19] px-2 py-1 rounded-sm border border-[#1E293B]">
+            <div className="flex items-center gap-3">
+              <span className="hidden md:inline font-display text-xs text-[#64748B] bg-[#0B0F19] px-2.5 py-1 rounded-sm border border-[#1E293B]">
                 Ctrl + ↵
               </span>
               <button
@@ -93,11 +93,11 @@ export function ProblemBar({
                 onClick={onRun}
                 disabled={runDisabled || running}
                 title="Run hidden tests (Ctrl+Enter)"
-                className="flex items-center gap-1.5 rounded-sm bg-[#38BDF8] px-3.5 py-1.5 font-mono text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="flex items-center gap-2 rounded-sm bg-[#38BDF8] px-4 py-2 font-display text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
                 {running ? (
                   <>
-                    <svg className="size-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <svg className="size-4 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle
                         className="opacity-25"
                         cx="12"
@@ -116,7 +116,7 @@ export function ProblemBar({
                   </>
                 ) : (
                   <>
-                    <svg className="size-3.5" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z" />
                     </svg>
                     Run Tests
