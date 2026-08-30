@@ -13,7 +13,7 @@ const ResizablePanelGroup = ({ className, ...props }: React.ComponentProps<typeo
 const ResizablePanel = Panel;
 
 const ResizableHandle = ({
-  withHandle,
+  withHandle = true,
   className,
   ...props
 }: React.ComponentProps<typeof Separator> & {
@@ -21,14 +21,14 @@ const ResizableHandle = ({
 }) => (
   <Separator
     className={cn(
-      "relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90",
+      "relative flex w-1.5 items-center justify-center bg-[#171717] hover:bg-[#10B981]/50 active:bg-[#10B981] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#10B981] data-[panel-group-direction=vertical]:h-1.5 data-[panel-group-direction=vertical]:w-full cursor-col-resize data-[panel-group-direction=vertical]:cursor-row-resize select-none z-10",
       className,
     )}
     {...props}
   >
     {withHandle && (
-      <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
-        <GripVertical className="h-2.5 w-2.5" />
+      <div className="z-20 flex h-7 w-3.5 items-center justify-center rounded-sm border border-[#262626] bg-[#0A0A0A] text-[#64748B] hover:text-[#10B981] transition-colors shadow-md">
+        <GripVertical className="h-3.5 w-3.5" />
       </div>
     )}
   </Separator>

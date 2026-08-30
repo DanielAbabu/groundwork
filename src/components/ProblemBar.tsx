@@ -34,14 +34,14 @@ export function ProblemBar({
   rightSlot,
 }: ProblemBarProps) {
   return (
-    <div className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-[#1E293B] bg-[#0F172A] px-6">
+    <div className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-[#171717] bg-[#0A0A0A] px-6">
       {/* Left: Window Dots + Breadcrumb + Badges + Title */}
       <div className="flex min-w-0 items-center gap-3">
-        {/* Small Nordic Blue Dot Accent */}
+        {/* Small Emerald Dot Accent */}
         <div className="flex items-center gap-1.5 mr-1 select-none">
-          <span className="size-2.5 rounded-full bg-[#1E293B] border border-[#334155]" />
-          <span className="size-2.5 rounded-full bg-[#1E293B] border border-[#334155]" />
-          <span className="size-2.5 rounded-full bg-[#38BDF8]" />
+          <span className="size-2.5 rounded-full bg-[#171717] border border-[#262626]" />
+          <span className="size-2.5 rounded-full bg-[#171717] border border-[#262626]" />
+          <span className="size-2.5 rounded-full bg-[#10B981]" />
         </div>
 
         <Link
@@ -51,11 +51,11 @@ export function ProblemBar({
           ← {backLabel}
         </Link>
 
-        <span className="text-[#1E293B] shrink-0 select-none">/</span>
+        <span className="text-[#171717] shrink-0 select-none">/</span>
 
         {severity && (
           <span
-            className={`shrink-0 rounded-sm border px-2 py-0.5 font-display text-xs font-bold uppercase tracking-wider ${SEV_CLASSES[severity] ?? "border-[#1E293B] text-[#64748B]"}`}
+            className={`shrink-0 rounded-sm border px-2 py-0.5 font-display text-xs font-bold uppercase tracking-wider ${SEV_CLASSES[severity] ?? "border-[#171717] text-[#64748B]"}`}
           >
             {severity}
           </span>
@@ -72,7 +72,7 @@ export function ProblemBar({
 
         {onRun &&
           (passed ? (
-            <span className="flex items-center gap-2 rounded-sm border border-[#10B981]/40 bg-[#10B981]/10 px-4 py-1.5 font-display text-xs font-bold uppercase tracking-wider text-[#10B981]">
+            <span className="flex items-center gap-2 rounded-sm border border-[#2DD4BF]/40 bg-[#2DD4BF]/10 px-4 py-1.5 font-display text-xs font-bold uppercase tracking-wider text-[#2DD4BF]">
               <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -85,7 +85,7 @@ export function ProblemBar({
             </span>
           ) : (
             <div className="flex items-center gap-3">
-              <span className="hidden md:inline font-display text-xs text-[#64748B] bg-[#0B0F19] px-2.5 py-1 rounded-sm border border-[#1E293B]">
+              <span className="hidden md:inline font-display text-xs text-[#64748B] bg-[#000000] px-2.5 py-1 rounded-sm border border-[#171717]">
                 Ctrl + ↵
               </span>
               <button
@@ -93,7 +93,7 @@ export function ProblemBar({
                 onClick={onRun}
                 disabled={runDisabled || running}
                 title="Run hidden tests (Ctrl+Enter)"
-                className="flex items-center gap-2 rounded-sm bg-[#38BDF8] px-4 py-2 font-display text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="flex items-center gap-2 rounded-sm bg-[#10B981] px-4 py-2 font-display text-xs font-bold text-[#000000] hover:bg-[#34D399] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
                 {running ? (
                   <>

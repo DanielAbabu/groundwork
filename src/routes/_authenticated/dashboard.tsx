@@ -92,14 +92,14 @@ function Dashboard() {
     }) ?? designScenarios[0]!;
 
   return (
-    <div className="mx-auto max-w-6xl px-6 sm:px-10 py-10 sm:py-14 space-y-10 sm:space-y-12 min-h-[calc(100vh-56px)] bg-[#0B0F19] text-[#F8FAFC]">
+    <div className="mx-auto max-w-6xl px-6 sm:px-10 py-10 sm:py-14 space-y-10 sm:space-y-12 min-h-[calc(100vh-56px)] bg-[#000000] text-[#F8FAFC]">
       {/* ── Welcome Header ── */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <span className="font-display text-xs font-bold uppercase tracking-wider text-[#38BDF8]">
+          <span className="font-display text-xs font-bold uppercase tracking-wider text-[#10B981]">
             RAW // SKILL
           </span>
-          <span className="text-[#1E293B]">/</span>
+          <span className="text-[#171717]">/</span>
           <span className="font-display text-xs text-[#64748B]">ENGINEER COMMAND CENTER</span>
         </div>
         <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-[#F8FAFC]">
@@ -120,11 +120,11 @@ function Dashboard() {
 
       {/* ── Track Cards ── */}
       <div className="grid gap-8 md:grid-cols-2">
-        {/* Debugging Track (Ice Blue Accent) */}
-        <div className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-8 sm:p-9 flex flex-col justify-between space-y-6 hover:border-[#38BDF8] transition-all shadow-sm">
+        {/* Debugging Track (Emerald Accent) */}
+        <div className="rounded-sm border border-[#171717] bg-[#0A0A0A] p-8 sm:p-9 flex flex-col justify-between space-y-6 hover:border-[#10B981] transition-all shadow-sm">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#38BDF8] bg-[#0B0F19] px-3 py-1 rounded-sm border border-[#334155]">
+              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#10B981] bg-[#000000] px-3 py-1 rounded-sm border border-[#262626]">
                 FILE // DEBUG-ROTATION
               </span>
               <span className="font-display text-xs text-[#64748B] font-semibold">
@@ -138,7 +138,7 @@ function Dashboard() {
             </p>
           </div>
 
-          <div className="pt-5 border-t border-[#1E293B] space-y-4">
+          <div className="pt-5 border-t border-[#171717] space-y-4">
             <div className="flex items-center justify-between text-xs font-display">
               <span className="text-[#64748B]">NEXT IN DOCKET:</span>
               <span className="text-[#F8FAFC] font-semibold truncate max-w-xs">
@@ -148,18 +148,18 @@ function Dashboard() {
             <Link
               to="/incidents/$slug"
               params={{ slug: nextDebugScenario.id }}
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-sm bg-[#38BDF8] font-display text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all shadow-sm"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-sm bg-[#10B981] font-display text-xs font-bold text-[#000000] hover:bg-[#34D399] transition-all shadow-sm"
             >
               Continue Debugging →
             </Link>
           </div>
         </div>
 
-        {/* System Design Track (Emerald Signal Accent) */}
-        <div className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-8 sm:p-9 flex flex-col justify-between space-y-6 hover:border-[#10B981] transition-all shadow-sm">
+        {/* System Design Track (Teal Mint Signal Accent) */}
+        <div className="rounded-sm border border-[#171717] bg-[#0A0A0A] p-8 sm:p-9 flex flex-col justify-between space-y-6 hover:border-[#2DD4BF] transition-all shadow-sm">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#10B981] bg-[#10B981]/10 px-3 py-1 rounded-sm border border-[#10B981]/30">
+              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#2DD4BF] bg-[#2DD4BF]/10 px-3 py-1 rounded-sm border border-[#2DD4BF]/30">
                 FILE // SYSTEM-DESIGN
               </span>
               <span className="font-display text-xs text-[#64748B] font-semibold">
@@ -175,7 +175,7 @@ function Dashboard() {
             </p>
           </div>
 
-          <div className="pt-5 border-t border-[#1E293B] space-y-4">
+          <div className="pt-5 border-t border-[#171717] space-y-4">
             <div className="flex items-center justify-between text-xs font-display">
               <span className="text-[#64748B]">NEXT IN DOCKET:</span>
               <span className="text-[#F8FAFC] font-semibold truncate max-w-xs">
@@ -185,7 +185,7 @@ function Dashboard() {
             <Link
               to="/design/$slug"
               params={{ slug: nextDesignScenario.id }}
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-sm border border-[#10B981] bg-[#10B981]/10 font-display text-xs font-bold text-[#10B981] hover:bg-[#10B981] hover:text-[#0B0F19] transition-all shadow-sm"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-sm border border-[#2DD4BF] bg-[#2DD4BF]/10 font-display text-xs font-bold text-[#2DD4BF] hover:bg-[#2DD4BF] hover:text-[#000000] transition-all shadow-sm"
             >
               Enter System Design Review →
             </Link>

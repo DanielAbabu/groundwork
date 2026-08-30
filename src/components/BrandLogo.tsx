@@ -9,7 +9,7 @@ interface BrandLogoProps {
 export function GaugeNotchIcon({ className = "size-4" }: { className?: string }) {
   return (
     <svg
-      className={`shrink-0 text-[#38BDF8] ${className}`}
+      className={`shrink-0 text-[#10B981] ${className}`}
       viewBox="0 0 20 20"
       fill="none"
       stroke="currentColor"
@@ -18,11 +18,11 @@ export function GaugeNotchIcon({ className = "size-4" }: { className?: string })
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <circle cx="10" cy="10" r="7.5" stroke="#1E293B" strokeWidth="1.2" />
-      <path d="M5.5 14.5 A 6.5 6.5 0 1 1 14.5 14.5" stroke="#334155" strokeWidth="1.5" />
-      <line x1="10" y1="10" x2="13.5" y2="6.5" stroke="#38BDF8" strokeWidth="1.75" />
-      <circle cx="10" cy="10" r="1.25" fill="#38BDF8" stroke="none" />
-      <line x1="5.5" y1="13.5" x2="6.5" y2="12.5" stroke="#38BDF8" strokeWidth="1.25" />
+      <circle cx="10" cy="10" r="7.5" stroke="#171717" strokeWidth="1.2" />
+      <path d="M5.5 14.5 A 6.5 6.5 0 1 1 14.5 14.5" stroke="#262626" strokeWidth="1.5" />
+      <line x1="10" y1="10" x2="13.5" y2="6.5" stroke="#10B981" strokeWidth="1.75" />
+      <circle cx="10" cy="10" r="1.25" fill="#10B981" stroke="none" />
+      <line x1="5.5" y1="13.5" x2="6.5" y2="12.5" stroke="#10B981" strokeWidth="1.25" />
     </svg>
   );
 }
@@ -39,7 +39,7 @@ export function BrandLogo({
 
         <span className="flex items-baseline gap-1 text-sm tracking-tight">
           <span className="font-display font-extrabold tracking-tight text-[#F8FAFC]">RAW</span>
-          <span className="font-mono text-xs font-semibold text-[#38BDF8]">//</span>
+          <span className="font-mono text-xs font-semibold text-[#10B981]">//</span>
           <span className="font-mono text-xs font-bold tracking-widest text-[#F8FAFC]">SKILL</span>
         </span>
       </div>

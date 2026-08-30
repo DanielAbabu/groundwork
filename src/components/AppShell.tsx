@@ -55,9 +55,9 @@ export function AppShell({ children }: AppShellProps) {
   })();
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-[#F8FAFC] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#000000] text-[#F8FAFC] flex flex-col font-sans">
       {/* ── 56px Global Top Header (Nordic Precision Studio) ── */}
-      <header className="sticky top-0 z-40 w-full border-b border-[#1E293B] bg-[#0F172A]/90 backdrop-blur">
+      <header className="sticky top-0 z-40 w-full border-b border-[#171717] bg-[#0A0A0A]/90 backdrop-blur">
         <div className="flex h-14 items-center justify-between gap-6 px-6 sm:px-8">
           {/* Gauge Notch Brand Logo */}
           <BrandLogo href="/dashboard" />
@@ -68,7 +68,7 @@ export function AppShell({ children }: AppShellProps) {
               to="/incidents"
               className={`flex h-full items-center px-5 font-display text-sm font-medium tracking-wide transition-colors border-b-2 ${
                 isIncidents
-                  ? "border-[#38BDF8] text-[#F8FAFC] font-semibold"
+                  ? "border-[#10B981] text-[#F8FAFC] font-semibold"
                   : "border-transparent text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
@@ -78,7 +78,7 @@ export function AppShell({ children }: AppShellProps) {
               to="/design"
               className={`flex h-full items-center px-5 font-display text-sm font-medium tracking-wide transition-colors border-b-2 ${
                 isDesign
-                  ? "border-[#38BDF8] text-[#F8FAFC] font-semibold"
+                  ? "border-[#10B981] text-[#F8FAFC] font-semibold"
                   : "border-transparent text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
@@ -90,7 +90,7 @@ export function AppShell({ children }: AppShellProps) {
           <div className="flex items-center gap-4 shrink-0">
             {/* Streak */}
             {streak > 0 && (
-              <span className="hidden sm:flex items-center gap-2 rounded-sm border border-[#334155] bg-[#1E293B] px-3 py-1 font-display text-xs text-[#38BDF8]">
+              <span className="hidden sm:flex items-center gap-2 rounded-sm border border-[#262626] bg-[#171717] px-3 py-1 font-display text-xs text-[#10B981]">
                 <span>⚡</span>
                 <span className="font-bold">{streak}d Streak</span>
               </span>
@@ -108,8 +108,8 @@ export function AppShell({ children }: AppShellProps) {
               to="/profile"
               className={`rounded-sm border px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wider transition-colors ${
                 location.pathname === "/profile"
-                  ? "border-[#38BDF8] bg-[#1E293B] text-[#38BDF8]"
-                  : "border-[#1E293B] bg-[#0F172A] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#334155]"
+                  ? "border-[#10B981] bg-[#171717] text-[#10B981]"
+                  : "border-[#171717] bg-[#0A0A0A] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#262626]"
               }`}
             >
               Profile
@@ -117,7 +117,7 @@ export function AppShell({ children }: AppShellProps) {
 
             <button
               onClick={() => handleSignOut(router, queryClient)}
-              className="rounded-sm border border-[#1E293B] bg-[#0F172A] px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wider text-[#64748B] transition-colors hover:border-[#F43F5E]/40 hover:bg-[#F43F5E]/10 hover:text-[#F43F5E]"
+              className="rounded-sm border border-[#171717] bg-[#0A0A0A] px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wider text-[#64748B] transition-colors hover:border-[#F43F5E]/40 hover:bg-[#F43F5E]/10 hover:text-[#F43F5E]"
             >
               Sign out
             </button>
@@ -125,7 +125,7 @@ export function AppShell({ children }: AppShellProps) {
             {/* Mobile Nav Toggle */}
             <button
               id="mobile-nav-btn"
-              className="md:hidden rounded-sm border border-[#1E293B] bg-[#0F172A] p-2 text-[#94A3B8] hover:text-[#F8FAFC]"
+              className="md:hidden rounded-sm border border-[#171717] bg-[#0A0A0A] p-2 text-[#94A3B8] hover:text-[#F8FAFC]"
               onClick={() => setMobileMenuOpen((open) => !open)}
               aria-label="Toggle Navigation Menu"
             >
@@ -137,12 +137,12 @@ export function AppShell({ children }: AppShellProps) {
 
       {/* Mobile Menu Backdrop & Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex flex-col bg-[#0B0F19]/95 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="flex h-11 items-center justify-between border-b border-[#1E293B] px-4">
+        <div className="md:hidden fixed inset-0 z-50 flex flex-col bg-[#000000]/95 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="flex h-11 items-center justify-between border-b border-[#171717] px-4">
             <BrandLogo href="/dashboard" />
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="rounded-sm border border-[#1E293B] p-1.5 text-[#94A3B8]"
+              className="rounded-sm border border-[#171717] p-1.5 text-[#94A3B8]"
             >
               <X className="size-4" />
             </button>
@@ -153,11 +153,11 @@ export function AppShell({ children }: AppShellProps) {
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center gap-3 rounded-sm p-3 font-sans text-sm font-semibold transition-colors ${
                 location.pathname === "/dashboard"
-                  ? "bg-[#1E293B] text-[#38BDF8]"
+                  ? "bg-[#171717] text-[#10B981]"
                   : "text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
-              <LayoutDashboard className="size-4 text-[#38BDF8]" />
+              <LayoutDashboard className="size-4 text-[#10B981]" />
               Dashboard
             </Link>
             <Link
@@ -165,11 +165,11 @@ export function AppShell({ children }: AppShellProps) {
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center gap-3 rounded-sm p-3 font-sans text-sm font-semibold transition-colors ${
                 isIncidents
-                  ? "bg-[#1E293B] text-[#38BDF8]"
+                  ? "bg-[#171717] text-[#10B981]"
                   : "text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
-              <Terminal className="size-4 text-[#38BDF8]" />
+              <Terminal className="size-4 text-[#10B981]" />
               Debugging Rotation
             </Link>
             <Link
@@ -177,11 +177,11 @@ export function AppShell({ children }: AppShellProps) {
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center gap-3 rounded-sm p-3 font-sans text-sm font-semibold transition-colors ${
                 isDesign
-                  ? "bg-[#1E293B] text-[#38BDF8]"
+                  ? "bg-[#171717] text-[#10B981]"
                   : "text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
-              <Compass className="size-4 text-[#38BDF8]" />
+              <Compass className="size-4 text-[#10B981]" />
               System Design Track
             </Link>
             <Link
@@ -189,15 +189,15 @@ export function AppShell({ children }: AppShellProps) {
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center gap-3 rounded-sm p-3 font-sans text-sm font-semibold transition-colors ${
                 location.pathname === "/profile"
-                  ? "bg-[#1E293B] text-[#38BDF8]"
+                  ? "bg-[#171717] text-[#10B981]"
                   : "text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
-              <User className="size-4 text-[#38BDF8]" />
+              <User className="size-4 text-[#10B981]" />
               Profile Dossier
             </Link>
           </div>
-          <div className="border-t border-[#1E293B] p-4 bg-[#0F172A]">
+          <div className="border-t border-[#171717] p-4 bg-[#0A0A0A]">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
@@ -216,7 +216,7 @@ export function AppShell({ children }: AppShellProps) {
       <main className="flex-1">{children}</main>
 
       {/* ── Brand Footer ── */}
-      <footer className="border-t border-[#1E293B] bg-[#0F172A] py-6 px-6">
+      <footer className="border-t border-[#171717] bg-[#0A0A0A] py-6 px-6">
         <div className="mx-auto flex max-w-6xl flex-col sm:flex-row items-center justify-between gap-4">
           <BrandLogo showTagline href="/dashboard" />
           <span className="font-mono text-xs text-[#64748B]">

@@ -181,7 +181,7 @@ function IncidentRoom() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-56px)] flex-col bg-[#0B0F19] text-[#F8FAFC] overflow-hidden selection:bg-[#38BDF8] selection:text-[#0B0F19]">
+    <div className="flex h-[calc(100vh-56px)] flex-col bg-[#000000] text-[#F8FAFC] overflow-hidden selection:bg-[#10B981] selection:text-[#000000]">
       {/* ── Problem Command Bar ── */}
       <ProblemBar
         title={scenario.title}
@@ -204,14 +204,14 @@ function IncidentRoom() {
               defaultSize={descCollapsed ? 4 : 25}
               minSize={descCollapsed ? 4 : 15}
               maxSize={descCollapsed ? 4 : 40}
-              className="bg-[#0F172A] transition-all duration-200"
+              className="bg-[#0A0A0A] transition-all duration-200"
             >
-              <div className="flex h-full flex-col overflow-hidden border-r border-[#1E293B] relative">
+              <div className="flex h-full flex-col overflow-hidden border-r border-[#171717] relative">
                 {/* Collapse toggle */}
                 <button
                   onClick={() => setDescCollapsed((v) => !v)}
                   title={descCollapsed ? "Expand Incident Brief" : "Collapse Incident Brief"}
-                  className="absolute right-3 top-3 z-20 flex size-7 items-center justify-center rounded-sm border border-[#1E293B] bg-[#0B0F19] text-[#64748B] hover:text-[#F8FAFC] transition-colors"
+                  className="absolute right-3 top-3 z-20 flex size-7 items-center justify-center rounded-sm border border-[#171717] bg-[#000000] text-[#64748B] hover:text-[#F8FAFC] transition-colors"
                 >
                   {descCollapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
                 </button>
@@ -219,16 +219,16 @@ function IncidentRoom() {
                 {!descCollapsed && (
                   <div className="flex-1 overflow-y-auto p-6 sm:p-7 space-y-7">
                     {/* Severity + Service Metadata Header */}
-                    <div className="flex flex-wrap items-center gap-2.5 border-b border-[#1E293B] pb-5 pr-8">
+                    <div className="flex flex-wrap items-center gap-2.5 border-b border-[#171717] pb-5 pr-8">
                       <span
                         className={`rounded-sm border px-2.5 py-1 font-display text-xs font-bold uppercase tracking-wider ${scenario.severity === "SEV-1" ? "border-[#EF4444]/40 bg-[#EF4444]/10 text-[#EF4444]" : scenario.severity === "SEV-2" ? "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#F59E0B]" : "border-[#10B981]/40 bg-[#10B981]/10 text-[#10B981]"}`}
                       >
                         {scenario.severity}
                       </span>
-                      <span className="rounded-sm border border-[#1E293B] bg-[#0B0F19] px-2.5 py-1 font-display text-xs font-semibold text-[#94A3B8]">
+                      <span className="rounded-sm border border-[#171717] bg-[#000000] px-2.5 py-1 font-display text-xs font-semibold text-[#94A3B8]">
                         {scenario.service}
                       </span>
-                      <span className="rounded-sm border border-[#1E293B] bg-[#0B0F19] px-2.5 py-1 font-display text-xs font-semibold text-[#94A3B8]">
+                      <span className="rounded-sm border border-[#171717] bg-[#000000] px-2.5 py-1 font-display text-xs font-semibold text-[#94A3B8]">
                         {TYPE_LABELS[scenario.type]}
                       </span>
                     </div>
@@ -236,7 +236,7 @@ function IncidentRoom() {
                     {/* Incident Framing Context */}
                     <div className="space-y-2.5">
                       <div className="flex items-center gap-2 font-display text-xs uppercase tracking-wider text-[#64748B] font-bold">
-                        <Terminal className="size-3.5 text-[#38BDF8]" />
+                        <Terminal className="size-3.5 text-[#10B981]" />
                         Incident Context
                       </div>
                       <p className="font-display text-sm leading-relaxed text-[#F8FAFC]">
@@ -245,7 +245,7 @@ function IncidentRoom() {
                     </div>
 
                     {/* Alert Symptom Terminal Block */}
-                    <div className="rounded-sm border border-[#EF4444]/30 bg-[#0B0F19] p-4 sm:p-5 space-y-2">
+                    <div className="rounded-sm border border-[#EF4444]/30 bg-[#000000] p-4 sm:p-5 space-y-2">
                       <div className="flex items-center gap-2 font-display text-xs uppercase tracking-wider text-[#EF4444] font-bold">
                         <ShieldAlert className="size-4 text-[#EF4444]" />
                         Alert Symptom
@@ -257,9 +257,9 @@ function IncidentRoom() {
 
                     {/* Hints Drawer */}
                     {scenario.hints && scenario.hints.length > 0 && (
-                      <div className="space-y-3 pt-3 border-t border-[#1E293B]">
+                      <div className="space-y-3 pt-3 border-t border-[#171717]">
                         <div className="flex items-center gap-2 font-display text-xs uppercase tracking-wider text-[#64748B] font-bold">
-                          <HelpCircle className="size-3.5 text-[#38BDF8]" />
+                          <HelpCircle className="size-3.5 text-[#10B981]" />
                           Investigation Hints
                         </div>
                         <HintDrawer hints={scenario.hints} />
@@ -268,16 +268,16 @@ function IncidentRoom() {
 
                     {/* Concept Tags */}
                     {scenario.concepts && scenario.concepts.length > 0 && (
-                      <div className="space-y-3 pt-3 border-t border-[#1E293B]">
+                      <div className="space-y-3 pt-3 border-t border-[#171717]">
                         <div className="flex items-center gap-2 font-display text-xs uppercase tracking-wider text-[#64748B] font-bold">
-                          <Tag className="size-3.5 text-[#38BDF8]" />
+                          <Tag className="size-3.5 text-[#10B981]" />
                           Target Concepts
                         </div>
                         <div className="flex flex-wrap gap-2">
                           {scenario.concepts.map((c) => (
                             <span
                               key={c}
-                              className="rounded-sm border border-[#38BDF8]/30 bg-[#38BDF8]/10 px-2.5 py-1 font-display text-xs text-[#38BDF8] font-semibold"
+                              className="rounded-sm border border-[#10B981]/30 bg-[#10B981]/10 px-2.5 py-1 font-display text-xs text-[#10B981] font-semibold"
                             >
                               #{c}
                             </span>
@@ -288,7 +288,7 @@ function IncidentRoom() {
 
                     {/* Incident Postmortem */}
                     {showPostmortem && (
-                      <div className="rounded-sm border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-4 space-y-3 pt-3 border-t border-[#1E293B]">
+                      <div className="rounded-sm border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-4 space-y-3 pt-3 border-t border-[#171717]">
                         <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-[#F59E0B] font-bold">
                           <CheckCircle2 className="size-3.5 text-[#F59E0B]" />
                           Incident Postmortem
@@ -336,10 +336,10 @@ function IncidentRoom() {
 
             {/* ── CENTER PANEL: Monaco Code Editor ── */}
             <ResizablePanel defaultSize={descCollapsed ? 66 : 45} minSize={25}>
-              <section className="flex h-full flex-col overflow-hidden border-r border-[#1E293B]">
+              <section className="flex h-full flex-col overflow-hidden border-r border-[#171717]">
                 {/* File Tabs Strip */}
                 <div
-                  className="flex shrink-0 items-center overflow-x-auto border-b border-[#1E293B] bg-[#0B0F19]"
+                  className="flex shrink-0 items-center overflow-x-auto border-b border-[#171717] bg-[#000000]"
                   style={{ scrollbarWidth: "none" }}
                 >
                   {scenario.files.map((file) => {
@@ -350,17 +350,17 @@ function IncidentRoom() {
                         key={file.path}
                         onClick={() => setActivePath(file.path)}
                         title={file.path}
-                        className={`flex h-9 shrink-0 items-center gap-1.5 border-r border-[#1E293B] px-3.5 font-mono text-xs transition-colors whitespace-nowrap ${
+                        className={`flex h-9 shrink-0 items-center gap-1.5 border-r border-[#171717] px-3.5 font-mono text-xs transition-colors whitespace-nowrap ${
                           isActive
-                            ? "border-b-2 border-b-[#38BDF8] bg-[#0F172A] text-[#F8FAFC] font-bold"
-                            : "text-[#64748B] hover:bg-[#0F172A]/50 hover:text-[#F8FAFC]"
+                            ? "border-b-2 border-b-[#10B981] bg-[#0A0A0A] text-[#F8FAFC] font-bold"
+                            : "text-[#64748B] hover:bg-[#0A0A0A]/50 hover:text-[#F8FAFC]"
                         }`}
                       >
-                        <FileCode className="size-3.5 text-[#38BDF8]" />
+                        <FileCode className="size-3.5 text-[#10B981]" />
                         {isDirty && <span className="text-[#F59E0B] text-[8px]">●</span>}
                         {file.path.split("/").pop()}
                         {file.context && (
-                          <span className="text-[9px] text-[#64748B] bg-[#0B0F19] px-1 rounded border border-[#1E293B]">
+                          <span className="text-[9px] text-[#64748B] bg-[#000000] px-1 rounded border border-[#171717]">
                             ro
                           </span>
                         )}
@@ -379,7 +379,7 @@ function IncidentRoom() {
                 </div>
 
                 {/* Monaco Editor Container */}
-                <div className="flex-1 overflow-hidden bg-[#0B0F19]">
+                <div className="flex-1 overflow-hidden bg-[#000000]">
                   <ClientOnly
                     fallback={
                       <pre className="h-full overflow-auto p-4 font-mono text-xs text-[#94A3B8]">
@@ -390,7 +390,7 @@ function IncidentRoom() {
                     <Suspense
                       fallback={
                         <div className="p-6 font-mono text-xs text-[#64748B] flex items-center gap-2">
-                          <Cpu className="size-4 animate-spin text-[#38BDF8]" />
+                          <Cpu className="size-4 animate-spin text-[#10B981]" />
                           Initializing Monaco IDE Environment…
                         </div>
                       }
@@ -406,14 +406,14 @@ function IncidentRoom() {
                 </div>
 
                 {/* Editor Footer Telemetry Bar */}
-                <div className="flex shrink-0 items-center justify-between border-t border-[#1E293B] bg-[#0B0F19] px-4 py-1.5 font-mono text-[10px] text-[#64748B]">
+                <div className="flex shrink-0 items-center justify-between border-t border-[#171717] bg-[#000000] px-4 py-1.5 font-mono text-[10px] text-[#64748B]">
                   <div className="flex items-center gap-3">
                     <span>{activePath.split(".").pop()?.toUpperCase() ?? "PYTHON"} ENVIRONMENT</span>
                     <span>·</span>
                     <span>{activeFile.context ? "READ ONLY CONTEXT" : "EDITABLE SOURCE"}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[#38BDF8]">PYODIDE HARNESS READY</span>
+                    <span className="text-[#10B981]">PYODIDE HARNESS READY</span>
                   </div>
                 </div>
               </section>
@@ -439,12 +439,12 @@ function IncidentRoom() {
         {/* ── MOBILE VIEW: High-Density Tab View Switcher ── */}
         <div className="lg:hidden flex flex-1 flex-col overflow-hidden pb-12 w-full">
           {/* Mobile Top View Switcher */}
-          <div className="flex items-center border-b border-[#1E293B] bg-[#0F172A] shrink-0">
+          <div className="flex items-center border-b border-[#171717] bg-[#0A0A0A] shrink-0">
             <button
               onClick={() => setMobileTab("brief")}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 font-mono text-xs font-semibold transition-colors border-b-2 ${
                 mobileTab === "brief"
-                  ? "border-[#38BDF8] text-[#38BDF8] bg-[#0B0F19]"
+                  ? "border-[#10B981] text-[#10B981] bg-[#000000]"
                   : "border-transparent text-[#94A3B8]"
               }`}
             >
@@ -455,7 +455,7 @@ function IncidentRoom() {
               onClick={() => setMobileTab("editor")}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 font-mono text-xs font-semibold transition-colors border-b-2 ${
                 mobileTab === "editor"
-                  ? "border-[#38BDF8] text-[#38BDF8] bg-[#0B0F19]"
+                  ? "border-[#10B981] text-[#10B981] bg-[#000000]"
                   : "border-transparent text-[#94A3B8]"
               }`}
             >
@@ -466,7 +466,7 @@ function IncidentRoom() {
               onClick={() => setMobileTab("console")}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 font-mono text-xs font-semibold transition-colors border-b-2 ${
                 mobileTab === "console"
-                  ? "border-[#38BDF8] text-[#38BDF8] bg-[#0B0F19]"
+                  ? "border-[#10B981] text-[#10B981] bg-[#000000]"
                   : "border-transparent text-[#94A3B8]"
               }`}
             >
@@ -481,12 +481,12 @@ function IncidentRoom() {
           {/* Mobile View Container */}
           <div className="flex-1 overflow-hidden">
             {mobileTab === "brief" && (
-              <div className="h-full overflow-y-auto p-4 space-y-5 bg-[#0F172A]">
-                <div className="flex flex-wrap items-center gap-2 border-b border-[#1E293B] pb-3">
+              <div className="h-full overflow-y-auto p-4 space-y-5 bg-[#0A0A0A]">
+                <div className="flex flex-wrap items-center gap-2 border-b border-[#171717] pb-3">
                   <span className="rounded-sm border border-[#EF4444]/40 bg-[#EF4444]/10 px-2 py-0.5 font-mono text-[10px] font-bold text-[#EF4444]">
                     {scenario.severity}
                   </span>
-                  <span className="rounded-sm border border-[#1E293B] bg-[#0B0F19] px-2 py-0.5 font-mono text-[10px] text-[#94A3B8]">
+                  <span className="rounded-sm border border-[#171717] bg-[#000000] px-2 py-0.5 font-mono text-[10px] text-[#94A3B8]">
                     {scenario.service}
                   </span>
                 </div>
@@ -498,7 +498,7 @@ function IncidentRoom() {
                   <p className="text-xs leading-relaxed text-[#F8FAFC]">{scenario.framing}</p>
                 </div>
 
-                <div className="rounded-sm border border-[#EF4444]/30 bg-[#0B0F19] p-3 space-y-1">
+                <div className="rounded-sm border border-[#EF4444]/30 bg-[#000000] p-3 space-y-1">
                   <div className="font-mono text-[10px] uppercase tracking-widest text-[#EF4444] font-bold">
                     Alert Symptom
                   </div>
@@ -506,7 +506,7 @@ function IncidentRoom() {
                 </div>
 
                 {scenario.hints && scenario.hints.length > 0 && (
-                  <div className="space-y-2 pt-2 border-t border-[#1E293B]">
+                  <div className="space-y-2 pt-2 border-t border-[#171717]">
                     <div className="font-mono text-[10px] uppercase tracking-widest text-[#64748B] font-bold">
                       Hints
                     </div>
@@ -519,27 +519,27 @@ function IncidentRoom() {
             {mobileTab === "editor" && (
               <div className="flex h-full flex-col overflow-hidden">
                 {/* File Tabs Strip */}
-                <div className="flex shrink-0 items-center overflow-x-auto border-b border-[#1E293B] bg-[#0B0F19]">
+                <div className="flex shrink-0 items-center overflow-x-auto border-b border-[#171717] bg-[#000000]">
                   {scenario.files.map((file) => {
                     const isActive = file.path === activePath;
                     return (
                       <button
                         key={file.path}
                         onClick={() => setActivePath(file.path)}
-                        className={`flex h-8 shrink-0 items-center gap-1 border-r border-[#1E293B] px-3 font-mono text-xs ${
+                        className={`flex h-8 shrink-0 items-center gap-1 border-r border-[#171717] px-3 font-mono text-xs ${
                           isActive
-                            ? "border-b-2 border-b-[#38BDF8] bg-[#0F172A] text-[#F8FAFC] font-bold"
+                            ? "border-b-2 border-b-[#10B981] bg-[#0A0A0A] text-[#F8FAFC] font-bold"
                             : "text-[#64748B]"
                         }`}
                       >
-                        <FileCode className="size-3 text-[#38BDF8]" />
+                        <FileCode className="size-3 text-[#10B981]" />
                         {file.path.split("/").pop()}
                       </button>
                     );
                   })}
                 </div>
 
-                <div className="flex-1 overflow-hidden bg-[#0B0F19]">
+                <div className="flex-1 overflow-hidden bg-[#000000]">
                   <ClientOnly
                     fallback={<pre className="p-3 font-mono text-xs">{activeValue}</pre>}
                   >
@@ -570,11 +570,11 @@ function IncidentRoom() {
           </div>
 
           {/* Mobile Bottom Action Bar */}
-          <div className="fixed bottom-0 left-0 right-0 border-t border-[#1E293B] bg-[#0B0F19] z-30">
+          <div className="fixed bottom-0 left-0 right-0 border-t border-[#171717] bg-[#000000] z-30">
             <button
               onClick={run}
               disabled={running || passed}
-              className="w-full py-3 bg-[#38BDF8] font-mono text-xs font-bold text-[#0B0F19] disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3 bg-[#10B981] font-mono text-xs font-bold text-[#000000] disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {running ? "Running Hidden Tests…" : passed ? "✓ VERDICT: PASSED" : "▶ Run Tests (Ctrl+Enter)"}
             </button>
