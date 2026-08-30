@@ -86,10 +86,10 @@ function AuthPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#0B0F19] px-6">
+    <main className="flex min-h-screen items-center justify-center bg-[#000000] px-4 sm:px-6 py-12">
       {/* Nordic ID Credential Card */}
-      <div className="w-full max-w-sm rounded-sm border border-[#1E293B] bg-[#0F172A] p-7 shadow-sm">
-        <div className="flex items-center justify-between border-b border-[#1E293B] pb-4 mb-5">
+      <div className="w-full max-w-sm rounded-sm border border-[#171717] bg-[#0A0A0A] p-6 sm:p-7 shadow-xl">
+        <div className="flex items-center justify-between border-b border-[#171717] pb-4 mb-5">
           <BrandLogo href="/" />
           <span className="font-mono text-[9px] uppercase tracking-widest text-[#64748B]">
             ID // CREDENTIAL
@@ -97,13 +97,13 @@ function AuthPage() {
         </div>
 
         {/* Mode Toggle Underline Switch */}
-        <div className="flex border-b border-[#1E293B] mb-5">
+        <div className="flex border-b border-[#171717] mb-5">
           <button
             type="button"
             onClick={() => setMode("signin")}
             className={`flex-1 pb-2 font-mono text-xs uppercase tracking-wider transition-colors border-b-2 ${
               mode === "signin"
-                ? "border-[#38BDF8] text-[#F8FAFC] font-bold"
+                ? "border-[#10B981] text-[#F8FAFC] font-bold"
                 : "border-transparent text-[#64748B] hover:text-[#94A3B8]"
             }`}
           >
@@ -114,7 +114,7 @@ function AuthPage() {
             onClick={() => setMode("signup")}
             className={`flex-1 pb-2 font-mono text-xs uppercase tracking-wider transition-colors border-b-2 ${
               mode === "signup"
-                ? "border-[#38BDF8] text-[#F8FAFC] font-bold"
+                ? "border-[#10B981] text-[#F8FAFC] font-bold"
                 : "border-transparent text-[#64748B] hover:text-[#94A3B8]"
             }`}
           >
@@ -135,10 +135,10 @@ function AuthPage() {
             type="button"
             disabled={busyProvider !== null || busy}
             onClick={() => handleOAuthLogin("google")}
-            className="flex w-full items-center justify-center gap-2.5 rounded-sm border border-[#334155] bg-[#1E293B] px-4 py-2.5 font-mono text-xs text-[#F8FAFC] transition-all hover:bg-[#334155] hover:border-[#38BDF8] active:scale-[0.98] disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2.5 rounded-sm border border-[#262626] bg-[#171717] px-4 py-2.5 font-mono text-xs text-[#F8FAFC] transition-all hover:bg-[#262626] hover:border-[#10B981] active:scale-[0.98] disabled:opacity-50"
           >
             {busyProvider === "google" ? (
-              <span className="text-[#38BDF8]">Connecting to Google…</span>
+              <span className="text-[#10B981]">Connecting to Google…</span>
             ) : (
               <>
                 <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
@@ -167,8 +167,8 @@ function AuthPage() {
 
         {/* ── Divider ── */}
         <div className="relative my-5 flex items-center justify-center">
-          <div className="w-full border-t border-[#1E293B]" />
-          <span className="absolute bg-[#0F172A] px-2.5 font-sans text-[10px] uppercase tracking-widest text-[#64748B]">
+          <div className="w-full border-t border-[#171717]" />
+          <span className="absolute bg-[#0A0A0A] px-2.5 font-sans text-[10px] uppercase tracking-widest text-[#64748B]">
             or continue with
           </span>
         </div>
@@ -188,7 +188,7 @@ function AuthPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-[#1E293B] border-[#334155] text-[#F8FAFC] focus:border-[#38BDF8]"
+              className="bg-[#171717] border-[#262626] text-[#F8FAFC] focus:border-[#10B981]"
             />
           </div>
           <div className="space-y-1.5">
@@ -206,13 +206,13 @@ function AuthPage() {
               autoComplete={mode === "signup" ? "new-password" : "current-password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="bg-[#1E293B] border-[#334155] text-[#F8FAFC] focus:border-[#38BDF8]"
+              className="bg-[#171717] border-[#262626] text-[#F8FAFC] focus:border-[#10B981]"
             />
           </div>
           <Button
             type="submit"
             disabled={busy || busyProvider !== null}
-            className="w-full font-mono text-xs font-bold uppercase tracking-wider bg-[#38BDF8] text-[#0B0F19] hover:bg-[#7DD3FC]"
+            className="w-full font-mono text-xs font-bold uppercase tracking-wider bg-[#10B981] text-[#000000] hover:bg-[#34D399]"
           >
             {busy
               ? "Working…"

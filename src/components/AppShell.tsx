@@ -106,7 +106,7 @@ export function AppShell({ children }: AppShellProps) {
 
             <Link
               to="/profile"
-              className={`rounded-sm border px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wider transition-colors ${
+              className={`hidden sm:inline-flex rounded-sm border px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wider transition-colors ${
                 location.pathname === "/profile"
                   ? "border-[#10B981] bg-[#171717] text-[#10B981]"
                   : "border-[#171717] bg-[#0A0A0A] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#262626]"
@@ -117,7 +117,7 @@ export function AppShell({ children }: AppShellProps) {
 
             <button
               onClick={() => handleSignOut(router, queryClient)}
-              className="rounded-sm border border-[#171717] bg-[#0A0A0A] px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wider text-[#64748B] transition-colors hover:border-[#F43F5E]/40 hover:bg-[#F43F5E]/10 hover:text-[#F43F5E]"
+              className="hidden sm:inline-flex rounded-sm border border-[#171717] bg-[#0A0A0A] px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wider text-[#64748B] transition-colors hover:border-[#F43F5E]/40 hover:bg-[#F43F5E]/10 hover:text-[#F43F5E]"
             >
               Sign out
             </button>

@@ -51,30 +51,30 @@ export function Index() {
   const firstDesign = designScenarios[0]!;
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-[#F8FAFC] flex flex-col font-sans selection:bg-[#38BDF8] selection:text-[#0B0F19]">
+    <div className="min-h-screen bg-[#000000] text-[#F8FAFC] flex flex-col font-sans selection:bg-[#10B981] selection:text-[#000000]">
       {/* ── Nordic Sticky Header ── */}
-      <header className="sticky top-0 z-50 w-full border-b border-[#1E293B] bg-[#0F172A]/90 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full border-b border-[#171717] bg-[#0A0A0A]/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 py-3.5">
           <BrandLogo href="/" />
 
           <div className="flex items-center gap-6">
             <Link
               to="/incidents"
-              className="hidden sm:inline-flex items-center gap-1.5 font-mono text-xs text-[#94A3B8] hover:text-[#38BDF8] transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 font-mono text-xs text-[#94A3B8] hover:text-[#10B981] transition-colors"
             >
-              <Terminal className="size-3.5 text-[#38BDF8]" />
+              <Terminal className="size-3.5 text-[#10B981]" />
               Debugging Docket
             </Link>
             <Link
               to="/design"
-              className="hidden sm:inline-flex items-center gap-1.5 font-mono text-xs text-[#94A3B8] hover:text-[#38BDF8] transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 font-mono text-xs text-[#94A3B8] hover:text-[#10B981] transition-colors"
             >
-              <Network className="size-3.5 text-[#38BDF8]" />
+              <Network className="size-3.5 text-[#10B981]" />
               System Blueprints
             </Link>
             <Link
               to="/dashboard"
-              className="rounded-sm bg-[#38BDF8] px-4 py-1.5 font-mono text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all shadow-sm flex items-center gap-1.5"
+              className="rounded-sm bg-[#10B981] px-4 py-1.5 font-mono text-xs font-bold text-[#000000] hover:bg-[#34D399] transition-all shadow-sm flex items-center gap-1.5"
             >
               Enter Workspace <ArrowRight className="size-3.5" />
             </Link>
@@ -87,22 +87,22 @@ export function Index() {
             TIER 1: IMMEDIATE UNDERSTANDING (HERO)
             Goal: Make the product value proposition crystal clear in seconds.
             ========================================================================= */}
-        <section className="relative pt-8 sm:pt-12 lg:pt-20 border-b border-[#1E293B]/80 bg-gradient-to-b from-[#0F172A]/40 to-[#0B0F19]">
+        <section className="relative pt-8 sm:pt-12 lg:pt-20 border-b border-[#171717] bg-gradient-to-b from-[#0A0A0A] to-[#000000]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pb-16">
               {/* Left Asymmetric Narrative Block */}
               <div className="lg:col-span-8 space-y-6">
-                <div className="inline-flex items-center gap-2 rounded-sm border border-[#38BDF8]/30 bg-[#38BDF8]/10 px-3 py-1 font-mono text-xs font-bold text-[#38BDF8]">
+                <div className="inline-flex items-center gap-2 rounded-sm border border-[#10B981]/30 bg-[#10B981]/10 px-3 py-1 font-mono text-xs font-bold text-[#10B981]">
                   <span className="relative flex size-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#38BDF8] opacity-75"></span>
-                    <span className="relative inline-flex rounded-full size-2 bg-[#38BDF8]"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full size-2 bg-[#10B981]"></span>
                   </span>
                   No copilot. No shortcuts. Just you and the incident.
                 </div>
 
                 <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.06] tracking-tight text-[#F8FAFC]">
                   Prove your engineering mastery under{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#38BDF8] via-[#7DD3FC] to-[#F8FAFC]">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#10B981] via-[#34D399] to-[#F8FAFC]">
                     real-world pressure.
                   </span>
                 </h1>
@@ -116,20 +116,20 @@ export function Index() {
                   <Link
                     to="/incidents/$slug"
                     params={{ slug: first.id }}
-                    className="inline-flex items-center gap-2 rounded-sm bg-[#38BDF8] px-6 py-3 font-mono text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all shadow-md"
+                    className="inline-flex items-center gap-2 rounded-sm bg-[#10B981] px-6 py-3 font-mono text-xs font-bold text-[#000000] hover:bg-[#34D399] transition-all shadow-md"
                   >
                     Start First Scenario <ArrowRight className="size-4" />
                   </Link>
                   <Link
                     to="/design/$slug"
                     params={{ slug: firstDesign.id }}
-                    className="inline-flex items-center gap-2 rounded-sm border border-[#334155] bg-[#0F172A] px-6 py-3 font-mono text-xs font-semibold text-[#F8FAFC] hover:border-[#38BDF8] hover:bg-[#1E293B] transition-all"
+                    className="inline-flex items-center gap-2 rounded-sm border border-[#262626] bg-[#0A0A0A] px-6 py-3 font-mono text-xs font-semibold text-[#F8FAFC] hover:border-[#10B981] hover:bg-[#171717] transition-all"
                   >
                     Start System Design
                   </Link>
                   <Link
                     to="/dashboard"
-                    className="inline-flex items-center gap-1.5 font-mono text-xs text-[#64748B] hover:text-[#38BDF8] transition-colors px-2 py-3"
+                    className="inline-flex items-center gap-1.5 font-mono text-xs text-[#64748B] hover:text-[#10B981] transition-colors px-2 py-3"
                   >
                     View Engineer Dossier →
                   </Link>
@@ -137,10 +137,10 @@ export function Index() {
               </div>
 
               {/* Right Quick Telemetry Stat Stack */}
-              <div className="lg:col-span-4 rounded-sm border border-[#1E293B] bg-[#0F172A] p-6 space-y-5 shadow-xl">
-                <div className="font-mono text-xs font-bold uppercase tracking-widest text-[#38BDF8] flex items-center justify-between border-b border-[#1E293B] pb-3">
+              <div className="lg:col-span-4 rounded-sm border border-[#171717] bg-[#0A0A0A] p-6 space-y-5 shadow-xl">
+                <div className="font-mono text-xs font-bold uppercase tracking-widest text-[#10B981] flex items-center justify-between border-b border-[#171717] pb-3">
                   <span>Engine Manifest</span>
-                  <Activity className="size-4 text-[#38BDF8]" />
+                  <Activity className="size-4 text-[#10B981]" />
                 </div>
 
                 <div className="space-y-4">

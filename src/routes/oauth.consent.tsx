@@ -223,9 +223,9 @@ function OAuthConsentPage() {
     <main className="grid-noise flex min-h-screen items-center justify-center bg-background px-4 py-12">
       <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 sm:p-8 shadow-2xl space-y-6">
         {/* Brand Header */}
-        <div className="flex items-center justify-between border-b border-[#1E293B] pb-4">
+        <div className="flex items-center justify-between border-b border-[#171717] pb-4">
           <BrandLogo href="/" />
-          <div className="flex items-center gap-1.5 rounded-sm border border-[#38BDF8]/30 bg-[#38BDF8]/10 px-2.5 py-0.5 text-[10px] font-mono text-[#38BDF8] font-bold">
+          <div className="flex items-center gap-1.5 rounded-sm border border-[#10B981]/30 bg-[#10B981]/10 px-2.5 py-0.5 text-[10px] font-mono text-[#10B981] font-bold">
             <Lock className="h-3 w-3" />
             <span>OAuth 2.1</span>
           </div>

@@ -191,7 +191,7 @@ function DesignRoom() {
       )}
 
       {showSummary ? (
-        <div className="flex-1 overflow-y-auto p-6 bg-[#0B0F19]">
+        <div className="flex-1 overflow-y-auto p-6 bg-[#000000]">
           <div className="mx-auto max-w-4xl">
             <Summary
               grades={grades}
@@ -207,15 +207,15 @@ function DesignRoom() {
       ) : (
         /* ── Full-Viewport 2-Panel Workspace (Responsive) ── */
         <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
-          {/* ── 3.2 Left Column: "Case File" Panel (Responsive Stack) ── */}
-          <aside className="w-full lg:w-88 shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r border-[#1E293B] bg-[#0F172A] overflow-y-auto p-6 lg:p-8 space-y-6 lg:space-y-8 max-h-60 lg:max-h-none">
+          {/* ── Left Column: "Case File" Panel ── */}
+          <aside className="w-full lg:w-96 shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r border-[#171717] bg-[#0A0A0A] overflow-y-auto p-5 lg:p-8 space-y-6 max-h-72 lg:max-h-none">
             {/* STAKEHOLDER Section */}
-            <div className="space-y-3 border-b border-[#1E293B] pb-5">
-              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#38BDF8] block">
+            <div className="space-y-3 border-b border-[#171717] pb-5">
+              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#10B981] block">
                 STAKEHOLDER
               </span>
               <div className="flex items-center gap-3.5 pt-0.5">
-                <div className="size-9 lg:size-10 rounded-full border border-[#38BDF8]/40 bg-[#38BDF8]/10 font-display text-sm font-bold text-[#38BDF8] flex items-center justify-center shrink-0 select-none">
+                <div className="size-9 lg:size-10 rounded-full border border-[#10B981]/40 bg-[#10B981]/10 font-display text-sm font-bold text-[#10B981] flex items-center justify-center shrink-0 select-none">
                   {initials}
                 </div>
                 <div>
@@ -228,7 +228,7 @@ function DesignRoom() {
             </div>
 
             {/* CONTEXT Section */}
-            <div className="hidden sm:block space-y-2 border-b border-[#1E293B] pb-5">
+            <div className="hidden sm:block space-y-2 border-b border-[#171717] pb-5">
               <span className="font-display text-xs font-bold uppercase tracking-wider text-[#64748B] block font-bold">
                 CONTEXT
               </span>
@@ -238,8 +238,8 @@ function DesignRoom() {
             </div>
 
             {/* THIS STAGE Section */}
-            <div className="space-y-2 border-l-2 border-[#38BDF8] pl-4 py-1">
-              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#38BDF8] block">
+            <div className="space-y-2 border-l-2 border-[#10B981] pl-4 py-1">
+              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#10B981] block">
                 THIS STAGE // FOCUS
               </span>
               <h3 className="font-display text-sm lg:text-base font-bold text-[#F8FAFC]">{stage.title}</h3>

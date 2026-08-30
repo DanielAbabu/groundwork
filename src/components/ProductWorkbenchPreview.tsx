@@ -33,9 +33,9 @@ export function ProductWorkbenchPreview() {
   };
 
   return (
-    <div className="w-full rounded-sm border border-[#1E293B] bg-[#0F172A] shadow-2xl overflow-hidden">
+    <div className="w-full rounded-sm border border-[#171717] bg-[#0A0A0A] shadow-2xl overflow-hidden">
       {/* Top Controller Bar */}
-      <div className="border-b border-[#1E293B] bg-[#0B0F19]/90 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div className="border-b border-[#171717] bg-[#000000]/90 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <div className="flex gap-1.5 mr-3">
             <span className="size-2.5 rounded-full bg-[#EF4444]/80 inline-block" />
@@ -48,12 +48,12 @@ export function ProductWorkbenchPreview() {
         </div>
 
         {/* View Switcher */}
-        <div className="flex items-center rounded-sm bg-[#1E293B]/60 p-1 border border-[#334155]">
+        <div className="flex items-center max-w-full overflow-x-auto rounded-sm bg-[#171717] p-1 border border-[#262626]">
           <button
             onClick={() => setActiveTab("debug")}
-            className={`flex items-center gap-2 px-3 py-1 font-mono text-xs rounded-sm transition-all ${
+            className={`flex items-center gap-2 px-3 py-1 font-mono text-xs rounded-sm transition-all whitespace-nowrap ${
               activeTab === "debug"
-                ? "bg-[#38BDF8] font-bold text-[#0B0F19] shadow-sm"
+                ? "bg-[#10B981] font-bold text-[#000000] shadow-sm"
                 : "text-[#94A3B8] hover:text-[#F8FAFC]"
             }`}
           >
@@ -62,9 +62,9 @@ export function ProductWorkbenchPreview() {
           </button>
           <button
             onClick={() => setActiveTab("design")}
-            className={`flex items-center gap-2 px-3 py-1 font-mono text-xs rounded-sm transition-all ${
+            className={`flex items-center gap-2 px-3 py-1 font-mono text-xs rounded-sm transition-all whitespace-nowrap ${
               activeTab === "design"
-                ? "bg-[#38BDF8] font-bold text-[#0B0F19] shadow-sm"
+                ? "bg-[#10B981] font-bold text-[#000000] shadow-sm"
                 : "text-[#94A3B8] hover:text-[#F8FAFC]"
             }`}
           >
@@ -78,26 +78,26 @@ export function ProductWorkbenchPreview() {
       {activeTab === "debug" ? (
         <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[440px]">
           {/* Left Column: Monaco Code Editor View */}
-          <div className="lg:col-span-7 border-r border-[#1E293B] bg-[#0B0F19] flex flex-col">
+          <div className="lg:col-span-7 border-r border-[#171717] bg-[#000000] flex flex-col">
             {/* Tab strip */}
-            <div className="border-b border-[#1E293B] bg-[#0F172A] flex items-center justify-between px-3">
-              <div className="flex">
+            <div className="border-b border-[#171717] bg-[#0A0A0A] flex items-center justify-between px-3">
+              <div className="flex overflow-x-auto">
                 <button
                   onClick={() => setActiveFile("processor.py")}
-                  className={`px-3 py-2 border-t-2 font-mono text-xs flex items-center gap-1.5 ${
+                  className={`px-3 py-2 border-t-2 font-mono text-xs flex items-center gap-1.5 whitespace-nowrap ${
                     activeFile === "processor.py"
-                      ? "border-[#38BDF8] bg-[#0B0F19] text-[#F8FAFC] font-semibold"
+                      ? "border-[#10B981] bg-[#000000] text-[#F8FAFC] font-semibold"
                       : "border-transparent text-[#64748B] hover:text-[#94A3B8]"
                   }`}
                 >
-                  <FileCode className="size-3 text-[#38BDF8]" />
+                  <FileCode className="size-3 text-[#10B981]" />
                   order_processor.py
                 </button>
                 <button
                   onClick={() => setActiveFile("test_suite.py")}
-                  className={`px-3 py-2 border-t-2 font-mono text-xs flex items-center gap-1.5 ${
+                  className={`px-3 py-2 border-t-2 font-mono text-xs flex items-center gap-1.5 whitespace-nowrap ${
                     activeFile === "test_suite.py"
-                      ? "border-[#38BDF8] bg-[#0B0F19] text-[#F8FAFC] font-semibold"
+                      ? "border-[#10B981] bg-[#000000] text-[#F8FAFC] font-semibold"
                       : "border-transparent text-[#64748B] hover:text-[#94A3B8]"
                   }`}
                 >

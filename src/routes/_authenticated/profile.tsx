@@ -122,30 +122,30 @@ function ProfilePage() {
   const sent = (nudges ?? []).filter((row) => row.direction === "sent");
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-[#0B0F19] text-[#F8FAFC] pb-20">
+    <div className="min-h-[calc(100vh-56px)] bg-[#000000] text-[#F8FAFC] pb-20">
       {/* Header */}
-      <div className="border-b border-[#1E293B] bg-[#0F172A] px-6 sm:px-10 py-8 sm:py-10">
+      <div className="border-b border-[#171717] bg-[#0A0A0A] px-4 sm:px-10 py-8 sm:py-10">
         <div className="mx-auto max-w-5xl space-y-2">
           <div className="flex items-center gap-2">
-            <span className="font-display text-xs font-bold uppercase tracking-wider text-[#38BDF8]">
+            <span className="font-display text-xs font-bold uppercase tracking-wider text-[#10B981]">
               DOSSIER // ENGINEER CREDENTIAL
             </span>
-            <span className="text-[#1E293B]">/</span>
+            <span className="text-[#171717]">/</span>
             <span className="font-display text-xs text-[#64748B]">WORKSHOP PROFILE</span>
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-[#F8FAFC]">
             {profile?.display_name || profile?.username || "Your Profile"}
           </h1>
-          <p className="font-display text-sm text-[#38BDF8] font-bold">
+          <p className="font-display text-sm text-[#10B981] font-bold">
             @{profile?.username ?? "engineer"}
           </p>
         </div>
       </div>
 
-      <div className="mx-auto grid max-w-5xl gap-8 sm:gap-10 px-6 sm:px-10 py-8 sm:py-12">
+      <div className="mx-auto grid max-w-5xl gap-8 sm:gap-10 px-4 sm:px-10 py-8 sm:py-12">
         <ProgressSummary progress={progress ?? []} />
 
-        <div className="overflow-x-auto rounded-sm border border-[#1E293B] bg-[#0F172A] p-7 shadow-sm space-y-4">
+        <div className="overflow-x-auto rounded-sm border border-[#171717] bg-[#0A0A0A] p-5 sm:p-7 shadow-sm space-y-4">
           <h2 className="font-display text-xs font-bold uppercase tracking-wider text-[#64748B]">
             LOGBOOK // ACTIVITY HISTORY
           </h2>
@@ -153,9 +153,9 @@ function ProfilePage() {
         </div>
 
         {/* Identity Credentials */}
-        <section className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-7 space-y-6 shadow-sm">
-          <div className="flex items-center justify-between border-b border-[#1E293B] pb-4">
-            <h2 className="font-display text-xs font-bold uppercase tracking-wider text-[#38BDF8]">
+        <section className="rounded-sm border border-[#171717] bg-[#0A0A0A] p-5 sm:p-7 space-y-6 shadow-sm">
+          <div className="flex items-center justify-between border-b border-[#171717] pb-4">
+            <h2 className="font-display text-xs font-bold uppercase tracking-wider text-[#10B981]">
               FILE // IDENTITY CREDENTIALS
             </h2>
             <span className="font-display text-xs text-[#64748B]">STAMPED RECORD</span>
@@ -175,7 +175,7 @@ function ProfilePage() {
                 id="username"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
-                className="font-display text-sm bg-[#0B0F19] border-[#1E293B] text-[#F8FAFC] py-2.5 px-4"
+                className="font-display text-sm bg-[#000000] border-[#171717] text-[#F8FAFC] py-2.5 px-4 focus:border-[#10B981]"
                 placeholder="oncall_hero"
               />
             </div>
@@ -187,13 +187,13 @@ function ProfilePage() {
                 id="displayName"
                 value={displayName}
                 onChange={(event) => setDisplayName(event.target.value)}
-                className="font-sans text-xs bg-[#0B0F19] border-[#1E293B] text-[#F8FAFC]"
+                className="font-sans text-xs bg-[#000000] border-[#171717] text-[#F8FAFC] focus:border-[#10B981]"
                 placeholder="Ada Lovelace"
               />
             </div>
             <Button
               type="submit"
-              className="font-mono text-xs font-bold bg-[#38BDF8] text-[#0B0F19] hover:bg-[#7DD3FC]"
+              className="font-mono text-xs font-bold bg-[#10B981] text-[#000000] hover:bg-[#34D399]"
               disabled={saveMutation.isPending}
             >
               {saveMutation.isPending ? "Saving…" : "Save Record"}
@@ -202,7 +202,7 @@ function ProfilePage() {
         </section>
 
         {/* Search Engineers */}
-        <section className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-6 space-y-4 shadow-sm">
+        <section className="rounded-sm border border-[#171717] bg-[#0A0A0A] p-5 sm:p-6 space-y-4 shadow-sm">
           <h2 className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#64748B]">
             ON-CALL ROSTER // FIND ENGINEERS
           </h2>
@@ -210,7 +210,7 @@ function ProfilePage() {
             value={term}
             onChange={(event) => setTerm(event.target.value)}
             placeholder="Search by handle or name…"
-            className="mt-2 font-mono text-xs bg-[#0B0F19] border-[#1E293B] text-[#F8FAFC]"
+            className="mt-2 font-mono text-xs bg-[#000000] border-[#171717] text-[#F8FAFC] focus:border-[#10B981]"
           />
           <ul className="mt-4 space-y-2">
             {debounced.trim().length >= 2 && !isFetching && (results?.length ?? 0) === 0 && (

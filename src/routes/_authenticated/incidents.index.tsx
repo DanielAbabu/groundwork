@@ -155,17 +155,17 @@ export function Board() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0B0F19] text-[#F8FAFC] font-sans selection:bg-[#38BDF8] selection:text-[#0B0F19] pb-16">
+    <div className="flex flex-col min-h-screen bg-[#000000] text-[#F8FAFC] font-sans selection:bg-[#10B981] selection:text-[#000000] pb-16">
       {/* =========================================================================
           TIER 1: IMMEDIATE UNDERSTANDING & TELEMETRY HEADER
           ========================================================================= */}
-      <div className="border-b border-[#1E293B] bg-[#0F172A]/90 backdrop-blur">
+      <div className="border-b border-[#171717] bg-[#0A0A0A]/90 backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             {/* Header Title & Value Prop */}
             <div className="space-y-2 max-w-3xl">
-              <div className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-[#38BDF8]">
-                <Terminal className="size-4 text-[#38BDF8]" />
+              <div className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-[#10B981]">
+                <Terminal className="size-4 text-[#10B981]" />
                 FILE // DOCKET-INDEX · TACTICAL DEBUGGING ROTATION
               </div>
               <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-[#F8FAFC]">
@@ -180,34 +180,34 @@ export function Board() {
             <div className="flex flex-wrap items-center gap-3 shrink-0">
               <button
                 onClick={launchNextUnsolved}
-                className="inline-flex items-center gap-2 rounded-sm bg-[#38BDF8] px-4 py-2.5 font-mono text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all shadow-md"
+                className="inline-flex items-center gap-2 rounded-sm bg-[#10B981] px-4 py-2.5 font-mono text-xs font-bold text-[#000000] hover:bg-[#34D399] transition-all shadow-md"
               >
                 <Zap className="size-3.5" />
                 Launch Next Unsolved →
               </button>
               <button
                 onClick={randomUnsolved}
-                className="inline-flex items-center gap-2 rounded-sm border border-[#334155] bg-[#1E293B] px-4 py-2.5 font-mono text-xs font-semibold text-[#F8FAFC] hover:border-[#38BDF8] hover:text-[#38BDF8] transition-all"
+                className="inline-flex items-center gap-2 rounded-sm border border-[#262626] bg-[#171717] px-4 py-2.5 font-mono text-xs font-semibold text-[#F8FAFC] hover:border-[#10B981] hover:text-[#10B981] transition-all"
               >
-                <Shuffle className="size-3.5 text-[#38BDF8]" />
+                <Shuffle className="size-3.5 text-[#10B981]" />
                 Pick Random Case
               </button>
             </div>
           </div>
 
           {/* Telemetry Progress Band */}
-          <div className="mt-8 pt-5 border-t border-[#1E293B] grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+          <div className="mt-8 pt-5 border-t border-[#171717] grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
             <div className="sm:col-span-8 space-y-2">
               <div className="flex items-center justify-between font-mono text-xs">
                 <span className="text-[#64748B] uppercase tracking-wider flex items-center gap-2">
-                  <Activity className="size-3.5 text-[#38BDF8]" />
+                  <Activity className="size-3.5 text-[#10B981]" />
                   Rotation Clearance Progress
                 </span>
-                <span className="font-bold text-[#38BDF8]">{pct}% Clearance</span>
+                <span className="font-bold text-[#10B981]">{pct}% Clearance</span>
               </div>
-              <div className="h-2 w-full rounded-none bg-[#0B0F19] overflow-hidden border border-[#1E293B]">
+              <div className="h-2 w-full rounded-none bg-[#000000] overflow-hidden border border-[#171717]">
                 <div
-                  className="h-full bg-gradient-to-r from-[#38BDF8] to-[#10B981] transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all duration-500"
                   style={{ width: `${pct}%` }}
                 />
               </div>
