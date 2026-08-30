@@ -1,7 +1,8 @@
-import { type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Link, useLocation, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { Menu, X, LayoutDashboard, Terminal, Compass, User, LogOut } from "lucide-react";
 import { NudgePopover } from "@/components/NudgePopover";
 import { BrandLogo } from "@/components/BrandLogo";
 import { handleSignOut } from "@/lib/auth";
@@ -16,6 +17,7 @@ export function AppShell({ children }: AppShellProps) {
   const router = useRouter();
   const location = useLocation();
   const queryClient = useQueryClient();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const fetchProgress = useServerFn(listProgress);
   const { data: progress } = useQuery<ProgressRow[]>({
@@ -120,71 +122,95 @@ export function AppShell({ children }: AppShellProps) {
               Sign out
             </button>
 
-            {/* Mobile Nav Button */}
+            {/* Mobile Nav Toggle */}
             <button
               id="mobile-nav-btn"
-              className="md:hidden rounded-sm border border-[#1E293B] bg-[#0F172A] p-1.5 text-[#94A3B8]"
-              onClick={() => {
-                const sheet = document.getElementById("mobile-nav-sheet");
-                sheet?.classList.toggle("translate-y-full");
-              }}
+              className="md:hidden rounded-sm border border-[#1E293B] bg-[#0F172A] p-1.5 text-[#94A3B8] hover:text-[#F8FAFC]"
+              onClick={() => setMobileMenuOpen((open) => !open)}
+              aria-label="Toggle Navigation Menu"
             >
-              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
+              {mobileMenuOpen ? <X className="size-4" /> : <Menu className="size-4" />}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile bottom sheet nav */}
-      <div
-        id="mobile-nav-sheet"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 translate-y-full transition-transform duration-300 border-t border-[#1E293B] bg-[#0F172A] p-4"
-      >
-        <div className="flex flex-col gap-1">
-          <Link
-            to="/incidents"
-            onClick={() =>
-              document.getElementById("mobile-nav-sheet")?.classList.add("translate-y-full")
-            }
-            className={`rounded-sm px-4 py-3 font-sans text-sm tracking-wide transition-colors ${
-              isIncidents
-                ? "bg-[#1E293B] text-[#38BDF8] font-semibold"
-                : "text-[#94A3B8] hover:text-[#F8FAFC]"
-            }`}
-          >
-            Debugging Rotation
-          </Link>
-          <Link
-            to="/design"
-            onClick={() =>
-              document.getElementById("mobile-nav-sheet")?.classList.add("translate-y-full")
-            }
-            className={`rounded-sm px-4 py-3 font-sans text-sm tracking-wide transition-colors ${
-              isDesign
-                ? "bg-[#1E293B] text-[#38BDF8] font-semibold"
-                : "text-[#94A3B8] hover:text-[#F8FAFC]"
-            }`}
-          >
-            System Design
-          </Link>
-          <Link
-            to="/dashboard"
-            onClick={() =>
-              document.getElementById("mobile-nav-sheet")?.classList.add("translate-y-full")
-            }
-            className="rounded-sm px-4 py-3 font-sans text-sm tracking-wide text-[#94A3B8] hover:text-[#F8FAFC] transition-colors"
-          >
-            Dashboard
-          </Link>
+      {/* Mobile Menu Backdrop & Drawer */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-50 flex flex-col bg-[#0B0F19]/95 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="flex h-11 items-center justify-between border-b border-[#1E293B] px-4">
+            <BrandLogo href="/dashboard" />
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="rounded-sm border border-[#1E293B] p-1.5 text-[#94A3B8]"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+            <Link
+              to="/dashboard"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-3 rounded-sm p-3 font-sans text-sm font-semibold transition-colors ${
+                location.pathname === "/dashboard"
+                  ? "bg-[#1E293B] text-[#38BDF8]"
+                  : "text-[#94A3B8] hover:text-[#F8FAFC]"
+              }`}
+            >
+              <LayoutDashboard className="size-4 text-[#38BDF8]" />
+              Dashboard
+            </Link>
+            <Link
+              to="/incidents"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-3 rounded-sm p-3 font-sans text-sm font-semibold transition-colors ${
+                isIncidents
+                  ? "bg-[#1E293B] text-[#38BDF8]"
+                  : "text-[#94A3B8] hover:text-[#F8FAFC]"
+              }`}
+            >
+              <Terminal className="size-4 text-[#38BDF8]" />
+              Debugging Rotation
+            </Link>
+            <Link
+              to="/design"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-3 rounded-sm p-3 font-sans text-sm font-semibold transition-colors ${
+                isDesign
+                  ? "bg-[#1E293B] text-[#38BDF8]"
+                  : "text-[#94A3B8] hover:text-[#F8FAFC]"
+              }`}
+            >
+              <Compass className="size-4 text-[#38BDF8]" />
+              System Design Track
+            </Link>
+            <Link
+              to="/profile"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-3 rounded-sm p-3 font-sans text-sm font-semibold transition-colors ${
+                location.pathname === "/profile"
+                  ? "bg-[#1E293B] text-[#38BDF8]"
+                  : "text-[#94A3B8] hover:text-[#F8FAFC]"
+              }`}
+            >
+              <User className="size-4 text-[#38BDF8]" />
+              Profile Dossier
+            </Link>
+          </div>
+          <div className="border-t border-[#1E293B] p-4 bg-[#0F172A]">
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                handleSignOut(router, queryClient);
+              }}
+              className="w-full flex items-center justify-center gap-2 rounded-sm border border-[#F43F5E]/40 bg-[#F43F5E]/10 py-2.5 font-mono text-xs font-bold text-[#F43F5E]"
+            >
+              <LogOut className="size-3.5" />
+              Sign Out
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Content */}
       <main className="flex-1">{children}</main>

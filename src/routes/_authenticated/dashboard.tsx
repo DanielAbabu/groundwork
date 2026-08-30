@@ -92,7 +92,7 @@ function Dashboard() {
     }) ?? designScenarios[0]!;
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-10 space-y-8 min-h-[calc(100vh-44px)] bg-[#0B0F19] text-[#F8FAFC]">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8 min-h-[calc(100vh-44px)] bg-[#0B0F19] text-[#F8FAFC]">
       {/* ── Welcome Header ── */}
       <div>
         <div className="flex items-center gap-2">

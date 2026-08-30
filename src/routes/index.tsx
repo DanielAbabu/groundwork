@@ -54,7 +54,7 @@ export function Index() {
     <div className="min-h-screen bg-[#0B0F19] text-[#F8FAFC] flex flex-col font-sans selection:bg-[#38BDF8] selection:text-[#0B0F19]">
       {/* ── Nordic Sticky Header ── */}
       <header className="sticky top-0 z-50 w-full border-b border-[#1E293B] bg-[#0F172A]/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3.5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 py-3.5">
           <BrandLogo href="/" />
 
           <div className="flex items-center gap-6">
@@ -82,13 +82,13 @@ export function Index() {
         </div>
       </header>
 
-      <main className="flex-1 space-y-20 lg:space-y-28 pb-20">
+      <main className="flex-1 space-y-16 sm:space-y-20 lg:space-y-28 pb-20">
         {/* =========================================================================
             TIER 1: IMMEDIATE UNDERSTANDING (HERO)
             Goal: Make the product value proposition crystal clear in seconds.
             ========================================================================= */}
-        <section className="relative pt-12 lg:pt-20 border-b border-[#1E293B]/80 bg-gradient-to-b from-[#0F172A]/40 to-[#0B0F19]">
-          <div className="mx-auto max-w-7xl px-6">
+        <section className="relative pt-8 sm:pt-12 lg:pt-20 border-b border-[#1E293B]/80 bg-gradient-to-b from-[#0F172A]/40 to-[#0B0F19]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pb-16">
               {/* Left Asymmetric Narrative Block */}
               <div className="lg:col-span-8 space-y-6">

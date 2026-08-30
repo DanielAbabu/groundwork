@@ -124,7 +124,7 @@ function ProfilePage() {
   return (
     <div className="min-h-[calc(100vh-44px)] bg-[#0B0F19] text-[#F8FAFC] pb-16">
       {/* Header */}
-      <div className="border-b border-[#1E293B] bg-[#0F172A] px-6 py-6">
+      <div className="border-b border-[#1E293B] bg-[#0F172A] px-4 sm:px-6 py-6">
         <div className="mx-auto max-w-5xl">
           <div className="flex items-center gap-2 mb-1">
             <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#38BDF8]">
@@ -142,7 +142,7 @@ function ProfilePage() {
         </div>
       </div>
 
-      <div className="mx-auto grid max-w-5xl gap-8 px-6 py-8">
+      <div className="mx-auto grid max-w-5xl gap-6 sm:gap-8 px-4 sm:px-6 py-6 sm:py-8">
         <ProgressSummary progress={progress ?? []} />
 
         <div className="overflow-x-auto rounded-sm border border-[#1E293B] bg-[#0F172A] p-5 shadow-sm">

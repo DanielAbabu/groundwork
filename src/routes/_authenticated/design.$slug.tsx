@@ -205,30 +205,30 @@ function DesignRoom() {
           </div>
         </div>
       ) : (
-        /* ── Full-Viewport 2-Panel Workspace ── */
-        <div className="flex flex-1 overflow-hidden">
-          {/* ── 3.2 Left Column: "Case File" Panel (320px) ── */}
-          <aside className="w-80 shrink-0 flex flex-col border-r border-[#1E293B] bg-[#0F172A] overflow-y-auto p-5 space-y-6">
+        /* ── Full-Viewport 2-Panel Workspace (Responsive) ── */
+        <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+          {/* ── 3.2 Left Column: "Case File" Panel (Responsive Stack) ── */}
+          <aside className="w-full lg:w-80 shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r border-[#1E293B] bg-[#0F172A] overflow-y-auto p-4 lg:p-5 space-y-4 lg:space-y-6 max-h-48 lg:max-h-none">
             {/* STAKEHOLDER Section */}
-            <div className="space-y-2 border-b border-[#1E293B] pb-4">
+            <div className="space-y-2 border-b border-[#1E293B] pb-3 lg:pb-4">
               <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#64748B] block">
                 STAKEHOLDER
               </span>
-              <div className="flex items-center gap-3 pt-1">
-                <div className="size-9 rounded-full border border-[#38BDF8]/40 bg-[#38BDF8]/10 font-display text-sm font-bold text-[#38BDF8] flex items-center justify-center shrink-0 select-none">
+              <div className="flex items-center gap-3 pt-0.5">
+                <div className="size-8 lg:size-9 rounded-full border border-[#38BDF8]/40 bg-[#38BDF8]/10 font-display text-xs lg:text-sm font-bold text-[#38BDF8] flex items-center justify-center shrink-0 select-none">
                   {initials}
                 </div>
                 <div>
-                  <h4 className="font-display text-sm font-bold text-[#F8FAFC]">
+                  <h4 className="font-display text-xs lg:text-sm font-bold text-[#F8FAFC]">
                     {scenario.stakeholder}
                   </h4>
-                  <p className="font-mono text-[11px] text-[#64748B]">{scenario.stakeholderRole}</p>
+                  <p className="font-mono text-[10px] lg:text-[11px] text-[#64748B]">{scenario.stakeholderRole}</p>
                 </div>
               </div>
             </div>
 
             {/* CONTEXT Section */}
-            <div className="space-y-2 border-b border-[#1E293B] pb-4">
+            <div className="hidden sm:block space-y-2 border-b border-[#1E293B] pb-3 lg:pb-4">
               <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#64748B] block font-bold">
                 CONTEXT
               </span>
@@ -238,11 +238,11 @@ function DesignRoom() {
             </div>
 
             {/* THIS STAGE Section */}
-            <div className="space-y-2 border-l-2 border-[#38BDF8] pl-3 py-1">
+            <div className="space-y-1.5 border-l-2 border-[#38BDF8] pl-3 py-0.5">
               <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#38BDF8] block">
                 THIS STAGE // FOCUS
               </span>
-              <h3 className="font-display text-sm font-bold text-[#F8FAFC]">{stage.title}</h3>
+              <h3 className="font-display text-xs lg:text-sm font-bold text-[#F8FAFC]">{stage.title}</h3>
               <p className="font-sans text-xs leading-relaxed text-[#94A3B8]">{stage.prompt}</p>
             </div>
 

@@ -146,7 +146,7 @@ export function DesignBoard() {
           TIER 1: IMMEDIATE UNDERSTANDING & TELEMETRY HEADER
           ========================================================================= */}
       <div className="border-b border-[#1E293B] bg-[#0F172A]/90 backdrop-blur">
-        <div className="mx-auto max-w-7xl px-6 py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             {/* Header Title & Value Proposition */}
             <div className="space-y-2 max-w-3xl">
@@ -223,7 +223,7 @@ export function DesignBoard() {
         </div>
       </div>
 
-      <main className="flex-1 mx-auto max-w-7xl px-6 py-10 space-y-12">
+      <main className="flex-1 mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-10 space-y-8 sm:space-y-12">
         {/* =========================================================================
             TIER 2: FEATURED SYSTEM BLUEPRINT SPOTLIGHT
             ========================================================================= */}
