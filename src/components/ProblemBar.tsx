@@ -34,11 +34,11 @@ export function ProblemBar({
   rightSlot,
 }: ProblemBarProps) {
   return (
-    <div className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-[#171717] bg-[#0A0A0A] px-6">
+    <div className="flex h-14 shrink-0 items-center justify-between gap-2 sm:gap-4 border-b border-[#171717] bg-[#0A0A0A] px-3 sm:px-6">
       {/* Left: Window Dots + Breadcrumb + Badges + Title */}
-      <div className="flex min-w-0 items-center gap-3">
-        {/* Small Emerald Dot Accent */}
-        <div className="flex items-center gap-1.5 mr-1 select-none">
+      <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+        {/* Small Emerald Dot Accent (hidden on mobile) */}
+        <div className="hidden sm:flex items-center gap-1.5 mr-1 select-none">
           <span className="size-2.5 rounded-full bg-[#171717] border border-[#262626]" />
           <span className="size-2.5 rounded-full bg-[#171717] border border-[#262626]" />
           <span className="size-2.5 rounded-full bg-[#10B981]" />
@@ -55,25 +55,31 @@ export function ProblemBar({
 
         {severity && (
           <span
-            className={`shrink-0 rounded-sm border px-2 py-0.5 font-display text-xs font-bold uppercase tracking-wider ${SEV_CLASSES[severity] ?? "border-[#171717] text-[#64748B]"}`}
+            className={`hidden sm:inline-flex shrink-0 rounded-sm border px-2 py-0.5 font-display text-xs font-bold uppercase tracking-wider ${SEV_CLASSES[severity] ?? "border-[#171717] text-[#64748B]"}`}
           >
             {severity}
           </span>
         )}
 
-        {difficulty && <DifficultyPill difficulty={difficulty} showDot={false} />}
+        {difficulty && (
+          <span className="hidden sm:inline-flex shrink-0">
+            <DifficultyPill difficulty={difficulty} showDot={false} />
+          </span>
+        )}
 
-        <span className="truncate font-display text-base font-bold text-[#F8FAFC]">{title}</span>
+        <span className="truncate font-display text-xs sm:text-base font-bold text-[#F8FAFC]">
+          {title}
+        </span>
       </div>
 
       {/* Right: actions */}
-      <div className="flex shrink-0 items-center gap-3">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         {rightSlot}
 
         {onRun &&
           (passed ? (
-            <span className="flex items-center gap-2 rounded-sm border border-[#2DD4BF]/40 bg-[#2DD4BF]/10 px-4 py-1.5 font-display text-xs font-bold uppercase tracking-wider text-[#2DD4BF]">
-              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span className="flex items-center gap-1.5 rounded-sm border border-[#10B981]/40 bg-[#10B981]/10 px-2.5 py-1 sm:px-4 sm:py-1.5 font-display text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#10B981]">
+              <svg className="size-3.5 sm:size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -84,7 +90,7 @@ export function ProblemBar({
               VERDICT: PASSED
             </span>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <span className="hidden md:inline font-display text-xs text-[#64748B] bg-[#000000] px-2.5 py-1 rounded-sm border border-[#171717]">
                 Ctrl + ↵
               </span>
@@ -93,11 +99,11 @@ export function ProblemBar({
                 onClick={onRun}
                 disabled={runDisabled || running}
                 title="Run hidden tests (Ctrl+Enter)"
-                className="flex items-center gap-2 rounded-sm bg-[#10B981] px-4 py-2 font-display text-xs font-bold text-[#000000] hover:bg-[#34D399] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="flex items-center gap-1.5 rounded-sm bg-[#10B981] px-2.5 py-1.5 sm:px-4 sm:py-2 font-display text-xs font-bold text-[#000000] hover:bg-[#34D399] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
                 {running ? (
                   <>
-                    <svg className="size-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <svg className="size-3.5 sm:size-4 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle
                         className="opacity-25"
                         cx="12"

@@ -22,6 +22,7 @@ import { ProblemBar } from "@/components/ProblemBar";
 import { StakeholderChat } from "@/components/design/StakeholderChat";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/design/$slug")({
   loader: ({ params }) => {
@@ -80,6 +81,7 @@ function DesignRoom() {
   const [grades, setGrades] = useState<Record<string, StageGrade>>({});
   const [submitting, setSubmitting] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [caseFileOpen, setCaseFileOpen] = useState(true);
 
   const stage = scenario.stages[index]!;
   const grade = grades[stage.id];
@@ -126,7 +128,7 @@ function DesignRoom() {
   const stageNames = ["01 CLARIFY", "02 SIZE", "03 SKETCH", "04 DEFEND"];
 
   return (
-    <div className="flex h-[calc(100vh-44px)] flex-col bg-[#0B0F19] text-[#F8FAFC] overflow-hidden">
+    <div className="flex h-[calc(100vh-56px)] flex-col bg-[#000000] text-[#F8FAFC] overflow-hidden">
       {/* ── Problem Bar ── */}
       <ProblemBar
         title={scenario.title}
@@ -137,19 +139,19 @@ function DesignRoom() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowSummary((v) => !v)}
-              className={`rounded-sm border px-3 py-1 font-mono text-xs transition-colors ${
+              className={`rounded-sm border px-2.5 py-1 font-mono text-xs transition-colors whitespace-nowrap ${
                 showSummary
-                  ? "border-[#38BDF8] bg-[#38BDF8]/10 text-[#38BDF8] font-bold"
-                  : "border-[#1E293B] bg-[#0F172A] text-[#64748B] hover:text-[#F8FAFC]"
+                  ? "border-[#10B981] bg-[#10B981]/10 text-[#10B981] font-bold"
+                  : "border-[#171717] bg-[#0A0A0A] text-[#64748B] hover:text-[#F8FAFC]"
               }`}
             >
-              {showSummary ? "← Back to Stage Workspace" : "Review Scorecard"}
+              {showSummary ? "← Stage Workspace" : "Scorecard"}
             </button>
             {!showSummary && (
               <button
                 onClick={onSubmit}
                 disabled={submitting}
-                className="flex items-center gap-1.5 rounded-sm bg-[#38BDF8] px-3.5 py-1.5 font-mono text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all shadow-sm disabled:opacity-50"
+                className="flex items-center gap-1.5 rounded-sm bg-[#10B981] px-3 py-1 font-mono text-xs font-bold text-[#000000] hover:bg-[#34D399] transition-all shadow-sm disabled:opacity-50 whitespace-nowrap"
               >
                 {submitting ? "Grading…" : "Submit Stage"}
               </button>
@@ -158,10 +160,10 @@ function DesignRoom() {
         }
       />
 
-      {/* ── 3.1 Top Horizontal Ruler Stage Stepper ── */}
+      {/* ── Top Horizontal Stage Stepper (Touch Scrollable) ── */}
       {!showSummary && (
-        <div className="border-b border-[#1E293B] bg-[#0F172A] px-6 py-2.5 flex items-center justify-between overflow-x-auto shrink-0 select-none">
-          <div className="flex items-center gap-1 min-w-max w-full justify-between max-w-5xl mx-auto">
+        <div className="border-b border-[#171717] bg-[#0A0A0A] px-3 sm:px-6 py-2 flex items-center overflow-x-auto shrink-0 select-none max-w-full scrollbar-none">
+          <div className="flex items-center gap-2 min-w-max w-full justify-between max-w-5xl mx-auto">
             {scenario.stages.map((st, idx) => {
               const isCurrent = idx === index;
               const isCleared = grades[st.id]?.passed || savedPassed.has(st.id);
@@ -173,12 +175,12 @@ function DesignRoom() {
                     setIndex(idx);
                     setShowSummary(false);
                   }}
-                  className={`group relative flex items-center gap-2 px-4 py-1.5 font-mono text-xs transition-all rounded-sm ${
+                  className={`group relative flex items-center gap-1.5 px-3 sm:px-4 py-1.5 font-mono text-xs transition-all rounded-sm whitespace-nowrap ${
                     isCurrent
-                      ? "bg-[#38BDF8] text-[#0B0F19] font-bold shadow-sm"
+                      ? "bg-[#10B981] text-[#000000] font-bold shadow-sm"
                       : isCleared
-                        ? "border border-[#10B981]/30 bg-[#10B981]/10 text-[#10B981] hover:bg-[#10B981]/20 font-bold"
-                        : "border border-[#1E293B] bg-[#0B0F19] text-[#64748B] hover:text-[#F8FAFC] hover:border-[#334155]"
+                        ? "border border-[#10B981]/40 bg-[#10B981]/10 text-[#10B981] hover:bg-[#10B981]/20 font-bold"
+                        : "border border-[#171717] bg-[#000000] text-[#64748B] hover:text-[#F8FAFC] hover:border-[#262626]"
                   }`}
                 >
                   {isCleared && !isCurrent && <span className="text-xs">✓</span>}
@@ -191,7 +193,7 @@ function DesignRoom() {
       )}
 
       {showSummary ? (
-        <div className="flex-1 overflow-y-auto p-6 bg-[#000000]">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#000000]">
           <div className="mx-auto max-w-4xl">
             <Summary
               grades={grades}
@@ -205,70 +207,89 @@ function DesignRoom() {
           </div>
         </div>
       ) : (
-        /* ── Full-Viewport 2-Panel Workspace (Responsive) ── */
+        /* ── Full-Viewport 2-Panel Workspace (Responsive Grid Stack) ── */
         <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
-          {/* ── Left Column: "Case File" Panel ── */}
-          <aside className="w-full lg:w-96 shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r border-[#171717] bg-[#0A0A0A] overflow-y-auto p-5 lg:p-8 space-y-6 max-h-72 lg:max-h-none">
-            {/* STAKEHOLDER Section */}
-            <div className="space-y-3 border-b border-[#171717] pb-5">
-              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#10B981] block">
-                STAKEHOLDER
+          {/* ── Left Column: "Case File" Panel (Collapsible on Mobile) ── */}
+          <aside className="w-full lg:w-96 shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r border-[#171717] bg-[#0A0A0A]">
+            {/* Mobile Accordion Header */}
+            <div className="lg:hidden flex items-center justify-between p-3 border-b border-[#171717] bg-[#000000]">
+              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#10B981]">
+                CASE FILE // {scenario.stakeholder}
               </span>
-              <div className="flex items-center gap-3.5 pt-0.5">
-                <div className="size-9 lg:size-10 rounded-full border border-[#10B981]/40 bg-[#10B981]/10 font-display text-sm font-bold text-[#10B981] flex items-center justify-center shrink-0 select-none">
-                  {initials}
-                </div>
-                <div>
-                  <h4 className="font-display text-sm font-bold text-[#F8FAFC]">
-                    {scenario.stakeholder}
-                  </h4>
-                  <p className="font-display text-xs text-[#64748B] mt-0.5">{scenario.stakeholderRole}</p>
+              <button
+                onClick={() => setCaseFileOpen((v) => !v)}
+                className="text-[#64748B] hover:text-[#F8FAFC] flex items-center gap-1 font-mono text-xs"
+              >
+                {caseFileOpen ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+              </button>
+            </div>
+
+            <div
+              className={`overflow-y-auto p-4 sm:p-6 space-y-5 transition-all ${
+                caseFileOpen ? "max-h-48 sm:max-h-64 lg:max-h-none block" : "hidden lg:block"
+              }`}
+            >
+              {/* STAKEHOLDER Section */}
+              <div className="space-y-2 border-b border-[#171717] pb-4">
+                <span className="font-display text-[10px] font-bold uppercase tracking-wider text-[#10B981] block">
+                  STAKEHOLDER
+                </span>
+                <div className="flex items-center gap-3 pt-0.5">
+                  <div className="size-8 sm:size-10 rounded-full border border-[#10B981]/40 bg-[#10B981]/10 font-display text-xs sm:text-sm font-bold text-[#10B981] flex items-center justify-center shrink-0 select-none">
+                    {initials}
+                  </div>
+                  <div>
+                    <h4 className="font-display text-xs sm:text-sm font-bold text-[#F8FAFC]">
+                      {scenario.stakeholder}
+                    </h4>
+                    <p className="font-display text-[11px] text-[#64748B] mt-0.5">{scenario.stakeholderRole}</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* CONTEXT Section */}
-            <div className="hidden sm:block space-y-2 border-b border-[#171717] pb-5">
-              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#64748B] block font-bold">
-                CONTEXT
-              </span>
-              <p className="font-display text-sm leading-relaxed text-[#94A3B8] italic">
-                "{scenario.framing}"
-              </p>
-            </div>
-
-            {/* THIS STAGE Section */}
-            <div className="space-y-2 border-l-2 border-[#10B981] pl-4 py-1">
-              <span className="font-display text-xs font-bold uppercase tracking-wider text-[#10B981] block">
-                THIS STAGE // FOCUS
-              </span>
-              <h3 className="font-display text-sm lg:text-base font-bold text-[#F8FAFC]">{stage.title}</h3>
-              <p className="font-display text-sm leading-relaxed text-[#94A3B8]">{stage.prompt}</p>
-            </div>
-
-            {/* Stage Grade Status pill if graded */}
-            {grade && (
-              <div
-                className={`rounded-sm border p-4 font-display text-xs space-y-1.5 ${
-                  grade.passed
-                    ? "border-[#10B981]/40 bg-[#10B981]/10 text-[#10B981]"
-                    : "border-[#F43F5E]/40 bg-[#F43F5E]/10 text-[#F43F5E]"
-                }`}
-              >
-                <div className="flex items-center justify-between font-bold text-sm">
-                  <span>STAGE VERDICT</span>
-                  <span>{Math.round(grade.score * 100)}%</span>
-                </div>
-                <p className="text-xs font-normal">
-                  {grade.passed ? "✓ Stage cleared!" : "Needs adjustment before advancing."}
+              {/* CONTEXT Section */}
+              <div className="space-y-1.5 border-b border-[#171717] pb-4">
+                <span className="font-display text-[10px] font-bold uppercase tracking-wider text-[#64748B] block">
+                  CONTEXT
+                </span>
+                <p className="font-display text-xs leading-relaxed text-[#94A3B8] italic">
+                  "{scenario.framing}"
                 </p>
               </div>
-            )}
+
+              {/* THIS STAGE Section */}
+              <div className="space-y-1.5 border-l-2 border-[#10B981] pl-3 py-0.5">
+                <span className="font-display text-[10px] font-bold uppercase tracking-wider text-[#10B981] block">
+                  THIS STAGE // FOCUS
+                </span>
+                <h3 className="font-display text-xs sm:text-sm font-bold text-[#F8FAFC]">{stage.title}</h3>
+                <p className="font-display text-xs leading-relaxed text-[#94A3B8]">{stage.prompt}</p>
+              </div>
+
+              {/* Stage Grade Status pill if graded */}
+              {grade && (
+                <div
+                  className={`rounded-sm border p-3 font-display text-xs space-y-1 ${
+                    grade.passed
+                      ? "border-[#10B981]/40 bg-[#10B981]/10 text-[#10B981]"
+                      : "border-[#EF4444]/40 bg-[#EF4444]/10 text-[#EF4444]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between font-bold text-xs">
+                    <span>STAGE VERDICT</span>
+                    <span>{Math.round(grade.score * 100)}%</span>
+                  </div>
+                  <p className="text-[11px] font-normal">
+                    {grade.passed ? "✓ Stage cleared!" : "Needs adjustment before advancing."}
+                  </p>
+                </div>
+              )}
+            </div>
           </aside>
 
           {/* ── Right Panel: Stage Workspace Canvas / Interactive UI ── */}
-          <section className="flex flex-1 flex-col overflow-hidden bg-[#0B0F19]">
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <section className="flex flex-1 flex-col overflow-hidden bg-[#000000]">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
               {stage.kind === "clarify" && (
                 <StakeholderChat
                   questions={stage.questions}
@@ -311,7 +332,7 @@ function DesignRoom() {
             </div>
 
             {/* Bottom Navigation Bar */}
-            <div className="flex shrink-0 items-center justify-between border-t border-[#1E293B] bg-[#0F172A] px-6 py-3">
+            <div className="flex shrink-0 items-center justify-between border-t border-[#171717] bg-[#0A0A0A] px-4 py-2.5 sm:px-6 sm:py-3">
               <button
                 disabled={index === 0}
                 onClick={() => setIndex((i) => i - 1)}
@@ -324,7 +345,7 @@ function DesignRoom() {
                 {index < scenario.stages.length - 1 ? (
                   <button
                     onClick={() => setIndex((i) => i + 1)}
-                    className="font-mono text-xs text-[#F8FAFC] hover:text-[#38BDF8] font-bold transition-colors"
+                    className="font-mono text-xs text-[#F8FAFC] hover:text-[#10B981] font-bold transition-colors"
                   >
                     Next Stage →
                   </button>
@@ -363,8 +384,8 @@ function FeedbackList({ grade }: { grade: StageGrade }) {
   const passing = grade.feedback.filter((item) => item.ok === true);
 
   return (
-    <div className="mt-6 space-y-4 border-t border-[#3A342C] pt-6">
-      <p className="font-mono text-xs font-semibold uppercase tracking-widest text-[#7C7364]">
+    <div className="mt-6 space-y-4 border-t border-[#171717] pt-6">
+      <p className="font-mono text-xs font-semibold uppercase tracking-widest text-[#64748B]">
         GRADING FEEDBACK ({passing.length}/{grade.feedback.length} RULES PASSED)
       </p>
       <div className="space-y-3">
@@ -375,12 +396,12 @@ function FeedbackList({ grade }: { grade: StageGrade }) {
           return (
             <div
               key={i}
-              className={`rounded border p-4 transition-all ${
+              className={`rounded-sm border p-4 transition-all ${
                 isPass
-                  ? "border-[#7FB88A]/30 bg-[#7FB88A]/5"
+                  ? "border-[#10B981]/30 bg-[#10B981]/5"
                   : isPartial
-                    ? "border-[#C8912B]/30 bg-[#C8912B]/5"
-                    : "border-[#C4593F]/30 bg-[#C4593F]/5"
+                    ? "border-[#F59E0B]/30 bg-[#F59E0B]/5"
+                    : "border-[#EF4444]/30 bg-[#EF4444]/5"
               }`}
             >
               <div className="flex flex-wrap items-center gap-3">
@@ -388,21 +409,21 @@ function FeedbackList({ grade }: { grade: StageGrade }) {
                 <span
                   className={`inline-block -rotate-2 rounded-none border px-2 py-0.5 font-mono text-[10px] font-extrabold uppercase tracking-widest shadow-sm select-none ${
                     isPass
-                      ? "border-[#7FB88A] bg-[#7FB88A]/20 text-[#7FB88A]"
+                      ? "border-[#10B981] bg-[#10B981]/20 text-[#10B981]"
                       : isPartial
-                        ? "border-[#C8912B] bg-[#C8912B]/20 text-[#C8912B]"
-                        : "border-[#C4593F] bg-[#C4593F]/20 text-[#C4593F]"
+                        ? "border-[#F59E0B] bg-[#F59E0B]/20 text-[#F59E0B]"
+                        : "border-[#EF4444] bg-[#EF4444]/20 text-[#EF4444]"
                   }`}
                 >
                   {isPass ? "PASS" : isPartial ? "PARTIAL" : "MISS"}
                 </span>
 
                 {item.rule && (
-                  <span className="rounded-none border border-[#3A342C] bg-[#161412] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[#7C7364]">
+                  <span className="rounded-none border border-[#171717] bg-[#000000] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[#64748B]">
                     {RULE_LABELS[item.rule] ?? item.rule}
                   </span>
                 )}
-                <span className="font-mono text-xs font-semibold text-[#F2ECE1]">{item.label}</span>
+                <span className="font-mono text-xs font-semibold text-[#F8FAFC]">{item.label}</span>
               </div>
 
               {item.targets && item.targets.length > 0 && (
@@ -410,16 +431,16 @@ function FeedbackList({ grade }: { grade: StageGrade }) {
                   {item.targets.map((target) => (
                     <span
                       key={target}
-                      className="rounded-none border border-[#3A342C] bg-[#161412] px-2 py-0.5 font-mono text-[10px] text-[#B8AE9C]"
+                      className="rounded-none border border-[#171717] bg-[#000000] px-2 py-0.5 font-mono text-[10px] text-[#94A3B8]"
                     >
                       {target}
                     </span>
                   ))}
                 </div>
               )}
-              <p className="mt-2 font-mono text-xs leading-relaxed text-[#B8AE9C]">{item.detail}</p>
+              <p className="mt-2 font-mono text-xs leading-relaxed text-[#94A3B8]">{item.detail}</p>
               {item.fix && (
-                <p className="mt-2 border-l-2 border-[#C8912B] pl-3 font-mono text-[11px] text-[#C8912B]">
+                <p className="mt-2 border-l-2 border-[#F59E0B] pl-3 font-mono text-[11px] text-[#F59E0B]">
                   Fix: {item.fix}
                 </p>
               )}
@@ -465,28 +486,28 @@ function CapacityStage({
   const isAllComputed = computedFields === stage.fields.length;
 
   return (
-    <div className="rounded-none border border-[#3A342C] bg-[#1D1A17] p-6 space-y-6 shadow-md select-none">
+    <div className="rounded-sm border border-[#171717] bg-[#0A0A0A] p-4 sm:p-6 space-y-6 shadow-md select-none">
       {/* Ledger Sheet Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#3A342C] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#171717] pb-4">
         <div>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] block">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#10B981] block">
             ACCOUNTING LEDGER // CAPACITY & BANDWIDTH ESTIMATION
           </span>
-          <h3 className="font-serif text-lg font-semibold text-[#F2ECE1] mt-0.5">
+          <h3 className="font-display text-base sm:text-lg font-semibold text-[#F8FAFC] mt-0.5">
             System Traffic & Storage Ledger
           </h3>
         </div>
-        <div className="font-mono text-xs text-[#7C7364] text-left sm:text-right">
+        <div className="font-mono text-xs text-[#64748B] text-left sm:text-right">
           <span>LINE ITEMS: {stage.fields.length}</span>
         </div>
       </div>
 
-      {/* Assumption Text (Serif Italic Note Block) */}
-      <div className="rounded-none border-l-2 border-[#C8912B] bg-[#161412] p-3.5 space-y-1">
-        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B]">
+      {/* Assumption Text (Italic Note Block) */}
+      <div className="rounded-sm border-l-2 border-[#10B981] bg-[#000000] p-3.5 space-y-1">
+        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#10B981]">
           ESTIMATION ASSUMPTIONS & FORMULA GUIDANCE
         </span>
-        <p className="font-serif italic text-xs leading-relaxed text-[#B8AE9C]">
+        <p className="font-sans italic text-xs leading-relaxed text-[#94A3B8]">
           "Assume 86,400 seconds per day. Write exact numeric inputs or mathematical expressions
           (e.g. 500 * 86400 or 1000/2) directly into each ledger row to evaluate system
           constraints."
@@ -494,7 +515,7 @@ function CapacityStage({
       </div>
 
       {/* Ruled Ledger Table */}
-      <div className="space-y-0 divide-y divide-[#3A342C]/40 border-t border-b border-[#3A342C]">
+      <div className="space-y-0 divide-y divide-[#171717] border-t border-b border-[#171717]">
         {stage.fields.map((field, idx) => {
           const rawText = inputs[field.id] ?? "";
           const evalResult = evaluateFormula(rawText);
@@ -504,32 +525,32 @@ function CapacityStage({
           return (
             <div
               key={field.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3 px-2 transition-colors hover:bg-[#26221D]/40"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3 px-1 sm:px-2 transition-colors hover:bg-[#171717]/40"
             >
               {/* Left Column: Label & Target Formula */}
               <div className="space-y-0.5 max-w-md">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-[10px] text-[#7C7364]">{idx + 1}.</span>
+                  <span className="font-mono text-[10px] text-[#64748B]">{idx + 1}.</span>
                   <label
-                    className="font-mono text-xs font-semibold text-[#F2ECE1] cursor-pointer"
+                    className="font-mono text-xs font-semibold text-[#F8FAFC] cursor-pointer"
                     htmlFor={field.id}
                   >
                     {field.label}
                   </label>
                 </div>
                 {field.formula && (
-                  <p className="font-mono text-[10px] text-[#7C7364] pl-4">
-                    Target Formula: <span className="text-[#C8912B]">{field.formula}</span>
+                  <p className="font-mono text-[10px] text-[#64748B] pl-4">
+                    Target Formula: <span className="text-[#10B981]">{field.formula}</span>
                   </p>
                 )}
               </div>
 
               {/* Right Column: Expression Input & Evaluated Value */}
-              <div className="flex items-center gap-3 justify-end">
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 justify-between sm:justify-end w-full sm:w-auto">
                 {hasValue && !invalid && (
-                  <div className="font-mono text-xs text-right mr-1">
-                    <span className="text-[10px] text-[#7C7364] uppercase block">EVALUATED</span>
-                    <span className="font-bold text-[#7FB88A]">
+                  <div className="font-mono text-xs text-left sm:text-right mr-1">
+                    <span className="text-[10px] text-[#64748B] uppercase block">EVALUATED</span>
+                    <span className="font-bold text-[#10B981]">
                       {evalResult.value!.toLocaleString()}
                     </span>
                   </div>
@@ -541,10 +562,10 @@ function CapacityStage({
                   placeholder={field.formula ? "e.g. 500 * 86400" : "100"}
                   value={rawText}
                   onChange={(e) => handleInputChange(field.id, e.target.value)}
-                  className="w-48 text-right font-mono text-xs bg-[#161412] border-[#3A342C] text-[#F2ECE1] focus-visible:ring-1 focus-visible:ring-[#C8912B] rounded-none"
+                  className="w-full sm:w-48 text-left sm:text-right font-mono text-xs bg-[#000000] border-[#171717] text-[#F8FAFC] focus-visible:ring-1 focus-visible:ring-[#10B981] rounded-sm"
                 />
 
-                <span className="font-mono text-xs text-[#7C7364] w-14 shrink-0 text-left">
+                <span className="font-mono text-xs text-[#64748B] w-14 shrink-0 text-left">
                   {field.unit ?? ""}
                 </span>
               </div>
@@ -553,17 +574,17 @@ function CapacityStage({
         })}
       </div>
 
-      {/* Totals Footer Bar with Accounting Double-Rule */}
-      <div className="border-t-2 border-b-2 border-t-[#C8912B]/80 border-b-[#C8912B] py-3.5 px-4 bg-[#161412] flex items-center justify-between brass-emboss select-none">
+      {/* Totals Footer Bar */}
+      <div className="border-t-2 border-b-2 border-t-[#10B981]/80 border-b-[#10B981] py-3.5 px-4 bg-[#000000] flex items-center justify-between select-none">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B]">
+          <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#10B981]">
             LEDGER STATUS // TOTALS
           </span>
         </div>
 
         <div className="flex items-center gap-3 font-mono text-xs">
-          <span className="text-[#7C7364]">COMPUTED ROWS:</span>
-          <span className={`font-bold ${isAllComputed ? "text-[#7FB88A]" : "text-[#C8912B]"}`}>
+          <span className="text-[#64748B]">COMPUTED ROWS:</span>
+          <span className={`font-bold ${isAllComputed ? "text-[#10B981]" : "text-[#F59E0B]"}`}>
             {computedFields} / {stage.fields.length} {isAllComputed ? "✓ COMPLETE" : "PENDING"}
           </span>
         </div>
@@ -592,16 +613,16 @@ function ComponentsStage({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded border border-[#3A342C] bg-[#1D1A17] p-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-sm border border-[#171717] bg-[#0A0A0A] p-4">
         <div>
-          <h4 className="font-serif font-semibold text-[#F2ECE1] text-sm">
+          <h4 className="font-display font-semibold text-[#F8FAFC] text-sm">
             System Resilience & Latency Analysis
           </h4>
-          <p className="font-mono text-xs text-[#7C7364] mt-0.5">
+          <p className="font-mono text-xs text-[#64748B] mt-0.5">
             {spofs.length === 0 ? (
-              <span className="text-[#7FB88A] font-semibold">✓ No Single Points of Failure</span>
+              <span className="text-[#10B981] font-semibold">✓ No Single Points of Failure</span>
             ) : (
-              <span className="text-[#C4593F] font-semibold">
+              <span className="text-[#EF4444] font-semibold">
                 ⚠️ {spofs.length} Single Point(s) of Failure detected
               </span>
             )}
@@ -609,13 +630,13 @@ function ComponentsStage({
         </div>
 
         {latency.hops.length > 0 && (
-          <div className="w-64">
+          <div className="w-full sm:w-64">
             <LatencyBar estimate={latency} />
           </div>
         )}
       </div>
 
-      <div className="h-[520px] rounded border border-[#3A342C] overflow-hidden">
+      <div className="h-[450px] sm:h-[520px] rounded-sm border border-[#171717] overflow-hidden">
         <ComponentCanvas
           nodes={answer.nodes}
           edges={answer.edges}
@@ -643,28 +664,28 @@ function TradeoffStage({
   const charCount = answer.text.length;
 
   return (
-    <div className="rounded-none border border-[#3A342C] bg-[#1D1A17] p-6 space-y-6 shadow-md select-none">
+    <div className="rounded-sm border border-[#171717] bg-[#0A0A0A] p-4 sm:p-6 space-y-6 shadow-md select-none">
       {/* Field Report Header */}
-      <div className="flex items-center justify-between border-b border-[#3A342C] pb-4">
+      <div className="flex items-center justify-between border-b border-[#171717] pb-4">
         <div>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B] block">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#10B981] block">
             FIELD REPORT // TRADE-OFF DEFENSE
           </span>
-          <h3 className="font-serif text-lg font-semibold text-[#F2ECE1] mt-0.5">
+          <h3 className="font-display text-base sm:text-lg font-semibold text-[#F8FAFC] mt-0.5">
             Architectural Defense Statement
           </h3>
         </div>
-        <div className="font-mono text-xs text-[#7C7364]">
+        <div className="font-mono text-xs text-[#64748B]">
           <span>FORM: FR-404</span>
         </div>
       </div>
 
       {/* Prompt guidance */}
-      <div className="rounded-none border-l-2 border-[#C8912B] bg-[#161412] p-3.5 space-y-1">
-        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#C8912B]">
+      <div className="rounded-sm border-l-2 border-[#10B981] bg-[#000000] p-3.5 space-y-1">
+        <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#10B981]">
           DEFENSE BRIEF
         </span>
-        <p className="font-serif italic text-xs leading-relaxed text-[#B8AE9C]">
+        <p className="font-sans italic text-xs leading-relaxed text-[#94A3B8]">
           "Defend one key architectural trade-off accepted in your design (e.g. eventual consistency
           over strong consistency, cache warming overhead, or fan-out write amplification). Explain
           why this trade-off is optimal for the workload and how you mitigate failure modes."
@@ -678,22 +699,22 @@ function TradeoffStage({
           value={answer.text}
           onChange={(event) => onChange({ text: event.target.value })}
           placeholder="Authored architectural defense statement..."
-          className="font-serif text-sm leading-relaxed text-[#F2ECE1] bg-[#161412] border-[#3A342C] p-5 focus-visible:ring-1 focus-visible:ring-[#C8912B] focus-visible:border-b-[#C8912B] rounded-none shadow-inner"
+          className="font-sans text-sm leading-relaxed text-[#F8FAFC] bg-[#000000] border-[#171717] p-4 sm:p-5 focus-visible:ring-1 focus-visible:ring-[#10B981] rounded-sm shadow-inner"
         />
-        <div className="absolute bottom-3 right-3 font-mono text-[10px] text-[#7C7364] bg-[#1D1A17] px-2 py-0.5 border border-[#3A342C]">
+        <div className="absolute bottom-3 right-3 font-mono text-[10px] text-[#64748B] bg-[#0A0A0A] px-2 py-0.5 border border-[#171717]">
           {charCount} CHARS
         </div>
       </div>
 
       {/* Staff Engineer Ideal Defense Strategy Box */}
       {grade && (
-        <details className="rounded-none border border-[#C8912B]/40 bg-[#C8912B]/5 p-4 transition-all">
-          <summary className="cursor-pointer font-mono text-xs font-bold uppercase tracking-widest text-[#C8912B] flex items-center justify-between">
+        <details className="rounded-sm border border-[#10B981]/40 bg-[#10B981]/5 p-4 transition-all">
+          <summary className="cursor-pointer font-mono text-xs font-bold uppercase tracking-widest text-[#10B981] flex items-center justify-between">
             <span>💡 STAFF ENGINEER IDEAL DEFENSE STRATEGY</span>
-            <span className="text-[10px] text-[#7C7364]">[EXPAND]</span>
+            <span className="text-[10px] text-[#64748B]">[EXPAND]</span>
           </summary>
-          <div className="mt-3.5 border-t border-[#C8912B]/20 pt-3">
-            <p className="font-serif text-xs leading-relaxed text-[#F2ECE1]">{stage.ideal}</p>
+          <div className="mt-3.5 border-t border-[#10B981]/20 pt-3">
+            <p className="font-sans text-xs leading-relaxed text-[#F8FAFC]">{stage.ideal}</p>
           </div>
         </details>
       )}
@@ -720,35 +741,35 @@ function Summary({
   const pct = Math.round((cleared / scenario.stages.length) * 100);
   const hiringSignal =
     pct >= 85
-      ? { label: "STRONG HIRE", color: "text-[#7FB88A] border-[#7FB88A]/40 bg-[#7FB88A]/10" }
+      ? { label: "STRONG HIRE", color: "text-[#10B981] border-[#10B981]/40 bg-[#10B981]/10" }
       : pct >= 70
-        ? { label: "HIRE", color: "text-[#C8912B] border-[#C8912B]/40 bg-[#C8912B]/10" }
+        ? { label: "HIRE", color: "text-[#34D399] border-[#34D399]/40 bg-[#34D399]/10" }
         : pct >= 50
-          ? { label: "BORDERLINE", color: "text-[#D99B26] border-[#D99B26]/40 bg-[#D99B26]/10" }
-          : { label: "NO HIRE", color: "text-[#C4593F] border-[#C4593F]/40 bg-[#C4593F]/10" };
+          ? { label: "BORDERLINE", color: "text-[#F59E0B] border-[#F59E0B]/40 bg-[#F59E0B]/10" }
+          : { label: "NO HIRE", color: "text-[#EF4444] border-[#EF4444]/40 bg-[#EF4444]/10" };
 
   return (
-    <section className="rounded border border-[#3A342C] bg-[#1D1A17] p-6 space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#3A342C] pb-5">
+    <section className="rounded-sm border border-[#171717] bg-[#0A0A0A] p-6 space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#171717] pb-5">
         <div>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#7C7364] block">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#64748B] block">
             EVALUATION DOCKET // SUMMARY
           </span>
-          <h2 className="font-serif text-2xl font-semibold text-[#F2ECE1] mt-1">
+          <h2 className="font-display text-xl sm:text-2xl font-semibold text-[#F8FAFC] mt-1">
             {scenario.title}
           </h2>
-          <p className="font-mono text-xs text-[#7C7364] mt-0.5">
+          <p className="font-mono text-xs text-[#64748B] mt-0.5">
             Stakeholder: {scenario.stakeholder} ({scenario.stakeholderRole})
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="text-right">
-            <span className="font-mono text-xs text-[#7C7364] block">Overall Score</span>
-            <span className="font-mono text-2xl font-bold text-[#F2ECE1]">{pct}%</span>
+            <span className="font-mono text-xs text-[#64748B] block">Overall Score</span>
+            <span className="font-mono text-2xl font-bold text-[#F8FAFC]">{pct}%</span>
           </div>
           <span
-            className={`rounded border px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-widest brass-emboss ${hiringSignal.color}`}
+            className={`rounded-sm border px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-widest ${hiringSignal.color}`}
           >
             {hiringSignal.label}
           </span>
@@ -756,7 +777,7 @@ function Summary({
       </div>
 
       <div className="space-y-3">
-        <h3 className="font-mono text-xs font-semibold uppercase tracking-widest text-[#7C7364]">
+        <h3 className="font-mono text-xs font-semibold uppercase tracking-widest text-[#64748B]">
           Stage Performance Breakdown
         </h3>
 
@@ -767,19 +788,19 @@ function Summary({
             return (
               <li
                 key={stage.id}
-                className="rounded border border-[#3A342C] bg-[#161412] p-4 space-y-2"
+                className="rounded-sm border border-[#171717] bg-[#000000] p-4 space-y-2"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="font-serif text-base font-medium text-[#F2ECE1]">
+                  <span className="font-display text-sm sm:text-base font-medium text-[#F8FAFC]">
                     {i + 1}. {stage.title} ({STAGE_KIND_LABELS[stage.kind]})
                   </span>
                   <span
-                    className={`rounded border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest ${
+                    className={`rounded-sm border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest ${
                       passed
-                        ? "border-[#7FB88A]/30 bg-[#7FB88A]/10 text-[#7FB88A]"
+                        ? "border-[#10B981]/30 bg-[#10B981]/10 text-[#10B981]"
                         : grade
-                          ? "border-[#C4593F]/30 bg-[#C4593F]/10 text-[#C4593F]"
-                          : "border-[#3A342C] text-[#7C7364]"
+                          ? "border-[#EF4444]/30 bg-[#EF4444]/10 text-[#EF4444]"
+                          : "border-[#171717] text-[#64748B]"
                     }`}
                   >
                     {passed ? "CLEARED ✓" : grade ? "NEEDS PASS" : "NOT SUBMITTED"}
@@ -789,7 +810,7 @@ function Summary({
                 <div className="pt-1">
                   <button
                     onClick={() => onJump(i)}
-                    className="font-mono text-[11px] uppercase tracking-widest text-[#C8912B] hover:underline font-semibold"
+                    className="font-mono text-[11px] uppercase tracking-widest text-[#10B981] hover:underline font-semibold"
                   >
                     ← Revisit Stage {i + 1}
                   </button>

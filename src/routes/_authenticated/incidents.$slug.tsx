@@ -437,7 +437,7 @@ function IncidentRoom() {
         </div>
 
         {/* ── MOBILE VIEW: High-Density Tab View Switcher ── */}
-        <div className="lg:hidden flex flex-1 flex-col overflow-hidden pb-12 w-full">
+        <div className="lg:hidden flex flex-1 flex-col overflow-hidden pb-14 w-full">
           {/* Mobile Top View Switcher */}
           <div className="flex items-center border-b border-[#171717] bg-[#0A0A0A] shrink-0">
             <button
@@ -481,7 +481,7 @@ function IncidentRoom() {
           {/* Mobile View Container */}
           <div className="flex-1 overflow-hidden">
             {mobileTab === "brief" && (
-              <div className="h-full overflow-y-auto p-4 space-y-5 bg-[#0A0A0A]">
+              <div className="h-full overflow-y-auto p-4 pb-20 space-y-5 bg-[#0A0A0A]">
                 <div className="flex flex-wrap items-center gap-2 border-b border-[#171717] pb-3">
                   <span className="rounded-sm border border-[#EF4444]/40 bg-[#EF4444]/10 px-2 py-0.5 font-mono text-[10px] font-bold text-[#EF4444]">
                     {scenario.severity}
