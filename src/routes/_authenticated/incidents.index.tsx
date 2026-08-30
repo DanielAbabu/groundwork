@@ -20,10 +20,7 @@ import {
   Search,
   X,
   Shuffle,
-  ShieldCheck,
-  FileCode,
   SlidersHorizontal,
-  Clock,
   Sparkles,
   Activity,
 } from "lucide-react";
@@ -50,12 +47,6 @@ type SortDir = "asc" | "desc";
 
 const DIFFICULTY_ORDER: Record<Difficulty, number> = { starter: 0, routine: 1, tricky: 2 };
 const STATUS_ORDER: Record<string, number> = { resolved: 0, attempted: 1, unattempted: 2 };
-
-const SEV_BADGE: Record<string, string> = {
-  "SEV-1": "bg-[#EF4444] text-[#FFFFFF]",
-  "SEV-2": "bg-[#F59E0B] text-[#0B0F19]",
-  "SEV-3": "bg-[#10B981] text-[#0B0F19]",
-};
 
 export function Board() {
   const navigate = useNavigate();
@@ -213,40 +204,40 @@ export function Board() {
               </div>
             </div>
 
-            <div className="sm:col-span-4 flex items-center justify-between sm:justify-end gap-6 font-mono text-xs border-t sm:border-t-0 border-[#1E293B] pt-3 sm:pt-0">
+            <div className="sm:col-span-4 flex items-center justify-between sm:justify-end gap-6 font-mono text-xs border-t sm:border-t-0 border-[#171717] pt-3 sm:pt-0">
               <div>
                 <div className="text-[10px] text-[#64748B] uppercase">Resolved</div>
                 <div className="font-bold text-[#10B981] text-base">{resolved}</div>
               </div>
-              <div className="border-r border-[#1E293B] h-6" />
+              <div className="border-r border-[#171717] h-6" />
               <div>
                 <div className="text-[10px] text-[#64748B] uppercase">Open Docket</div>
                 <div className="font-bold text-[#F8FAFC] text-base">
                   {scenarios.length - resolved}
                 </div>
               </div>
-              <div className="border-r border-[#1E293B] h-6" />
+              <div className="border-r border-[#171717] h-6" />
               <div>
                 <div className="text-[10px] text-[#64748B] uppercase">Total Incidents</div>
-                <div className="font-bold text-[#38BDF8] text-base">{scenarios.length}</div>
+                <div className="font-bold text-[#10B981] text-base">{scenarios.length}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <main className="flex-1 mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-10 space-y-8 sm:space-y-10">
+      <main className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-6 py-6 sm:py-10 space-y-8 sm:space-y-10">
         {/* =========================================================================
             TIER 2: FEATURED INCIDENT SPOTLIGHT CARD
             ========================================================================= */}
-        <section className="rounded-sm border border-[#38BDF8]/40 bg-gradient-to-r from-[#0F172A] via-[#0B0F19] to-[#0F172A] p-6 lg:p-8 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#38BDF8]/5 rounded-bl-full pointer-events-none" />
+        <section className="rounded-sm border border-[#10B981]/40 bg-gradient-to-r from-[#0A0A0A] via-[#000000] to-[#0A0A0A] p-6 lg:p-8 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#10B981]/5 rounded-bl-full pointer-events-none" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Info Column */}
             <div className="lg:col-span-8 space-y-4">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-[10px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 px-2.5 py-1 rounded-sm border border-[#38BDF8]/30 uppercase tracking-widest flex items-center gap-1.5">
+                <span className="font-mono text-[10px] font-bold text-[#10B981] bg-[#10B981]/10 px-2.5 py-1 rounded-sm border border-[#10B981]/30 uppercase tracking-widest flex items-center gap-1.5">
                   <Sparkles className="size-3" />
                   Recommended Next Incident
                 </span>
@@ -269,13 +260,13 @@ export function Board() {
               {/* Concept tags */}
               <div className="flex flex-wrap items-center gap-2 pt-1">
                 <DifficultyPill difficulty={featuredScenario.difficulty} />
-                <span className="rounded-sm border border-[#1E293B] bg-[#0F172A] px-2 py-0.5 font-mono text-[11px] text-[#94A3B8]">
+                <span className="rounded-sm border border-[#171717] bg-[#0A0A0A] px-2 py-0.5 font-mono text-[11px] text-[#94A3B8]">
                   {TYPE_LABELS[featuredScenario.type]}
                 </span>
                 {(featuredScenario.concepts ?? []).map((concept) => (
                   <span
                     key={concept}
-                    className="font-mono text-[10px] text-[#38BDF8] bg-[#38BDF8]/5 px-2 py-0.5 rounded-sm border border-[#38BDF8]/20"
+                    className="font-mono text-[10px] text-[#10B981] bg-[#10B981]/10 px-2 py-0.5 rounded-sm border border-[#10B981]/20"
                   >
                     #{concept}
                   </span>
@@ -284,7 +275,7 @@ export function Board() {
             </div>
 
             {/* Right Action Column */}
-            <div className="lg:col-span-4 rounded-sm border border-[#1E293B] bg-[#0B0F19] p-5 space-y-4 flex flex-col justify-between h-full">
+            <div className="lg:col-span-4 rounded-sm border border-[#171717] bg-[#0A0A0A] p-5 space-y-4 flex flex-col justify-between h-full">
               <div className="space-y-2">
                 <div className="font-mono text-xs font-bold text-[#64748B] uppercase tracking-wider">
                   Incident Manifest Specs
@@ -300,7 +291,7 @@ export function Board() {
                   </div>
                   <div className="flex justify-between text-[#94A3B8]">
                     <span>Status:</span>
-                    <span className="capitalize font-bold text-[#38BDF8]">{featuredStatus}</span>
+                    <span className="capitalize font-bold text-[#10B981]">{featuredStatus}</span>
                   </div>
                 </div>
               </div>
@@ -312,7 +303,7 @@ export function Board() {
                     params: { slug: featuredScenario.id },
                   })
                 }
-                className="w-full inline-flex items-center justify-center gap-2 rounded-sm bg-[#38BDF8] px-5 py-3 font-mono text-xs font-bold text-[#0B0F19] hover:bg-[#7DD3FC] transition-all shadow-md"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-sm bg-[#10B981] px-5 py-3 font-mono text-xs font-bold text-[#000000] hover:bg-[#34D399] transition-all shadow-md"
               >
                 Launch Incident Room <ArrowRight className="size-4" />
               </button>
@@ -321,21 +312,21 @@ export function Board() {
         </section>
 
         {/* =========================================================================
-            TIER 3: CATEGORY & COMMAND FILTER BAR
+            TIER 3: CATEGORY & COMMAND FILTER BAR (FULLY RESPONSIVE)
             ========================================================================= */}
         <section className="space-y-4">
-          {/* Category Filter Pills Row */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-            <span className="font-mono text-xs font-bold text-[#64748B] uppercase shrink-0 mr-2 flex items-center gap-1.5">
-              <SlidersHorizontal className="size-3.5 text-[#38BDF8]" />
+          {/* Category Filter Pills Row (Touch Scrollable) */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none max-w-full">
+            <span className="font-mono text-xs font-bold text-[#64748B] uppercase shrink-0 mr-1 flex items-center gap-1.5">
+              <SlidersHorizontal className="size-3.5 text-[#10B981]" />
               Category:
             </span>
             <button
               onClick={() => setTypeFilter("ALL")}
-              className={`px-3 py-1 font-mono text-xs rounded-sm border whitespace-nowrap transition-all ${
+              className={`px-3 py-1 font-mono text-xs rounded-sm border whitespace-nowrap shrink-0 transition-all ${
                 typeFilter === "ALL"
-                  ? "border-[#38BDF8] bg-[#38BDF8] font-bold text-[#0B0F19]"
-                  : "border-[#1E293B] bg-[#0F172A] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#334155]"
+                  ? "border-[#10B981] bg-[#10B981] font-bold text-[#000000]"
+                  : "border-[#171717] bg-[#0A0A0A] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#262626]"
               }`}
             >
               All Categories ({scenarios.length})
@@ -345,10 +336,10 @@ export function Board() {
               <button
                 key={cat.type}
                 onClick={() => setTypeFilter(cat.type)}
-                className={`px-3 py-1 font-mono text-xs rounded-sm border whitespace-nowrap transition-all ${
+                className={`px-3 py-1 font-mono text-xs rounded-sm border whitespace-nowrap shrink-0 transition-all ${
                   typeFilter === cat.type
-                    ? "border-[#38BDF8] bg-[#38BDF8] font-bold text-[#0B0F19]"
-                    : "border-[#1E293B] bg-[#0F172A] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#334155]"
+                    ? "border-[#10B981] bg-[#10B981] font-bold text-[#000000]"
+                    : "border-[#171717] bg-[#0A0A0A] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#262626]"
                 }`}
               >
                 {cat.label}
@@ -356,17 +347,17 @@ export function Board() {
             ))}
           </div>
 
-          {/* Search & Secondary Filter Controls */}
-          <div className="rounded-sm border border-[#1E293B] bg-[#0F172A] p-4 flex flex-wrap items-center justify-between gap-4">
+          {/* Search & Secondary Filter Controls (Responsive Grid Stack) */}
+          <div className="rounded-sm border border-[#171717] bg-[#0A0A0A] p-4 space-y-4 lg:space-y-0 lg:flex lg:items-center lg:justify-between lg:gap-4">
             {/* Search Input */}
-            <div className="flex min-w-[280px] flex-1 items-center gap-2.5 rounded-sm border border-[#1E293B] bg-[#0B0F19] px-3.5 py-2">
+            <div className="flex w-full lg:flex-1 items-center gap-2.5 rounded-sm border border-[#171717] bg-[#000000] px-3.5 py-2">
               <Search className="size-4 text-[#64748B] shrink-0" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search incident titles, services, symptoms, concept tags..."
-                className="flex-1 bg-transparent font-mono text-xs text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none"
+                placeholder="Search incident titles, services, symptoms..."
+                className="w-full bg-transparent font-mono text-xs text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none"
               />
               {search && (
                 <button onClick={() => setSearch("")} className="text-[#64748B] hover:text-[#F8FAFC]">
@@ -375,40 +366,45 @@ export function Board() {
               )}
             </div>
 
-            {/* Difficulty Filter Tabs */}
-            <div className="flex items-center gap-1.5 font-mono text-xs">
-              <span className="text-[#64748B] text-[10px] uppercase font-bold mr-1">Difficulty:</span>
-              {(["ALL", "starter", "routine", "tricky"] as const).map((d) => (
-                <button
-                  key={d}
-                  onClick={() => setDiffFilter(d)}
-                  className={`rounded-sm px-2.5 py-1 transition-all ${
-                    diffFilter === d
-                      ? "bg-[#38BDF8] text-[#0B0F19] font-bold"
-                      : "text-[#64748B] hover:text-[#F8FAFC]"
-                  }`}
-                >
-                  {d === "ALL" ? "All" : DIFFICULTY_LABELS[d]}
-                </button>
-              ))}
-            </div>
+            {/* Filter Groups Row (Responsive Horizontal Scroll on Mobile) */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 max-w-full overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+              {/* Difficulty Filter Tabs */}
+              <div className="flex items-center gap-1.5 font-mono text-xs shrink-0">
+                <span className="text-[#64748B] text-[10px] uppercase font-bold mr-1">Difficulty:</span>
+                {(["ALL", "starter", "routine", "tricky"] as const).map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setDiffFilter(d)}
+                    className={`rounded-sm px-2.5 py-1 transition-all ${
+                      diffFilter === d
+                        ? "bg-[#10B981] text-[#000000] font-bold"
+                        : "text-[#64748B] hover:text-[#F8FAFC]"
+                    }`}
+                  >
+                    {d === "ALL" ? "All" : DIFFICULTY_LABELS[d]}
+                  </button>
+                ))}
+              </div>
 
-            {/* Status Filter Tabs */}
-            <div className="flex items-center gap-1.5 font-mono text-xs">
-              <span className="text-[#64748B] text-[10px] uppercase font-bold mr-1">Status:</span>
-              {(["ALL", "resolved", "attempted", "unattempted"] as const).map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setStatusFilter(s)}
-                  className={`rounded-sm px-2.5 py-1 capitalize transition-all ${
-                    statusFilter === s
-                      ? "bg-[#38BDF8] text-[#0B0F19] font-bold"
-                      : "text-[#64748B] hover:text-[#F8FAFC]"
-                  }`}
-                >
-                  {s === "ALL" ? "All" : s}
-                </button>
-              ))}
+              <div className="hidden sm:block border-r border-[#171717] h-4" />
+
+              {/* Status Filter Tabs */}
+              <div className="flex items-center gap-1.5 font-mono text-xs shrink-0">
+                <span className="text-[#64748B] text-[10px] uppercase font-bold mr-1">Status:</span>
+                {(["ALL", "resolved", "attempted", "unattempted"] as const).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setStatusFilter(s)}
+                    className={`rounded-sm px-2.5 py-1 capitalize transition-all ${
+                      statusFilter === s
+                        ? "bg-[#10B981] text-[#000000] font-bold"
+                        : "text-[#64748B] hover:text-[#F8FAFC]"
+                    }`}
+                  >
+                    {s === "ALL" ? "All" : s}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -417,39 +413,41 @@ export function Board() {
             TIER 4: ENHANCED CASE DOCKET LIST
             ========================================================================= */}
         <section className="space-y-3">
-          <div className="flex items-center justify-between font-mono text-xs text-[#64748B] px-1">
+          {/* Sort Header (Responsive Stack) */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 font-mono text-xs text-[#64748B] px-1">
             <span>
               Showing <strong className="text-[#F8FAFC]">{filtered.length}</strong> of {scenarios.length} docket cases
             </span>
-            <div className="flex items-center gap-4">
-              <span>Sort by:</span>
+            <div className="flex items-center gap-3 max-w-full overflow-x-auto scrollbar-none pb-1 sm:pb-0">
+              <span className="shrink-0">Sort by:</span>
               <button
                 onClick={() => toggleSort("index")}
-                className={`hover:text-[#F8FAFC] ${sortKey === "index" ? "text-[#38BDF8] font-bold" : ""}`}
+                className={`hover:text-[#F8FAFC] shrink-0 ${sortKey === "index" ? "text-[#10B981] font-bold" : ""}`}
               >
                 No. {sortKey === "index" && (sortDir === "asc" ? "↑" : "↓")}
               </button>
               <button
                 onClick={() => toggleSort("title")}
-                className={`hover:text-[#F8FAFC] ${sortKey === "title" ? "text-[#38BDF8] font-bold" : ""}`}
+                className={`hover:text-[#F8FAFC] shrink-0 ${sortKey === "title" ? "text-[#10B981] font-bold" : ""}`}
               >
                 Title {sortKey === "title" && (sortDir === "asc" ? "↑" : "↓")}
               </button>
               <button
                 onClick={() => toggleSort("difficulty")}
-                className={`hover:text-[#F8FAFC] ${sortKey === "difficulty" ? "text-[#38BDF8] font-bold" : ""}`}
+                className={`hover:text-[#F8FAFC] shrink-0 ${sortKey === "difficulty" ? "text-[#10B981] font-bold" : ""}`}
               >
                 Difficulty {sortKey === "difficulty" && (sortDir === "asc" ? "↑" : "↓")}
               </button>
               <button
                 onClick={() => toggleSort("status")}
-                className={`hover:text-[#F8FAFC] ${sortKey === "status" ? "text-[#38BDF8] font-bold" : ""}`}
+                className={`hover:text-[#F8FAFC] shrink-0 ${sortKey === "status" ? "text-[#10B981] font-bold" : ""}`}
               >
                 Status {sortKey === "status" && (sortDir === "asc" ? "↑" : "↓")}
               </button>
             </div>
           </div>
 
+          {/* Cards List */}
           <div className="space-y-4 sm:space-y-5">
             {filtered.map((scenario) => {
               const row = byId.get(scenario.id);
@@ -460,12 +458,12 @@ export function Board() {
                   onClick={() =>
                     navigate({ to: "/incidents/$slug", params: { slug: scenario.id } })
                   }
-                  className="group rounded-sm border border-[#1E293B] bg-[#0F172A] p-6 sm:p-7 hover:border-[#38BDF8] hover:bg-[#0F172A]/90 transition-all cursor-pointer shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+                  className="group rounded-sm border border-[#171717] bg-[#0A0A0A] p-5 sm:p-7 hover:border-[#10B981] hover:bg-[#0A0A0A]/90 transition-all cursor-pointer shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-5"
                 >
                   {/* Left Metadata & Title Block */}
-                  <div className="space-y-3 flex-1">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className="font-display text-xs font-bold text-[#38BDF8]">
+                  <div className="space-y-3 flex-1 w-full">
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <span className="font-display text-xs font-bold text-[#10B981]">
                         INC-{scenario._index < 10 ? `0${scenario._index}` : scenario._index}
                       </span>
                       <span className="font-display text-xs text-[#64748B]">/</span>
@@ -478,20 +476,20 @@ export function Board() {
                       </span>
                     </div>
 
-                    <h3 className="font-display text-xl font-bold text-[#F8FAFC] group-hover:text-[#38BDF8] transition-colors leading-snug">
+                    <h3 className="font-display text-lg sm:text-xl font-bold text-[#F8FAFC] group-hover:text-[#10B981] transition-colors leading-snug">
                       {scenario.title}
                     </h3>
 
-                    <p className="font-display text-sm text-[#CBD5E1] leading-relaxed line-clamp-2">
+                    <p className="font-display text-xs sm:text-sm text-[#CBD5E1] leading-relaxed line-clamp-2">
                       {scenario.symptom}
                     </p>
 
                     {/* Concept tags */}
-                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
                       {(scenario.concepts ?? []).map((concept) => (
                         <span
                           key={concept}
-                          className="font-display text-xs text-[#94A3B8] bg-[#0B0F19] px-2.5 py-1 rounded-sm border border-[#1E293B]"
+                          className="font-display text-[11px] text-[#94A3B8] bg-[#000000] px-2 py-0.5 rounded-sm border border-[#171717]"
                         >
                           #{concept}
                         </span>
@@ -500,29 +498,29 @@ export function Board() {
                   </div>
 
                   {/* Right Status & Action Block */}
-                  <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto shrink-0 gap-4 border-t sm:border-t-0 border-[#1E293B] pt-4 sm:pt-0">
-                    <div className="flex items-center gap-2.5">
+                  <div className="flex flex-wrap items-center md:flex-col md:items-end justify-between w-full md:w-auto shrink-0 gap-3 border-t md:border-t-0 border-[#171717] pt-3 md:pt-0">
+                    <div className="flex flex-wrap items-center gap-2">
                       <DifficultyPill difficulty={scenario.difficulty} />
 
                       {status === "resolved" ? (
-                        <span className="inline-flex items-center gap-1.5 font-display text-xs font-bold text-[#10B981] bg-[#10B981]/10 px-3 py-1 rounded-sm border border-[#10B981]/30">
-                          <CheckCircle2 className="size-4 text-[#10B981]" />
+                        <span className="inline-flex items-center gap-1 font-display text-[11px] font-bold text-[#10B981] bg-[#10B981]/10 px-2.5 py-0.5 rounded-sm border border-[#10B981]/30">
+                          <CheckCircle2 className="size-3.5 text-[#10B981]" />
                           RESOLVED
                         </span>
                       ) : status === "attempted" ? (
-                        <span className="inline-flex items-center gap-1.5 font-display text-xs font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-3 py-1 rounded-sm border border-[#F59E0B]/30">
-                          <AlertTriangle className="size-4 text-[#F59E0B]" />
+                        <span className="inline-flex items-center gap-1 font-display text-[11px] font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-2.5 py-0.5 rounded-sm border border-[#F59E0B]/30">
+                          <AlertTriangle className="size-3.5 text-[#F59E0B]" />
                           IN PROGRESS ({row?.attempts ?? 1})
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 font-display text-xs text-[#64748B] bg-[#0B0F19] px-3 py-1 rounded-sm border border-[#1E293B]">
+                        <span className="inline-flex items-center gap-1 font-display text-[11px] text-[#64748B] bg-[#000000] px-2.5 py-0.5 rounded-sm border border-[#171717]">
                           OPEN DOCKET
                         </span>
                       )}
                     </div>
 
-                    <span className="inline-flex items-center gap-1.5 font-display text-xs font-bold text-[#38BDF8] group-hover:translate-x-1 transition-transform">
-                      Launch Scenario <ArrowRight className="size-4" />
+                    <span className="inline-flex items-center gap-1.5 font-display text-xs font-bold text-[#10B981] group-hover:translate-x-1 transition-transform">
+                      Launch Scenario <ArrowRight className="size-3.5" />
                     </span>
                   </div>
                 </article>
@@ -531,7 +529,7 @@ export function Board() {
           </div>
 
           {filtered.length === 0 && (
-            <div className="py-16 text-center rounded-sm border border-[#1E293B] bg-[#0F172A]">
+            <div className="py-16 text-center rounded-sm border border-[#171717] bg-[#0A0A0A]">
               <p className="font-mono text-sm text-[#64748B]">
                 No incident docket cases match your search filter.
               </p>
@@ -542,7 +540,7 @@ export function Board() {
                   setDiffFilter("ALL");
                   setStatusFilter("ALL");
                 }}
-                className="mt-3 font-mono text-xs font-bold text-[#38BDF8] hover:underline"
+                className="mt-3 font-mono text-xs font-bold text-[#10B981] hover:underline"
               >
                 Clear all filters
               </button>
