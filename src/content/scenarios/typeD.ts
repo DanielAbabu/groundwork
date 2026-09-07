@@ -11,20 +11,35 @@ export const typeDScenarios: Scenario[] = [
     symptom: "paginate() returns 9 of 10 requested items and undercounts total pages",
     framing:
       "A customer noticed rows vanishing between page 1 and page 2 of their export. Nothing is deleted — the slice boundaries are wrong.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/search/paginate?page=1&pageSize=10",
+      method: "GET",
+      appName: "SEARCH PAGINATION ROUTER",
+      description: "Search results pagination helper endpoint",
+    },
     files: [
       {
         path: "src/search/paginate.js",
-        content: `// Should return { items, page, pageSize, total, totalPages } for a 1-based page.
-// Pages are full-size except the last one.
+        content: `/**
+ * Search Gateway - Pagination Subsystem
+ */
+
+/**
+ * Returns paginated items for a 1-based page index.
+ *
+ * @param {Array} rows - Complete dataset
+ * @param {number} page - 1-based page number
+ * @param {number} pageSize - Number of items per page
+ */
 function paginate(rows, page, pageSize) {
   const start = (page - 1) * pageSize;
-  const items = rows.slice(start, start + pageSize - 1);
+  const items = rows.slice(start, start + pageSize);
   return {
     items: items,
     page: page,
     pageSize: pageSize,
     total: rows.length,
-    totalPages: Math.floor(rows.length / pageSize),
+    totalPages: Math.ceil(rows.length / pageSize),
   };
 }
 
@@ -73,12 +88,28 @@ test("the partial last page returns the remainder", () => {
     symptom: "getTopActivity(items, N) returns N - 1 entries",
     framing:
       "The dashboard recent activity widget is configured for 5 entries but only renders 4. An array slice boundary error is dropping the Nth item.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/dashboard/activity?limit=5",
+      method: "GET",
+      appName: "EXECUTIVE DASHBOARD ACTIVITY FEED",
+      description: "Top recent user activity feed API",
+    },
     files: [
       {
         path: "src/dashboard/activity.js",
-        content: `function getTopActivity(activities, limit) {
+        content: `/**
+ * Dashboard API - Activity Feed Engine
+ */
+
+/**
+ * Returns top N activity entries from activity log collection.
+ *
+ * @param {Array} activities - List of activity events
+ * @param {number} limit - Maximum number of entries to return
+ */
+function getTopActivity(activities, limit) {
   if (!activities || !Array.isArray(activities)) return [];
-  return activities.slice(0, limit - 1);
+  return activities.slice(0, limit);
 }
 
 module.exports = { getTopActivity };
@@ -112,12 +143,28 @@ test("returns requested limit count", () => {
     symptom: "Webhook notifications marked as failed after 2 retries instead of 3",
     framing:
       "Failed webhooks stop retrying after 2 attempts despite product policy requiring 3 retries. The attempt comparison operator is stopping early.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/webhooks/retry/evaluate",
+      method: "POST",
+      appName: "WEBHOOK DELIVERY RETRY WORKER",
+      description: "Exponential backoff & retry evaluator",
+      defaultPayload: { attemptCount: 3, maxRetries: 3 }
+    },
     files: [
       {
         path: "src/webhooks/retry.js",
-        content: `function shouldRetry(attemptCount, maxRetries = 3) {
-  // Bug: attemptCount < maxRetries stops at 2 retries
-  return attemptCount < maxRetries;
+        content: `/**
+ * Webhook Dispatcher - Retry Strategy Module
+ */
+
+/**
+ * Evaluates whether a failed webhook dispatch should be re-attempted.
+ *
+ * @param {number} attemptCount - Current attempt number (1-based)
+ * @param {number} maxRetries - Maximum allowed retry attempts
+ */
+function shouldRetry(attemptCount, maxRetries = 3) {
+  return attemptCount <= maxRetries;
 }
 
 module.exports = { shouldRetry };
@@ -153,17 +200,35 @@ test("allows retries up to maxRetries", () => {
     symptom: "Monthly revenue reports exclude transactions occurring on the final day of the month",
     framing:
       "End of month revenue reports exclude transactions occurring on the last day of the month. Converting the end date string defaults to 00:00:00 midnight.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/reports/revenue?startDate=2026-03-01&endDate=2026-03-31",
+      method: "GET",
+      appName: "REVENUE REPORTING AGGREGATOR",
+      description: "Financial date boundary report filter",
+    },
     files: [
       {
         path: "src/reports/filter.js",
-        content: `function filterByDateRange(records, startDate, endDate) {
+        content: `/**
+ * Financial Reports Subsystem - Date Range Filter
+ */
+
+/**
+ * Filters transaction records occurring within [startDate, endDate] inclusive.
+ *
+ * @param {Array<{id: number, date: string}>} records - List of records with ISO date string
+ * @param {string} startDate - Start date YYYY-MM-DD
+ * @param {string} endDate - End date YYYY-MM-DD
+ */
+function filterByDateRange(records, startDate, endDate) {
   const startMs = new Date(startDate).getTime();
-  // Bug: endDate timestamp is 00:00:00, excluding transactions on that date
-  const endMs = new Date(endDate).getTime();
+  const endObj = new Date(endDate);
+  endObj.setUTCHours(23, 59, 59, 999);
+  const endMs = endObj.getTime();
 
   return records.filter(r => {
     const t = new Date(r.date).getTime();
-    return t >= startMs && t < endMs;
+    return t >= startMs && t <= endMs;
   });
 }
 

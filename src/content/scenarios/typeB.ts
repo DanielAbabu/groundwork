@@ -1,51 +1,69 @@
 import type { Scenario } from "@/lib/scenarios/types";
 
-/**
- * Shared in-memory mock database used by the Type B scenarios.
- * Deterministic: the seed is a literal and every query() call works on a copy,
- * so the hidden tests always see the same rows.
- */
 function dbSource(seed: string) {
-  return `// Tiny in-memory database. Seeded data is fixed; every query works on a copy.
+  return `/**
+ * Core Database Abstraction & ORM Query Builder Layer
+ * Simulates a knex / django-style chained query interface over seeded SQL tables.
+ */
+
 const data = ${seed};
 
-function query(table) {
-  let rows = (data[table] || []).map((row) => ({ ...row }));
-  const api = {
-    where(field, value) {
-      rows = rows.filter((row) => row[field] === value);
-      return api;
-    },
-    whereIn(field, values) {
-      rows = rows.filter((row) => values.includes(row[field]));
-      return api;
-    },
-    whereNot(field, value) {
-      rows = rows.filter((row) => row[field] !== value);
-      return api;
-    },
-    orderBy(field) {
-      rows = rows.slice().sort((a, b) => (a[field] > b[field] ? 1 : a[field] < b[field] ? -1 : 0));
-      return api;
-    },
-    limit(n) {
-      rows = rows.slice(0, n);
-      return api;
-    },
-    all() {
-      return rows;
-    },
-    first() {
-      return rows.length ? rows[0] : null;
-    },
-    count() {
-      return rows.length;
-    },
-  };
-  return api;
+class DatabaseConnectionPool {
+  constructor(seedData) {
+    this.tables = JSON.parse(JSON.stringify(seedData));
+  }
+
+  table(tableName) {
+    const rawRows = (this.tables[tableName] || []).map((row) => ({ ...row }));
+    let rows = [...rawRows];
+
+    const builder = {
+      where(field, value) {
+        rows = rows.filter((row) => row[field] === value);
+        return builder;
+      },
+      whereIn(field, values) {
+        const set = new Set(values);
+        rows = rows.filter((row) => set.has(row[field]));
+        return builder;
+      },
+      whereNot(field, value) {
+        rows = rows.filter((row) => row[field] !== value);
+        return builder;
+      },
+      orderBy(field, direction = "asc") {
+        rows = rows.slice().sort((a, b) => {
+          if (a[field] > b[field]) return direction === "asc" ? 1 : -1;
+          if (a[field] < b[field]) return direction === "asc" ? -1 : 1;
+          return 0;
+        });
+        return builder;
+      },
+      limit(n) {
+        rows = rows.slice(0, n);
+        return builder;
+      },
+      all() {
+        return rows;
+      },
+      first() {
+        return rows.length ? rows[0] : null;
+      },
+      count() {
+        return rows.length;
+      },
+    };
+    return builder;
+  }
 }
 
-module.exports = { query, data };
+const pool = new DatabaseConnectionPool(data);
+
+function query(tableName) {
+  return pool.table(tableName);
+}
+
+module.exports = { query, pool, data };
 `;
 }
 
@@ -70,15 +88,34 @@ export const typeBScenarios: Scenario[] = [
     symptom: "GET /users/:id returns 404 for ids that definitely exist",
     framing:
       "Support has 60 tickets in an hour: everyone's profile page says the account does not exist. The rows are still in the database — the lookup is asking the wrong question.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/accounts/users/u_1",
+      method: "GET",
+      appName: "ACCOUNTS & USER DIRECTORY API",
+      description: "User profile lookup service endpoint",
+    },
     files: [
       {
         path: "src/routes/users.js",
         context: true,
-        content: `const { findUserById } = require("../data/users");
+        content: `/**
+ * Accounts Subsystem - User HTTP Controller
+ * Route: GET /api/v1/accounts/users/:id
+ */
+
+const { findUserById } = require("../data/users");
 
 function getUser(req) {
-  const user = findUserById(req.params.id);
-  if (!user) return { status: 404, body: { error: "not_found" } };
+  const userId = req && req.params ? req.params.id : null;
+  if (!userId) {
+    return { status: 400, body: { error: "bad_request", message: "Missing required parameter :id" } };
+  }
+
+  const user = findUserById(userId);
+  if (!user) {
+    return { status: 404, body: { error: "not_found", message: \`User '\${userId}' does not exist in accounts directory\` } };
+  }
+
   return { status: 200, body: user };
 }
 
@@ -87,10 +124,21 @@ module.exports = { getUser };
       },
       {
         path: "src/data/users.js",
-        content: `const { query } = require("../db");
+        content: `/**
+ * User Repository Layer
+ * Queries the accounts relational data store for user records.
+ */
 
+const { query } = require("../db");
+
+/**
+ * Finds a user record by primary key ID.
+ *
+ * @param {string} id - Unique user ID (e.g. "u_1")
+ * @returns {Object|null} User record or null if not found
+ */
 function findUserById(id) {
-  return query("users").where("email", id).first();
+  return query("users").where("id", id).first();
 }
 
 module.exports = { findUserById };
@@ -135,13 +183,34 @@ test("returns null for non-existent ID", () => {
     symptom: "Monthly invoices charge orgs for suspended user accounts",
     framing:
       "Customers are getting billed for suspended team members. The active user count query filters by organization ID, but fails to check account status.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/billing/cron/active-users?org_id=o_2",
+      method: "GET",
+      appName: "MONTHLY BILLING CRON WORKER",
+      description: "Active billable seat counting pipeline",
+    },
     files: [
       {
         path: "src/data/active-users.js",
-        content: `const { query } = require("../db");
+        content: `/**
+ * Active Seat Count Repository
+ * Queries billable active user seats for organization billing exports.
+ */
 
+const { query } = require("../db");
+
+/**
+ * Returns all active (billable) users for a given organization ID.
+ * Excludes suspended and archived accounts.
+ *
+ * @param {string} orgId - Organization ID
+ * @returns {Array<Object>} List of active billable user rows
+ */
 function findActiveUsers(orgId) {
-  return query("users").where("org_id", orgId).all();
+  return query("users")
+    .where("org_id", orgId)
+    .where("status", "active")
+    .all();
 }
 
 module.exports = { findActiveUsers };
@@ -185,13 +254,30 @@ test("excludes suspended users from count", () => {
     symptom: "GET /audit-logs displays security events belonging to other companies",
     framing:
       "A tenant administrator saw audit log events belonging to another company. The tenant ID query parameter is received but never passed to the database filter.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/audit/logs?tenant_id=t_1",
+      method: "GET",
+      appName: "ENTERPRISE AUDIT LOG EXPLORER",
+      description: "Tenant audit logging and compliance service",
+    },
     files: [
       {
         path: "src/audit/logs.js",
-        content: `const { query } = require("../db");
+        content: `/**
+ * Audit Service - Security Log Repository
+ * Enforces strict multi-tenant isolation across security log queries.
+ */
 
+const { query } = require("../db");
+
+/**
+ * Queries security audit logs specifically isolated to a tenant.
+ *
+ * @param {string} tenantId - Tenant UUID/ID filter
+ * @returns {Array<Object>} Tenant audit log events
+ */
 function queryLogsForTenant(tenantId) {
-  return query("audit_logs").all();
+  return query("audit_logs").where("tenant_id", tenantId).all();
 }
 
 module.exports = { queryLogsForTenant };
@@ -236,16 +322,33 @@ test("returns only logs for specified tenant", () => {
     symptom: "Date-restricted searches return events outside the requested date range",
     framing:
       "Searching with a keyword returns event logs created before the requested start date. The OR condition between action and message overrides the date filter.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/events/search?tenant_id=t_1&q=deploy&start_date=150",
+      method: "GET",
+      appName: "EVENTS & OBSERVABILITY SEARCH ENGINE",
+      description: "Log analytics search gateway endpoint",
+    },
     files: [
       {
         path: "src/events/search.js",
-        content: `const { query } = require("../db");
+        content: `/**
+ * Telemetry Events Gateway - Search Subsystem
+ */
 
+const { query } = require("../db");
+
+/**
+ * Searches tenant event logs matching keyword in action OR message,
+ * filtered strictly to events created on or after startDate.
+ *
+ * @param {string} tenantId - Tenant identifier
+ * @param {string} keyword - Search term
+ * @param {number} startDate - Timestamp lower bound
+ * @returns {Array<Object>} Matching events
+ */
 function searchEvents(tenantId, keyword, startDate) {
-  // Returns events for tenant matching keyword in action OR message, created >= startDate
   const rows = query("events").where("tenant_id", tenantId).all();
   return rows.filter((r) => {
-    // TODO: fix precedence bug where keyword OR bypasses date filter
     return r.created_at >= startDate && (r.action.includes(keyword) || r.message.includes(keyword));
   });
 }

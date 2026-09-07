@@ -11,20 +11,31 @@ export const typeGScenarios: Scenario[] = [
     symptom: "Paid subscribers get 403 Forbidden on premium features",
     framing:
       "Customer support received 80 complaints: paying enterprise accounts cannot access export tools. Free users report unexpectedly having full premium access.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/entitlements/evaluate",
+      method: "POST",
+      appName: "ENTITLEMENTS & FEATURE FLAG EVALUATOR",
+      description: "RBAC plan entitlement feature gate service",
+      defaultPayload: { user: { plan: "pro" }, feature: "premium" }
+    },
     files: [
       {
         path: "src/flags/entitlements.js",
-        content: `// Evaluates whether a user account has access to a feature.
-// Contract:
-//  - if feature is "premium", requires user.plan === "pro" OR user.plan === "enterprise"
-//  - if feature is "beta", requires user.isBetaTester === true
-//  - default features are allowed for all
+        content: `/**
+ * Entitlements Service - Feature Gate Evaluator
+ */
+
+/**
+ * Evaluates whether a user account has access to a requested feature gate.
+ *
+ * @param {{plan?: string, isBetaTester?: boolean}} user
+ * @param {string} feature
+ */
 function canAccessFeature(user, feature) {
   if (!user) return false;
   
   if (feature === "premium") {
-    // TODO: Fix inverted feature check
-    return user.plan !== "pro" && user.plan !== "enterprise";
+    return user.plan === "pro" || user.plan === "enterprise";
   }
   
   if (feature === "beta") {

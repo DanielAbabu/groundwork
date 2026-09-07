@@ -50,6 +50,14 @@ export interface ConceptNote {
   fixPattern: string;
 }
 
+export interface WebPreviewConfig {
+  url: string;
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  description?: string;
+  defaultPayload?: Record<string, unknown> | string;
+  appName?: string;
+}
+
 export interface Scenario {
   id: string;
   title: string;
@@ -77,6 +85,8 @@ export interface Scenario {
   testContent: string;
   /** Shown after a pass, or after 2 failed runs. */
   postmortem: string | PostmortemData;
+  /** Optional interactive webpage preview configuration. */
+  webPreview?: WebPreviewConfig;
 }
 
 export const TYPE_LABELS: Record<ScenarioType, string> = {

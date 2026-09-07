@@ -11,15 +11,27 @@ export const typeFScenarios: Scenario[] = [
     symptom: "Post like counts lag behind actual user interactions",
     framing:
       "High-traffic posts show inconsistent like counts. The update helper reads the current count, increments it in JS memory, and writes it back, overwriting concurrent updates.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/reactions/counter/apply",
+      method: "POST",
+      appName: "REACTIONS & ENGAGEMENT AGGREGATOR",
+      description: "Reaction delta counter worker endpoint",
+      defaultPayload: { currentCount: 5, delta: 1 }
+    },
     files: [
       {
         path: "src/reactions/counter.js",
-        content: `// Applies an incremental delta to a post reaction counter.
-// Contract:
-//  - takes current count and delta (+1 or -1)
-//  - count cannot drop below 0
+        content: `/**
+ * Reactions Subsystem - Counter Delta Engine
+ */
+
+/**
+ * Applies an incremental delta (+1 or -1) to a reaction counter safely.
+ *
+ * @param {number|null|undefined} currentCount
+ * @param {number} delta
+ */
 function applyReactionDelta(currentCount, delta) {
-  // TODO: Fix baseline calculation when delta is negative or currentCount is null/undefined
   const base = Number(currentCount) || 0;
   const next = base + delta;
   return Math.max(0, next);

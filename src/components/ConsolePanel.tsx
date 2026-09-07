@@ -1,23 +1,29 @@
 import { useState } from "react";
 import type { RunResult } from "@/lib/sandbox/runTests";
-import type { ConceptNote } from "@/lib/scenarios/types";
+import type { ConceptNote, Scenario } from "@/lib/scenarios/types";
+import { WebPreviewPanel } from "@/components/WebPreviewPanel";
+import { Globe } from "lucide-react";
 
 interface ConsolePanelProps {
+  scenario?: Scenario | undefined;
   result: RunResult | null;
   running: boolean;
   signal: React.ReactNode;
   conceptNote?: ConceptNote | undefined;
   failedRuns: number;
+  onRunTests?: (() => void) | undefined;
 }
 
 export function ConsolePanel({
+  scenario,
   result,
   running,
   signal,
   conceptNote,
   failedRuns,
+  onRunTests,
 }: ConsolePanelProps) {
-  const [tab, setTab] = useState<"signal" | "console">("signal");
+  const [tab, setTab] = useState<"signal" | "preview" | "console">("preview");
   const [conceptOpen, setConceptOpen] = useState(false);
 
   const cases = result?.kind === "results" ? result.cases : [];
@@ -29,17 +35,26 @@ export function ConsolePanel({
     <div className="flex h-full flex-col bg-[#0F172A] border-l border-[#1E293B]">
       {/* Tab bar */}
       <div className="flex shrink-0 items-center border-b border-[#1E293B] bg-[#0B0F19]">
-        {(["signal", "console"] as const).map((t) => (
+        {(["signal", "preview", "console"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`flex h-9 items-center gap-1.5 px-4 font-mono text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
+            className={`flex h-9 items-center gap-1.5 px-3 font-mono text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
               tab === t
-                ? "border-[#38BDF8] text-[#F8FAFC]"
+                ? "border-[#10B981] text-[#F8FAFC]"
                 : "border-transparent text-[#64748B] hover:text-[#94A3B8]"
             }`}
           >
-            {t === "signal" ? "Signal" : "Console"}
+            {t === "signal" ? (
+              "Signal"
+            ) : t === "preview" ? (
+              <span className="flex items-center gap-1">
+                <Globe className="size-3 text-[#10B981]" />
+                Web Preview
+              </span>
+            ) : (
+              "Console"
+            )}
             {t === "console" && result && (
               <span
                 className={`rounded-sm px-1.5 py-0.5 text-[10px] font-bold ${
@@ -60,6 +75,15 @@ export function ConsolePanel({
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
         {tab === "signal" && <div className="p-4">{signal}</div>}
+
+        {tab === "preview" && scenario && (
+          <WebPreviewPanel
+            scenario={scenario}
+            result={result}
+            running={running}
+            onRunTests={onRunTests || (() => {})}
+          />
+        )}
 
         {tab === "console" && (
           <div className="flex flex-col gap-0">

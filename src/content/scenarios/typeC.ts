@@ -11,14 +11,42 @@ export const typeCScenarios: Scenario[] = [
     symptom: "buildWelcomeEmail() resolves with `to: undefined` and a blank first name",
     framing:
       "Two thousand welcome emails went out saying 'Hi undefined'. The user records are complete — the send path is reading data that hasn't arrived yet.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/notifications/welcome",
+      method: "POST",
+      appName: "NOTIFICATIONS & TRANSACTIONAL EMAIL WORKER",
+      description: "Welcome email template compilation worker endpoint",
+      defaultPayload: { userId: "u_1" }
+    },
     files: [
       {
         path: "src/notifications/welcome.js",
-        content: `const { fetchUser } = require("./repo");
+        content: `/**
+ * Notifications Service - Welcome Email Pipeline
+ */
 
-// Should resolve with { to, subject, body } for the given user id.
+const { fetchUser } = require("./repo");
+
+class EmailRenderingError extends Error {
+  constructor(msg) {
+    super(msg);
+    this.name = "EmailRenderingError";
+  }
+}
+
+/**
+ * Builds personalized welcome email object for newly registered users.
+ *
+ * @param {string} userId - Unique account user identifier
+ * @returns {Promise<{to: string, subject: string, body: string}>}
+ */
 async function buildWelcomeEmail(userId) {
-  const user = fetchUser(userId);
+  if (!userId) {
+    throw new EmailRenderingError("Cannot render email: missing userId");
+  }
+
+  const user = await fetchUser(userId);
+
   return {
     to: user.email,
     subject: "Welcome to Groundwork",
@@ -26,18 +54,21 @@ async function buildWelcomeEmail(userId) {
   };
 }
 
-module.exports = { buildWelcomeEmail };
+module.exports = { buildWelcomeEmail, EmailRenderingError };
 `,
       },
       {
         path: "src/notifications/repo.js",
         context: true,
-        content: `const USERS = {
+        content: `/**
+ * User Profile Repository Adapter
+ */
+
+const USERS = {
   u_1: { email: "ada@example.com", firstName: "Ada" },
   u_2: { email: "grace@example.com", firstName: "Grace" },
 };
 
-// Simulates a database round-trip.
 function fetchUser(id) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -82,17 +113,31 @@ test("builds personalized welcome email", async () => {
     symptom: "HTTP 401 Unauthorized errors persist after background token refresh",
     framing:
       "Long-running browser sessions experience 401 errors after an hour. The token store refreshes in the background, but the HTTP client keeps using the initial token.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/gateway/dispatch",
+      method: "GET",
+      appName: "API GATEWAY AUTHENTICATED HTTP CLIENT",
+      description: "OAuth 2.1 token store & bearer header generator",
+    },
     files: [
       {
         path: "src/api/client.js",
-        content: `const { getToken } = require("./token-store");
+        content: `/**
+ * API Gateway Client - Authenticated Fetcher
+ */
 
-const cachedToken = getToken();
+const { getToken } = require("./token-store");
 
+/**
+ * Dispatches an HTTP request formatted with active bearer authorization header.
+ *
+ * @param {string} url - Target endpoint URI
+ */
 async function fetchWithAuth(url) {
+  const currentToken = getToken();
   return {
     url,
-    headers: { Authorization: \`Bearer \${cachedToken}\` },
+    headers: { Authorization: \`Bearer \${currentToken}\` },
   };
 }
 
@@ -139,15 +184,35 @@ test("fetches with updated token", async () => {
     symptom: "Rapid POST /pay calls issue duplicate payment requests to payment gateway",
     framing:
       "Rapidly clicking the payment button submits duplicate charges to the payment gateway. The payment processor needs to lock concurrent requests for the same payment ID.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/payments/process",
+      method: "POST",
+      appName: "PAYMENTS GATEWAY MUTEX ENGINE",
+      description: "Payment concurrency control & idempotent lock server",
+      defaultPayload: { paymentId: "pay_100", amount: 50 }
+    },
     files: [
       {
         path: "src/payments/processor.js",
-        content: `const { chargeGateway } = require("./gateway");
+        content: `/**
+ * Payments Subsystem - Idempotent Payment Processor
+ */
+
+const { chargeGateway } = require("./gateway");
 
 const pending = new Set();
 
+/**
+ * Processes a payment transaction ensuring strict idempotency per payment ID.
+ *
+ * @param {string} paymentId - Unique payment attempt transaction ID
+ * @param {number} amount - Charge amount
+ */
 async function processPayment(paymentId, amount) {
-  // TODO: lock paymentId in pending set while processing, reject duplicates
+  if (pending.has(paymentId)) {
+    throw new Error(\`Duplicate payment request already in progress for \${paymentId}\`);
+  }
+
   pending.add(paymentId);
   try {
     const res = await chargeGateway(paymentId, amount);
@@ -198,14 +263,34 @@ test("blocks concurrent duplicate payment attempts", async () => {
     symptom: "FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory",
     framing:
       "Nightly data exports crash with heap memory exhaustion when processing large datasets. Unbounded Promise.all execution launches every item concurrently.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/exporter/batch",
+      method: "POST",
+      appName: "LARGE SCALE DATA EXPORTER PIPELINE",
+      description: "Batch data transformation & stream export pipeline",
+      defaultPayload: { items: [{ id: 1 }, { id: 2 }, { id: 3 }] }
+    },
     files: [
       {
         path: "src/exporter/batch.js",
-        content: `const { processItem } = require("./worker");
+        content: `/**
+ * Data Exporter Subsystem - Batch Stream Processor
+ */
 
+const { processItem } = require("./worker");
+
+/**
+ * Exports all items while controlling memory pressure.
+ *
+ * @param {Array<Object>} items - Array of data records to process
+ */
 async function exportAllBatches(items) {
-  // Bug: unbounded Promise.all launches all promises at once
-  return Promise.all(items.map(item => processItem(item)));
+  const results = [];
+  for (const item of items) {
+    const res = await processItem(item);
+    results.push(res);
+  }
+  return results;
 }
 
 module.exports = { exportAllBatches };

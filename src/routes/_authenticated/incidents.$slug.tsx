@@ -425,11 +425,13 @@ function IncidentRoom() {
             <ResizablePanel defaultSize={30} minSize={20} maxSize={50}>
               <div className="flex h-full flex-col overflow-hidden">
                 <ConsolePanel
+                  scenario={scenario}
                   result={result}
                   running={running}
                   failedRuns={failedRuns}
                   conceptNote={scenario.conceptNote ?? undefined}
                   signal={<SignalPanel signal={scenario.signal} />}
+                  onRunTests={run}
                 />
               </div>
             </ResizablePanel>
@@ -559,11 +561,13 @@ function IncidentRoom() {
             {mobileTab === "console" && (
               <div className="h-full overflow-hidden flex flex-col">
                 <ConsolePanel
+                  scenario={scenario}
                   result={result}
                   running={running}
                   failedRuns={failedRuns}
                   conceptNote={scenario.conceptNote ?? undefined}
                   signal={<SignalPanel signal={scenario.signal} />}
+                  onRunTests={run}
                 />
               </div>
             )}

@@ -11,16 +11,29 @@ export const typeHScenarios: Scenario[] = [
     symptom: "Monthly total revenue displays $100200300 instead of $600",
     framing:
       "The executive dashboard displays astronomical revenue totals like $500500. Database queries return numeric amounts as strings, which + converts to string concatenation instead of addition.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/reports/revenue/sum",
+      method: "POST",
+      appName: "EXECUTIVE REVENUE REPORTING SERVICE",
+      description: "Financial transaction aggregation service",
+      defaultPayload: { transactions: [{ amount: "100.50" }, { amount: "200.25" }] }
+    },
     files: [
       {
         path: "src/reports/revenue.js",
-        content: `// Sums a list of transaction amounts.
-// Note: DB driver returns amounts as strings (e.g. "100.50") to prevent float truncation.
+        content: `/**
+ * Reporting API - Financial Aggregation Engine
+ */
+
+/**
+ * Sums transaction amounts accurately safely converting string inputs.
+ *
+ * @param {Array<{amount: string|number}>} transactions
+ */
 function sumRevenue(transactions) {
   let total = 0;
   for (const tx of transactions) {
-    // TODO: Coerce tx.amount to a number before adding
-    total += tx.amount;
+    total += Number(tx.amount || 0);
   }
   return typeof total === "number" ? Math.round(total * 100) / 100 : 0;
 }

@@ -11,21 +11,41 @@ export const typeEScenarios: Scenario[] = [
     symptom: "Refund batch reconciliation fails with $0.01 imbalance",
     framing:
       "Finance is seeing 1-cent discrepancy errors during nightly payout reconciliation. The line-item refund helper rounds individual items before summing instead of rounding the final total.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/payments/refund/calculate",
+      method: "POST",
+      appName: "PAYOUT & REFUND RECONCILIATION ENGINE",
+      description: "Financial precision split refund calculation API",
+      defaultPayload: {
+        items: [
+          { price: 10.333, quantity: 1 },
+          { price: 10.333, quantity: 1 },
+          { price: 10.333, quantity: 1 }
+        ],
+        discountRate: 0.088
+      }
+    },
     files: [
       {
         path: "src/payments/refund.js",
-        content: `// Calculates total refund for a list of line items with a percentage discount applied.
-// Contract:
-//  - calculate discount per item or subtotal
-//  - final refund must be rounded to 2 decimals
+        content: `/**
+ * Payments Service - Refund Calculation Engine
+ */
+
+/**
+ * Calculates total refund for line items with optional discount rate applied.
+ * Rounds to 2 decimal places at the final total boundary.
+ *
+ * @param {Array<{price: number, quantity: number}>} items
+ * @param {number} discountRate
+ */
 function calculateRefund(items, discountRate = 0) {
   let total = 0;
   for (const item of items) {
     const itemNet = item.price * item.quantity * (1 - discountRate);
-    // TODO: Fix Premature per-item rounding accumulation
-    total += Math.round(itemNet * 100) / 100;
+    total += itemNet;
   }
-  return total;
+  return Math.round(total * 100) / 100;
 }
 
 module.exports = { calculateRefund };
@@ -109,18 +129,30 @@ test("returns 0 for empty items", () => {
     symptom: "GET /products?page=2 returns items already seen on page 1",
     framing:
       "Users report that clicking 'Next page' in search results shows the exact same items at the top of the list. The pagination offset calculation assumes 0-indexed page numbers.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/catalog/paginate?page=1&pageSize=20",
+      method: "GET",
+      appName: "PRODUCT CATALOG SEARCH GATEWAY",
+      description: "SQL query limit/offset calculation helper API",
+    },
     files: [
       {
         path: "src/search/paginate.js",
-        content: `// Computes DB limit and offset for 1-indexed page requests.
-// Example: computePagination(1, 20) -> { limit: 20, offset: 0 }
-// Example: computePagination(2, 20) -> { limit: 20, offset: 20 }
+        content: `/**
+ * Product Catalog Search - Limit/Offset Query Builder
+ */
+
+/**
+ * Computes database limit and offset for 1-indexed page requests.
+ *
+ * @param {number} page - 1-indexed page number
+ * @param {number} pageSize - Requested page size
+ */
 function computePagination(page, pageSize) {
   const safePage = Math.max(1, Number(page) || 1);
   const safeSize = Math.max(1, Number(pageSize) || 20);
   
-  // TODO: Fix offset calculation for 1-indexed page
-  const offset = safePage * safeSize;
+  const offset = (safePage - 1) * safeSize;
   return { limit: safeSize, offset };
 }
 

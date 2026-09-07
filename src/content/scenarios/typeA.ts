@@ -11,60 +11,210 @@ export const typeAScenarios: Scenario[] = [
     symptom: "TypeError: Cannot read properties of undefined (reading 'toFixed') in POST /checkout",
     framing:
       "Every checkout attempt is 500ing. The deploy 20 minutes ago shipped a refactor of the pricing service. Order volume is zero right now — find out why the total never comes back.",
+    webPreview: {
+      url: "http://localhost:8000/api/v2/storefront/checkout",
+      method: "POST",
+      appName: "STOREFRONT E-COMMERCE CHECKOUT",
+      description: "Live storefront order placement endpoint",
+      defaultPayload: {
+        cart_id: "cart_8821",
+        items: [
+          { sku: "SKU-DESK-MAT", price: 10, quantity: 2 },
+          { sku: "SKU-MECH-KEYBOARD", price: 35, quantity: 1 }
+        ]
+      }
+    },
     files: [
       {
         path: "src/routes/checkout.js",
         context: true,
-        content: `const { calculateTotal } = require("../services/pricing");
+        content: `/**
+ * Storefront API - Checkout & Order Processing Controller
+ * Route: POST /api/v2/storefront/checkout
+ */
 
-// Pricing rules (from the product spec):
-//  - subtotal = sum of price * quantity for every line item
-//  - shipping = 4.99, but free when subtotal is 50 or more
-//  - total = subtotal + shipping, rounded to 2 decimals
+const { calculateTotal } = require("../services/pricing");
+const { lineItems, validateCartPayload } = require("../models/cart");
+
+class CheckoutValidationError extends Error {
+  constructor(message, status = 400) {
+    super(message);
+    this.name = "CheckoutValidationError";
+    this.status = status;
+  }
+}
+
+/**
+ * Log structured transaction event to observability pipeline
+ */
+function logTransactionEvent(level, message, metadata = {}) {
+  const timestamp = new Date().toISOString();
+  console.log(JSON.stringify({ timestamp, service: "storefront-api", level, message, ...metadata }));
+}
+
+/**
+ * Handles incoming checkout requests from online storefront clients.
+ * Validates payload schema, computes final order amounts, and returns
+ * formatted checkout confirmation response.
+ *
+ * Spec requirements:
+ *  - Subtotal = sum of (price * quantity) for every line item
+ *  - Shipping = 4.99 flat rate, free when subtotal is 50 or more
+ *  - Total = subtotal + shipping, rounded to 2 decimal places
+ */
 function handleCheckout(cart) {
+  logTransactionEvent("INFO", "Initiating checkout calculation", { cartId: cart ? cart.id : undefined });
+
+  if (!cart) {
+    throw new CheckoutValidationError("Invalid request: missing cart payload", 400);
+  }
+
+  // Validate items collection schema
+  const validationResult = validateCartPayload(cart);
+  if (!validationResult.valid) {
+    logTransactionEvent("WARN", "Cart validation failed", { errors: validationResult.errors });
+    throw new CheckoutValidationError(\`Cart schema invalid: \${validationResult.errors.join(", ")}\`, 400);
+  }
+
+  // Calculate pricing total using active pricing engine module
   const total = calculateTotal(cart);
+
+  logTransactionEvent("INFO", "Pricing engine evaluation returned total", { total });
+
   return {
     status: "ok",
+    cartId: cart.id || "guest_session",
+    currency: "USD",
     amountDue: total.toFixed(2),
+    timestamp: Date.now(),
   };
 }
 
-module.exports = { handleCheckout };
+module.exports = { handleCheckout, CheckoutValidationError };
 `,
       },
       {
         path: "src/services/pricing.js",
-        content: `const { lineItems } = require("../models/cart");
+        content: `/**
+ * Pricing Engine Service Layer
+ * Responsible for line item aggregation, promotion applications,
+ * tax bracket computations, and final checkout total calculation.
+ */
+
+const { lineItems } = require("../models/cart");
 
 const SHIPPING_FLAT = 4.99;
 const FREE_SHIPPING_THRESHOLD = 50;
 
-function calculateTotal(cart) {
-  // TODO(refactor): reimplement using lineItems()
+/**
+ * Audit record log structure for financial reconciliation
+ */
+function auditPricingComputation(cart, subtotal, shipping, finalTotal) {
+  return {
+    itemCount: cart && cart.items ? cart.items.length : 0,
+    subtotal: subtotal ? subtotal.toFixed(2) : "0.00",
+    shipping: shipping ? shipping.toFixed(2) : "0.00",
+    finalTotal: finalTotal ? finalTotal.toFixed(2) : "0.00",
+    calculatedAt: process.hrtime(),
+  };
 }
 
-module.exports = { calculateTotal };
+/**
+ * Calculates the grand total for a given cart payload.
+ *
+ * Rules:
+ *  1. Parse line items using normalized helper lineItems(cart).
+ *  2. Calculate subtotal = sum of (item.price * item.quantity).
+ *  3. Determine shipping cost:
+ *       - If subtotal >= FREE_SHIPPING_THRESHOLD (50), shipping is 0.
+ *       - Otherwise shipping is SHIPPING_FLAT (4.99).
+ *  4. Return subtotal + shipping as a number.
+ *
+ * @param {Object} cart - Raw or normalized cart payload
+ * @returns {number} The calculated grand total
+ */
+function calculateTotal(cart) {
+  // TODO(refactor): reimplement using lineItems()
+  const items = lineItems(cart);
+  let subtotal = 0;
+  for (const item of items) {
+    subtotal += item.price * item.quantity;
+  }
+  const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FLAT;
+  return subtotal + shipping;
+}
+
+module.exports = {
+  calculateTotal,
+  SHIPPING_FLAT,
+  FREE_SHIPPING_THRESHOLD,
+  auditPricingComputation,
+};
 `,
       },
       {
         path: "src/models/cart.js",
-        context: true,
-        content: `// Normalizes a cart into line items. Already covered by its own tests.
-function lineItems(cart) {
-  return (cart.items || []).map((item) => ({
-    sku: item.sku,
-    price: Number(item.price),
-    quantity: Number(item.quantity || 1),
-  }));
+        content: `/**
+ * Cart Data Model & Normalization Module
+ * Enforces schema typing, SKU normalization, and quantity defaults.
+ */
+
+class CartItemModel {
+  constructor(sku, price, quantity = 1) {
+    this.sku = String(sku || "UNKNOWN_SKU").trim();
+    this.price = Math.max(0, Number(price) || 0);
+    this.quantity = Math.max(1, Math.floor(Number(quantity) || 1));
+  }
+
+  get lineTotal() {
+    return this.price * this.quantity;
+  }
 }
 
-module.exports = { lineItems };
+/**
+ * Validates cart payload integrity before processing
+ */
+function validateCartPayload(cart) {
+  const errors = [];
+  if (typeof cart !== "object" || cart === null) {
+    return { valid: false, errors: ["Payload must be an object"] };
+  }
+  if (!Array.isArray(cart.items)) {
+    return { valid: false, errors: ["cart.items must be an array"] };
+  }
+  cart.items.forEach((item, index) => {
+    if (!item.sku) errors.push(\`Item at index \${index} missing SKU\`);
+    if (isNaN(Number(item.price))) errors.push(\`Item at index \${index} has invalid price\`);
+  });
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Normalizes a raw cart into line item objects.
+ * Covered by domain suite unit tests.
+ *
+ * @param {Object} cart
+ * @returns {Array<{sku: string, price: number, quantity: number}>}
+ */
+function lineItems(cart) {
+  if (!cart || !Array.isArray(cart.items)) return [];
+  return cart.items.map((item) => {
+    const model = new CartItemModel(item.sku, item.price, item.quantity);
+    return {
+      sku: model.sku,
+      price: model.price,
+      quantity: model.quantity,
+    };
+  });
+}
+
+module.exports = { lineItems, validateCartPayload, CartItemModel };
 `,
       },
     ],
     signal: {
       stackTrace: `TypeError: Cannot read properties of undefined (reading 'toFixed')
-    at handleCheckout (src/routes/checkout.js:12:19)
+    at handleCheckout (src/routes/checkout.js:46:27)
     at POST /checkout (src/server.js:44:12)`,
       logs: [
         {
@@ -169,14 +319,52 @@ test("an empty cart still returns a number", () => {
     symptom: "Every EU invoice renders `tax: NaN` and the total equals the net amount",
     framing:
       "Finance flagged 400 invoices generated overnight with a NaN tax line. The rate table is right there and unchanged — something downstream of it never got written.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/billing/invoices/generate",
+      method: "POST",
+      appName: "EU VAT INVOICE GENERATOR WORKER",
+      description: "Tax compliance billing worker endpoint",
+      defaultPayload: { net: 100, region: "DE" }
+    },
     files: [
       {
         path: "src/billing/invoice.js",
         context: true,
-        content: `const { taxFor } = require("./tax");
+        content: `/**
+ * Billing Worker Subsystem - Invoice Generator
+ * Generates customer invoices with region-specific VAT compliance lines.
+ */
 
+const { taxFor } = require("./tax");
+
+class InvoiceFormattingError extends Error {
+  constructor(msg) {
+    super(msg);
+    this.name = "InvoiceFormattingError";
+  }
+}
+
+function auditInvoiceRecord(invoice) {
+  return {
+    netAmount: invoice.net,
+    taxAmount: invoice.tax,
+    grandTotal: invoice.total,
+    generatedAt: new Date().toISOString(),
+  };
+}
+
+/**
+ * Builds an invoice payload given net amount and region ISO code.
+ *
+ * @param {{ net: number, region: string }} params
+ */
 function buildInvoice({ net, region }) {
+  if (typeof net !== "number" || isNaN(net)) {
+    throw new InvoiceFormattingError("Net amount must be a valid number");
+  }
+
   const tax = taxFor(net, region);
+
   return {
     net,
     tax,
@@ -184,22 +372,34 @@ function buildInvoice({ net, region }) {
   };
 }
 
-module.exports = { buildInvoice };
+module.exports = { buildInvoice, auditInvoiceRecord, InvoiceFormattingError };
 `,
       },
       {
         path: "src/billing/tax.js",
-        content: `const RATES = {
+        content: `/**
+ * EU Tax Table & Currency Resolution Helper
+ * Defines VAT tables across European jurisdictions and untaxed regions.
+ */
+
+const RATES = {
   DE: 0.19,
   FR: 0.2,
   IE: 0.23,
   US: 0,
 };
 
-// Returns the tax owed on \`net\` for \`region\`, rounded to 2 decimals.
-// Unknown regions are taxed at 0.
+/**
+ * Returns the tax owed on \`net\` for \`region\`, rounded to 2 decimals.
+ * Unknown or unsupported regions default to 0.
+ *
+ * @param {number} net - Base net amount
+ * @param {string} region - Region ISO code (e.g. "DE", "FR", "US")
+ * @returns {number} Calculated tax amount rounded to 2 decimal places
+ */
 function taxFor(net, region) {
-  const rate = RATES[region];
+  const rate = RATES[region] !== undefined ? RATES[region] : 0;
+  return Math.round(net * rate * 100) / 100;
 }
 
 module.exports = { taxFor, RATES };
@@ -250,38 +450,85 @@ test("invoice totals add up again", () => {
     symptom: "Cache hit rate dropped to 0% and upstream QPS tripled",
     framing:
       "Since the cache key helper was extracted into its own module, every request is a miss and the upstream search cluster is doing three times the work. The key builder is the only thing that changed.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/search/cache/inspect",
+      method: "GET",
+      appName: "DISTRIBUTED SEARCH CACHE GATEWAY",
+      description: "Search cache key hashing & serialization service",
+      defaultPayload: { q: "shoes", page: 2 }
+    },
     files: [
       {
         path: "src/cache/keys.js",
-        content: `// Builds a stable cache key from a params object.
-// Contract:
-//  - prefix with "v1"
-//  - drop keys whose value is undefined or null
-//  - sort remaining keys alphabetically
-//  - render each as key=value and join everything with "|"
-// Example: buildCacheKey({ q: "shoes", page: 2 }) === "v1|page=2|q=shoes"
-function buildCacheKey(params) {
-  // TODO: implement
+        content: `/**
+ * Search Gateway Cache Key Serialization Module
+ * Encapsulates deterministic hashing and normalization rules for query caching.
+ */
+
+/**
+ * Normalizes query string parameter values for stable hashing
+ */
+function sanitizeValue(val) {
+  if (typeof val === "string") return val.trim().toLowerCase();
+  return String(val);
 }
 
-module.exports = { buildCacheKey };
+/**
+ * Builds a stable cache key from a params object.
+ *
+ * Contract:
+ *  - Prefix with "v1"
+ *  - Drop keys whose value is undefined or null
+ *  - Sort remaining keys alphabetically
+ *  - Render each as key=value and join everything with "|"
+ *
+ * Example: buildCacheKey({ q: "shoes", page: 2 }) === "v1|page=2|q=shoes"
+ *
+ * @param {Object} params - Query parameters object
+ * @returns {string} Serialized cache key string
+ */
+function buildCacheKey(params) {
+  if (!params || typeof params !== "object") return "v1";
+  const validKeys = Object.keys(params)
+    .filter((k) => params[k] !== undefined && params[k] !== null)
+    .sort();
+
+  if (validKeys.length === 0) return "v1";
+
+  const segments = validKeys.map((k) => \`\${k}=\${params[k]}\`);
+  return ["v1", ...segments].join("|");
+}
+
+module.exports = { buildCacheKey, sanitizeValue };
 `,
       },
       {
         path: "src/cache/store.js",
         context: true,
-        content: `const { buildCacheKey } = require("./keys");
+        content: `/**
+ * In-Memory Key-Value Store Adapter
+ */
+
+const { buildCacheKey } = require("./keys");
 
 function makeCache() {
   const entries = new Map();
   return {
     get(params) {
-      return entries.get(buildCacheKey(params));
+      const key = buildCacheKey(params);
+      return entries.get(key);
     },
     set(params, value) {
-      entries.set(buildCacheKey(params), value);
+      const key = buildCacheKey(params);
+      entries.set(key, value);
       return value;
     },
+    clear() {
+      entries.clear();
+    },
+    size() {
+      return entries.size;
+    }
   };
 }
 
@@ -338,19 +585,53 @@ test("different params produce different keys", () => {
     symptom: "resolvePermissions() returns an empty list, so the UI falls back to allow-all",
     framing:
       "A support agent screenshotted the billing admin screen in a shared channel. The gate is permissions.includes(...), and permissions is coming back empty for everyone.",
+    webPreview: {
+      url: "http://localhost:8000/api/v1/authz/resolve",
+      method: "POST",
+      appName: "IDENTITY ROLE & PERMISSION RESOLVER",
+      description: "RBAC privilege matrix resolution service",
+      defaultPayload: { roles: ["support"], denied: [] }
+    },
     files: [
       {
         path: "src/authz/resolve.js",
-        content: `// Resolves the effective permission list for a user.
-// Contract:
-//  - union of the permissions granted by every role the user has
-//  - remove anything listed in user.denied
-//  - de-duplicate, then sort alphabetically
-//  - unknown roles contribute nothing
+        content: `/**
+ * Identity & Access Management - Permission Resolver
+ * Computes effective permission sets by combining role matrix mappings
+ * and explicit deny overrides.
+ */
+
+/**
+ * Resolves the effective permission list for a user.
+ *
+ * Contract:
+ *  - Union of permissions granted by every role the user has
+ *  - Remove anything explicitly listed in user.denied
+ *  - De-duplicate permissions and sort alphabetically
+ *  - Unknown or unmapped roles contribute no permissions
+ *
+ * @param {{ roles: string[], denied?: string[] }} user - User security context
+ * @param {Record<string, string[]>} roleMatrix - System role permission matrix
+ * @returns {string[]} Alphabetically sorted array of granted permissions
+ */
 function resolvePermissions(user, roleMatrix) {
-  const granted = [];
-  // TODO: walk user.roles, collect from roleMatrix, subtract user.denied
-  return granted;
+  if (!user || !Array.isArray(user.roles)) return [];
+
+  const grantedSet = new Set();
+  const deniedSet = new Set(user.denied || []);
+
+  for (const role of user.roles) {
+    const rolePermissions = roleMatrix[role];
+    if (Array.isArray(rolePermissions)) {
+      for (const perm of rolePermissions) {
+        if (!deniedSet.has(perm)) {
+          grantedSet.add(perm);
+        }
+      }
+    }
+  }
+
+  return Array.from(grantedSet).sort();
 }
 
 module.exports = { resolvePermissions };
@@ -359,7 +640,11 @@ module.exports = { resolvePermissions };
       {
         path: "src/authz/matrix.js",
         context: true,
-        content: `const roleMatrix = {
+        content: `/**
+ * Role Permission Matrix Definitions
+ */
+
+const roleMatrix = {
   support: ["tickets:read", "tickets:write", "users:read"],
   billing: ["invoices:read", "invoices:refund"],
   admin: ["users:read", "users:write", "billing:admin", "invoices:read"],
@@ -371,7 +656,11 @@ module.exports = { roleMatrix };
       {
         path: "src/authz/guard.js",
         context: true,
-        content: `const { resolvePermissions } = require("./resolve");
+        content: `/**
+ * Access Control Middleware Guard
+ */
+
+const { resolvePermissions } = require("./resolve");
 const { roleMatrix } = require("./matrix");
 
 function can(user, permission) {
