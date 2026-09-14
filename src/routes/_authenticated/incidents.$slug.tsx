@@ -201,9 +201,9 @@ function IncidentRoom() {
           <ResizablePanelGroup orientation="horizontal" className="h-full w-full">
             {/* ── LEFT PANEL: Problem Brief & Diagnostic Telemetry ── */}
             <ResizablePanel
-              defaultSize={descCollapsed ? 4 : 25}
-              minSize={descCollapsed ? 4 : 15}
-              maxSize={descCollapsed ? 4 : 40}
+              defaultSize={descCollapsed ? "4%" : "25%"}
+              minSize={descCollapsed ? "4%" : "15%"}
+              maxSize={descCollapsed ? "4%" : "40%"}
               className="bg-[#0A0A0A] transition-all duration-200"
             >
               <div className="flex h-full flex-col overflow-hidden border-r border-[#171717] relative">
@@ -335,7 +335,7 @@ function IncidentRoom() {
             <ResizableHandle withHandle />
 
             {/* ── CENTER PANEL: Monaco Code Editor ── */}
-            <ResizablePanel defaultSize={descCollapsed ? 66 : 45} minSize={25}>
+            <ResizablePanel defaultSize={descCollapsed ? "66%" : "45%"} minSize="25%">
               <section className="flex h-full flex-col overflow-hidden border-r border-[#171717]">
                 {/* File Tabs Strip */}
                 <div
@@ -422,7 +422,7 @@ function IncidentRoom() {
             <ResizableHandle withHandle />
 
             {/* ── RIGHT PANEL: Test Console & Signal Telemetry ── */}
-            <ResizablePanel defaultSize={30} minSize={20} maxSize={50}>
+            <ResizablePanel defaultSize="30%" minSize="20%" maxSize="50%">
               <div className="flex h-full flex-col overflow-hidden">
                 <ConsolePanel
                   scenario={scenario}
