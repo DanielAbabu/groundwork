@@ -11,7 +11,12 @@ import { SignalPanel } from "@/components/SignalPanel";
 import { HintDrawer } from "@/components/HintDrawer";
 import { ProblemBar } from "@/components/ProblemBar";
 import { ConsolePanel } from "@/components/ConsolePanel";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+  usePanelRef,
+} from "@/components/ui/resizable";
 import {
   AlertCircle,
   FileCode,
@@ -93,6 +98,7 @@ function IncidentRoom() {
   const [passed, setPassed] = useState(false);
   const [descCollapsed, setDescCollapsed] = useState(false);
   const [mobileTab, setMobileTab] = useState<"brief" | "editor" | "console">("editor");
+  const descPanelRef = usePanelRef();
 
   useEffect(() => {
     setEdits({});
@@ -197,19 +203,28 @@ function IncidentRoom() {
       {/* ── 3-Panel IDE Workspace Layout ── */}
       <div className="flex flex-1 overflow-hidden relative">
         {/* ── DESKTOP VIEW: Resizable 3-Panel Group ── */}
-        <div className="hidden lg:flex w-full h-full">
-          <ResizablePanelGroup orientation="horizontal" className="h-full w-full">
+        <div className="hidden lg:flex h-full min-h-0 min-w-0 w-full">
+          <ResizablePanelGroup orientation="horizontal" className="h-full min-h-0 min-w-0 w-full">
             {/* ── LEFT PANEL: Problem Brief & Diagnostic Telemetry ── */}
             <ResizablePanel
-              defaultSize={descCollapsed ? "4%" : "25%"}
-              minSize={descCollapsed ? "4%" : "15%"}
-              maxSize={descCollapsed ? "4%" : "40%"}
-              className="bg-[#0A0A0A] transition-all duration-200"
+              defaultSize="25%"
+              minSize="15%"
+              maxSize="40%"
+              collapsedSize="4%"
+              collapsible
+              panelRef={descPanelRef}
+              className="bg-[#0A0A0A]"
             >
-              <div className="flex h-full flex-col overflow-hidden border-r border-[#171717] relative">
+              <div className="relative flex h-full min-h-0 min-w-0 flex-col overflow-hidden border-r border-[#171717]">
                 {/* Collapse toggle */}
                 <button
-                  onClick={() => setDescCollapsed((v) => !v)}
+                  onClick={() => {
+                    setDescCollapsed((collapsed) => {
+                      if (collapsed) descPanelRef.current?.expand();
+                      else descPanelRef.current?.collapse();
+                      return !collapsed;
+                    });
+                  }}
                   title={descCollapsed ? "Expand Incident Brief" : "Collapse Incident Brief"}
                   className="absolute right-3 top-3 z-20 flex size-7 items-center justify-center rounded-sm border border-[#171717] bg-[#000000] text-[#64748B] hover:text-[#F8FAFC] transition-colors"
                 >
@@ -335,8 +350,12 @@ function IncidentRoom() {
             <ResizableHandle withHandle />
 
             {/* ── CENTER PANEL: Monaco Code Editor ── */}
-            <ResizablePanel defaultSize={descCollapsed ? "66%" : "45%"} minSize="25%">
-              <section className="flex h-full flex-col overflow-hidden border-r border-[#171717]">
+            <ResizablePanel
+              defaultSize="45%"
+              minSize="25%"
+              className="min-h-0 min-w-0"
+            >
+              <section className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden border-r border-[#171717]">
                 {/* File Tabs Strip */}
                 <div
                   className="flex shrink-0 items-center overflow-x-auto border-b border-[#171717] bg-[#000000]"
@@ -379,7 +398,7 @@ function IncidentRoom() {
                 </div>
 
                 {/* Monaco Editor Container */}
-                <div className="flex-1 overflow-hidden bg-[#000000]">
+                <div className="flex-1 min-h-0 min-w-0 overflow-hidden bg-[#000000]">
                   <ClientOnly
                     fallback={
                       <pre className="h-full overflow-auto p-4 font-mono text-xs text-[#94A3B8]">
@@ -422,8 +441,8 @@ function IncidentRoom() {
             <ResizableHandle withHandle />
 
             {/* ── RIGHT PANEL: Test Console & Signal Telemetry ── */}
-            <ResizablePanel defaultSize="30%" minSize="20%" maxSize="50%">
-              <div className="flex h-full flex-col overflow-hidden">
+            <ResizablePanel defaultSize="30%" minSize="20%" maxSize="50%" className="min-h-0 min-w-0">
+              <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
                 <ConsolePanel
                   scenario={scenario}
                   result={result}
@@ -439,7 +458,7 @@ function IncidentRoom() {
         </div>
 
         {/* ── MOBILE VIEW: High-Density Tab View Switcher ── */}
-        <div className="lg:hidden flex flex-1 flex-col overflow-hidden pb-14 w-full">
+        <div className="lg:hidden flex min-h-0 flex-1 flex-col overflow-hidden pb-14 w-full">
           {/* Mobile Top View Switcher */}
           <div className="flex items-center border-b border-[#171717] bg-[#0A0A0A] shrink-0">
             <button
@@ -481,7 +500,7 @@ function IncidentRoom() {
           </div>
 
           {/* Mobile View Container */}
-          <div className="flex-1 overflow-hidden">
+          <div className="min-h-0 flex-1 overflow-hidden">
             {mobileTab === "brief" && (
               <div className="h-full overflow-y-auto p-4 pb-20 space-y-5 bg-[#0A0A0A]">
                 <div className="flex flex-wrap items-center gap-2 border-b border-[#171717] pb-3">
@@ -519,7 +538,7 @@ function IncidentRoom() {
             )}
 
             {mobileTab === "editor" && (
-              <div className="flex h-full flex-col overflow-hidden">
+              <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
                 {/* File Tabs Strip */}
                 <div className="flex shrink-0 items-center overflow-x-auto border-b border-[#171717] bg-[#000000]">
                   {scenario.files.map((file) => {
@@ -541,7 +560,7 @@ function IncidentRoom() {
                   })}
                 </div>
 
-                <div className="flex-1 overflow-hidden bg-[#000000]">
+                <div className="flex-1 min-h-0 min-w-0 overflow-hidden bg-[#000000]">
                   <ClientOnly
                     fallback={<pre className="p-3 font-mono text-xs">{activeValue}</pre>}
                   >
